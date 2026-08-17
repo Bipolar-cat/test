@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>KOTEKOTE CAFE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --bg: #FFFFFF;
+    --surface: #FFF9F0;
+    --ink: #241708;
+    --ink-soft: #8A7A63;
+    --accent: #FF5A1F;
+    --spot: #3B2412;
+    --line: #EFE6D6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #1B130A;
+      --surface: #241A0E;
+      --ink: #FBF3E7;
+      --ink-soft: #C6B49B;
+      --line: #3B2C18;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #1B130A;
+    --surface: #241A0E;
+    --ink: #FBF3E7;
+    --ink-soft: #C6B49B;
+    --line: #3B2C18;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Sans","Yu Gothic UI","Noto Sans JP",system-ui,sans-serif;
+    font-size: 19px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img,canvas,svg{ display:block; max-width:100%; }
+  a{ color:inherit; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  section{ position: relative; }
+
+  .eyebrow{
+    font-weight: 900; letter-spacing: .28em; text-transform: uppercase;
+    font-size: 13px; color: var(--accent);
+  }
+  h1,h2,h3{ text-wrap: balance; margin:0; }
+
+  /* ---------------- NAV ---------------- */
+  header.nav{
+    position: sticky; top:0; z-index:40;
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .navrow{ display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1180px; margin:0 auto; }
+  .navlogo{ font-weight:900; font-size:21px; letter-spacing:-0.01em; }
+  .navlogo em{ font-style:normal; color: var(--accent); }
+  nav.links{ display:flex; gap:26px; font-weight:700; font-size:15px; }
+  nav.links a{ text-decoration:none; opacity:.82; }
+  nav.links a:hover, nav.links a:focus-visible{ opacity:1; }
+  .navcta{ font-weight:900; font-size:14px; padding:10px 20px; border-radius:999px; background: var(--ink); color: var(--bg); text-decoration:none; }
+  @media (max-width:760px){ nav.links{ display:none; } }
+
+  /* ---------------- HERO ---------------- */
+  .hero{ padding: 88px 0 66px; display:grid; grid-template-columns: 1.1fr .9fr; gap:40px; align-items:center; }
+  @media (max-width:900px){ .hero{ grid-template-columns:1fr; padding-top:52px; } }
+  .hero-logo{
+    font-weight:900; font-size: clamp(42px, 12vw, 118px);
+    line-height:.86; letter-spacing:-0.02em; margin:14px 0 20px;
+  }
+  .hero-logo .k2{ color: var(--accent); }
+  .hero-jp{ font-weight:800; letter-spacing:.08em; font-size:15px; color: var(--ink-soft); margin-bottom: 22px; }
+  .hero-sub{ font-size: clamp(21px,2.2vw,28px); font-weight:900; max-width:16ch; margin-bottom:16px; }
+  .hero-copy{ max-width: 48ch; color: var(--ink-soft); font-size:18px; }
+  .hero-ctas{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:900; font-size:16px; padding:15px 28px; border-radius:999px; text-decoration:none; border:none; cursor:pointer; }
+  .btn-primary{ background: var(--ink); color: var(--bg); }
+  .btn-primary:hover{ opacity:.86; }
+  .btn-ghost{ background:transparent; border:2px solid var(--line); color: var(--ink); }
+  .btn-ghost:hover{ border-color: var(--accent); }
+
+  .spotwrap{ position:relative; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; }
+  #spots{ width:100%; height:100%; }
+  .spot-chip{ position:absolute; background: var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 14px; font-weight:900; font-size:13px; box-shadow: 0 12px 30px -14px rgba(36,23,8,.35); font-variant-numeric: tabular-nums; }
+  .spot-chip.c1{ top:2%; left:-6%; }
+  .spot-chip.c2{ bottom:6%; right:-4%; }
+  .spot-chip .num{ color: var(--accent); font-size:16px; }
+  @media (max-width:900px){ .spotwrap{ max-width:320px; margin:0 auto; } }
+
+  /* ---------------- CONCEPT ---------------- */
+  .concept{ padding:88px 0; border-top:1px solid var(--line); }
+  .concept-head{ max-width:64ch; margin-bottom:52px; }
+  .concept-head h2{ font-size: clamp(32px,4.2vw,52px); font-weight:900; margin-top:10px; }
+  .principles{ display:grid; grid-template-columns: repeat(3,1fr); gap:22px; }
+  @media (max-width:860px){ .principles{ grid-template-columns:1fr; } }
+  .principle{ background: var(--surface); border:1px solid var(--line); border-radius:18px; padding:30px 26px; min-height:220px; display:flex; flex-direction:column; gap:14px; }
+  .principle .mark{ font-weight:900; font-size:34px; color: var(--accent); line-height:1; }
+  .principle h3{ font-size:21px; font-weight:900; }
+  .principle p{ color: var(--ink-soft); font-size:16px; margin:0; }
+
+  /* ---------------- MENU ---------------- */
+  .menu{ padding:88px 0; border-top:1px solid var(--line); background: var(--surface); }
+  .menu-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:44px; flex-wrap:wrap; }
+  .menu-head h2{ font-size: clamp(32px,4.2vw,52px); font-weight:900; margin-top:10px; }
+  .menu-hint{ color: var(--ink-soft); font-size:15px; max-width:28ch; font-weight:700; }
+  .menu-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:22px; }
+  .dish{ position:relative; background: var(--bg); border:1px solid var(--line); border-radius:4px 4px 18px 18px; overflow:hidden; }
+  .dish-noren{ height:96px; background: linear-gradient(150deg, var(--spot), #6B4325 60%, var(--accent)); position:relative; }
+  .dish-noren svg{ position:absolute; left:0; right:0; bottom:-1px; width:100%; height:16px; }
+  .dish-price{ position:absolute; top:10px; right:10px; font-weight:900; font-variant-numeric: tabular-nums; background: rgba(255,255,255,.94); color: var(--ink); padding:4px 10px; border-radius:999px; font-size:13px; z-index:1; }
+  .dish-body{ padding: 20px 22px 24px; }
+  .dish h3{ font-size:20px; font-weight:900; margin-bottom:6px; }
+  .dish .quip{ font-size:13px; font-weight:900; color: var(--accent); letter-spacing:.02em; margin-bottom:8px; }
+  .dish p.desc{ color: var(--ink-soft); font-size:15px; margin:0; }
+
+  /* ---------------- BUZZ ---------------- */
+  .buzz{ padding:84px 0; }
+  .buzz-head{ text-align:center; margin-bottom:44px; }
+  .buzz-head h2{ font-size: clamp(30px,4vw,44px); font-weight:900; max-width:22ch; margin: 10px auto 0; }
+  .buzz-stats{ display:grid; grid-template-columns: repeat(4,1fr); gap:18px; margin-bottom:48px; }
+  @media (max-width:760px){ .buzz-stats{ grid-template-columns: repeat(2,1fr); } }
+  .stat{ text-align:center; padding:8px; }
+  .stat .n{ font-weight:900; font-size: clamp(28px,3.6vw,42px); font-variant-numeric: tabular-nums; color: var(--accent); }
+  .stat .l{ color: var(--ink-soft); font-weight:700; font-size:14px; margin-top:6px; }
+  .post-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+  @media (max-width:760px){ .post-grid{ grid-template-columns: repeat(2,1fr); } }
+  .post{ aspect-ratio:1/1; border-radius:10px; position:relative; overflow:hidden; display:flex; align-items:flex-end; }
+  .post span{ position:relative; color:#fff; font-weight:900; font-size:13px; padding:10px; text-shadow:0 2px 8px rgba(0,0,0,.4); }
+
+  /* ---------------- GALLERY ---------------- */
+  .gallery{ padding:88px 0; border-top:1px solid var(--line); }
+  .gallery-head{ max-width:58ch; margin-bottom:40px; }
+  .gallery-head h2{ font-size: clamp(32px,4.2vw,52px); font-weight:900; margin-top:10px; }
+  .grid-art{ display:grid; grid-template-columns: repeat(4,1fr); grid-auto-rows:150px; gap:14px; }
+  @media (max-width:860px){ .grid-art{ grid-template-columns: repeat(2,1fr); } }
+  .tile{ border-radius:14px; position:relative; overflow:hidden; }
+  .tile span{ position:absolute; left:14px; bottom:12px; color:#fff; font-weight:900; font-size:13px; text-shadow:0 2px 10px rgba(0,0,0,.35); }
+  .tile.big{ grid-column: span 2; grid-row: span 2; }
+
+  /* ---------------- ACCESS ---------------- */
+  .access{ padding:88px 0; border-top:1px solid var(--line); background: var(--surface); }
+  .access-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:40px; }
+  @media (max-width:860px){ .access-grid{ grid-template-columns:1fr; } }
+  .access h2{ font-size: clamp(28px,4vw,42px); font-weight:900; margin:10px 0 22px; }
+  dl.info{ display:grid; grid-template-columns: auto 1fr; gap:14px 22px; font-size:16px; }
+  dl.info dt{ font-weight:900; color: var(--ink-soft); font-size:13px; letter-spacing:.06em; text-transform:uppercase; padding-top:3px; }
+  dl.info dd{ margin:0; }
+  .map-card{ border-radius:18px; background: var(--bg); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; min-height:260px; position:relative; overflow:hidden; }
+  .map-card svg{ width:76%; }
+
+  /* ---------------- FOOTER ---------------- */
+  footer{ padding:60px 0 40px; border-top:1px solid var(--line); }
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+  .foot-logo{ font-weight:900; font-size:22px; }
+  .foot-logo em{ font-style:normal; color: var(--accent); }
+  .foot-links{ display:flex; gap:22px; font-weight:700; font-size:14px; opacity:.8; flex-wrap:wrap; }
+  .foot-links a{ text-decoration:none; }
+  .copyright{ color: var(--ink-soft); font-size:13px; margin-top:26px; }
+  .note{ color: var(--ink-soft); font-size:12.5px; margin-top:8px; }
+
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="navrow">
+    <div class="navlogo">KOTE<em>KOTE</em></div>
+    <nav class="links">
+      <a href="#concept">コンセプト</a>
+      <a href="#menu">メニュー</a>
+      <a href="#gallery">ギャラリー</a>
+      <a href="#access">アクセス</a>
+    </nav>
+    <a class="navcta" href="#access">来店情報を見る</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <p class="eyebrow">OSAKA / SHINSAIBASHI</p>
+      <h1 class="hero-logo">KOTE<span class="k2">KOTE</span></h1>
+      <p class="hero-jp">喫茶 コテコテ</p>
+      <p class="hero-sub">コテコテやけど、なんでか、映える。</p>
+      <p class="hero-copy">
+        大阪でいちばんInstagramがバズってる、と噂の純喫茶。
+        山盛りナポリタン、顔より大きいプリン、けったいな色のクリームソーダ。
+        やりすぎを、堂々とやる。それがコテコテの流儀です。
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#menu">メニューを見る</a>
+        <a class="btn btn-ghost" href="#access">来店情報</a>
+      </div>
+    </div>
+    <div class="spotwrap">
+      <canvas id="spots" width="600" height="600" aria-hidden="true"></canvas>
+      <div class="spot-chip c1">今日のイチオシ<br><span class="num">デカすぎプリン</span></div>
+      <div class="spot-chip c2">日曜の行列<br><span class="num">開店前から並ぶ</span></div>
+    </div>
+  </section>
+
+  <!-- CONCEPT -->
+  <section class="concept" id="concept">
+    <div class="concept-head">
+      <p class="eyebrow">CONCEPT</p>
+      <h2>「コテコテ」ってなんやねん。</h2>
+    </div>
+    <div class="principles">
+      <div class="principle">
+        <div class="mark">盛</div>
+        <h3>とにかく盛る</h3>
+        <p>普通の1.5倍が当たり前。ナポリタンもプリンも、遠慮という言葉を知りません。器からはみ出してからが本番です。</p>
+      </div>
+      <div class="principle">
+        <div class="mark">濃</div>
+        <h3>味も見た目も濃い</h3>
+        <p>薄味・淡色とは無縁。ソースは黒々、クリームソーダはけったいな色。目にも舌にも、はっきり効かせます。</p>
+      </div>
+      <div class="principle">
+        <div class="mark">笑</div>
+        <h3>ひと言、効かせる</h3>
+        <p>メニュー名にもツッコミどころを仕込む主義。「なんでやねん」と言いながら、結局全部頼んでしまう仕掛けです。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section class="menu" id="menu">
+    <div class="wrap" style="padding:0;">
+      <div class="menu-head">
+        <div>
+          <p class="eyebrow">SIGNATURE MENU</p>
+          <h2>純喫茶を、コテコテに。</h2>
+        </div>
+        <p class="menu-hint">大阪の純喫茶の定番を、遠慮なく盛った5品です。</p>
+      </div>
+      <div class="menu-grid">
+
+        <article class="dish">
+          <div class="dish-noren">
+            <div class="dish-price">¥580</div>
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0 L5 10 L10 0 L15 10 L20 0 L25 10 L30 0 L35 10 L40 0 L45 10 L50 0 L55 10 L60 0 L65 10 L70 0 L75 10 L80 0 L85 10 L90 0 L95 10 L100 0 L100 10 L0 10 Z" fill="var(--surface)"/></svg>
+          </div>
+          <div class="dish-body">
+            <p class="quip">これ飲まな帰れへんで</p>
+            <h3>自家製ミックスジュース</h3>
+            <p class="desc">大阪の喫茶店に欠かせない定番。数種のフルーツを毎朝ミキサーでガーッと。氷の音まで美味しい一杯。</p>
+          </div>
+        </article>
+
+        <article class="dish">
+          <div class="dish-noren">
+            <div class="dish-price">¥980</div>
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0 L5 10 L10 0 L15 10 L20 0 L25 10 L30 0 L35 10 L40 0 L45 10 L50 0 L55 10 L60 0 L65 10 L70 0 L75 10 L80 0 L85 10 L90 0 L95 10 L100 0 L100 10 L0 10 Z" fill="var(--surface)"/></svg>
+          </div>
+          <div class="dish-body">
+            <p class="quip">フォークが埋まる盛り</p>
+            <h3>山盛りナポリタン</h3>
+            <p class="desc">鉄板の上でジュージュー。粉チーズは自分で「これでもか」ってくらいかけてください。</p>
+          </div>
+        </article>
+
+        <article class="dish">
+          <div class="dish-noren">
+            <div class="dish-price">¥680</div>
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0 L5 10 L10 0 L15 10 L20 0 L25 10 L30 0 L35 10 L40 0 L45 10 L50 0 L55 10 L60 0 L65 10 L70 0 L75 10 L80 0 L85 10 L90 0 L95 10 L100 0 L100 10 L0 10 Z" fill="var(--surface)"/></svg>
+          </div>
+          <div class="dish-body">
+            <p class="quip">顔より大きい説、あり</p>
+            <h3>デカすぎプリン</h3>
+            <p class="desc">運ばれてくると、たいてい隣の席がざわつきます。ゆるゆる揺れる断面が撮りたくなる一品。</p>
+          </div>
+        </article>
+
+        <article class="dish">
+          <div class="dish-noren">
+            <div class="dish-price">¥650</div>
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0 L5 10 L10 0 L15 10 L20 0 L25 10 L30 0 L35 10 L40 0 L45 10 L50 0 L55 10 L60 0 L65 10 L70 0 L75 10 L80 0 L85 10 L90 0 L95 10 L100 0 L100 10 L0 10 Z" fill="var(--surface)"/></svg>
+          </div>
+          <div class="dish-body">
+            <p class="quip">何味か聞かんといて</p>
+            <h3>けったいクリームソーダ</h3>
+            <p class="desc">日替わりで色が変わる、謎めいた一杯。アイスは大盛り、聞かれても味の説明はしません。</p>
+          </div>
+        </article>
+
+        <article class="dish">
+          <div class="dish-noren">
+            <div class="dish-price">¥890</div>
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 0 L5 10 L10 0 L15 10 L20 0 L25 10 L30 0 L35 10 L40 0 L45 10 L50 0 L55 10 L60 0 L65 10 L70 0 L75 10 L80 0 L85 10 L90 0 L95 10 L100 0 L100 10 L0 10 Z" fill="var(--surface)"/></svg>
+          </div>
+          <div class="dish-body">
+            <p class="quip">切るのに気合いがいる</p>
+            <h3>分厚すぎるホットケーキ</h3>
+            <p class="desc">厚さ約3cm。焼き上がりまで20分、待つ価値はあります。バターは溶ける前に一枚撮ってください。</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BUZZ -->
+  <section class="buzz">
+    <div class="buzz-head">
+      <p class="eyebrow">ON YOUR FEED</p>
+      <h2>「なんでやねん」が、そのまま投稿になる。</h2>
+    </div>
+    <div class="buzz-stats">
+      <div class="stat"><div class="n">38万</div><div class="l">#コテコテ喫茶 投稿数</div></div>
+      <div class="stat"><div class="n">50分</div><div class="l">土日の平均待ち時間</div></div>
+      <div class="stat"><div class="n">5品</div><div class="l">コテコテシグネチャー</div></div>
+      <div class="stat"><div class="n">7:30</div><div class="l">モーニング開始</div></div>
+    </div>
+    <div class="post-grid">
+      <div class="post" style="background:linear-gradient(150deg,var(--spot),#8A5A34);"><span>山盛りナポリタン</span></div>
+      <div class="post" style="background:linear-gradient(150deg,var(--accent),#FFB25C);"><span>デカすぎプリン</span></div>
+      <div class="post" style="background:linear-gradient(150deg,#2E6E5E,#7FC9A8);"><span>けったいソーダ</span></div>
+      <div class="post" style="background:linear-gradient(150deg,#7A4A22,var(--accent));"><span>分厚すぎホットケーキ</span></div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-head">
+      <p class="eyebrow">GALLERY</p>
+      <h2>店の中も、割とコテコテ。</h2>
+    </div>
+    <div class="grid-art">
+      <div class="tile big" style="background:linear-gradient(150deg,var(--spot),#8A5A34 55%,var(--accent));"><span>カウンター席</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#FFB25C,var(--accent));"><span>厨房のコンロ</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#2E6E5E,#7FC9A8);"><span>ソーダフロート棚</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#6B4325,#3B2412);"><span>年季の入った看板</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,var(--accent),#7A2E10);"><span>窓際のボックス席</span></div>
+    </div>
+  </section>
+
+  <!-- ACCESS -->
+  <section class="access" id="access">
+    <div class="wrap" style="padding:0;">
+      <div class="access-grid">
+        <div>
+          <p class="eyebrow">ACCESS</p>
+          <h2>来店情報</h2>
+          <dl class="info">
+            <dt>住所</dt><dd>大阪府大阪市中央区 心斎橋筋(架空設定)</dd>
+            <dt>営業時間</dt><dd>7:30〜19:00(モーニングは7:30〜10:30)</dd>
+            <dt>定休日</dt><dd>水曜</dd>
+            <dt>最寄り</dt><dd>Osaka Metro 心斎橋駅より徒歩4分</dd>
+            <dt>会計</dt><dd>現金 / 主要スマホ決済</dd>
+          </dl>
+        </div>
+        <div class="map-card">
+          <svg viewBox="0 0 300 220" aria-hidden="true">
+            <path d="M20 190 L60 40 L120 90 L160 20 L220 100 L260 60 L280 190 Z" fill="none" stroke="var(--line)" stroke-width="3"/>
+            <circle cx="160" cy="20" r="9" fill="var(--accent)"/>
+            <path d="M10 200 H290" stroke="var(--line)" stroke-width="3"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="foot-logo">KOTE<em>KOTE</em></div>
+      <div class="foot-links">
+        <a href="#concept">コンセプト</a>
+        <a href="#menu">メニュー</a>
+        <a href="#gallery">ギャラリー</a>
+        <a href="#access">アクセス</a>
+      </div>
+    </div>
+    <p class="copyright">コテコテやけど、なんでか、映える。― 喫茶コテコテ, Osaka.</p>
+    <p class="note">※本サイトはデザイン検討用の架空店舗コンセプトです。</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var canvas = document.getElementById('spots');
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W = canvas.width, H = canvas.height;
+  var t = 0;
+
+  var blobs = [
+    { cx:0.32, cy:0.30, r:0.20, phase:0.0 },
+    { cx:0.68, cy:0.24, r:0.11, phase:1.4 },
+    { cx:0.66, cy:0.60, r:0.24, phase:2.6 },
+    { cx:0.28, cy:0.70, r:0.13, phase:4.1 },
+    { cx:0.50, cy:0.48, r:0.08, phase:5.2 }
+  ];
+
+  function drawBlob(cx, cy, baseR, seed){
+    var pts = [];
+    var n = 12;
+    for(var i=0;i<n;i++){
+      var ang = (i/n)*Math.PI*2;
+      var wob = Math.sin(ang*3 + t + seed) * (baseR*0.18) + Math.cos(ang*2 - t*0.7 + seed) * (baseR*0.12);
+      var r = baseR + wob;
+      pts.push([cx + Math.cos(ang)*r, cy + Math.sin(ang)*r]);
+    }
+    ctx.beginPath();
+    ctx.moveTo((pts[0][0]+pts[n-1][0])/2, (pts[0][1]+pts[n-1][1])/2);
+    for(var i=0;i<n;i++){
+      var p0 = pts[i], p1 = pts[(i+1)%n];
+      var midX=(p0[0]+p1[0])/2, midY=(p0[1]+p1[1])/2;
+      ctx.quadraticCurveTo(p0[0], p0[1], midX, midY);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#FFF9F0';
+    ctx.beginPath();
+    ctx.arc(W/2, H/2, W*0.44, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = '#3B2412';
+    blobs.forEach(function(b){
+      drawBlob(b.cx*W, b.cy*H, b.r*W, b.phase);
+    });
+
+    ctx.fillStyle = '#FF5A1F';
+    drawBlob(0.5*W, 0.5*H, 0.045*W, 9.9);
+
+    if(!reduce){ t += 0.01; requestAnimationFrame(draw); }
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>
