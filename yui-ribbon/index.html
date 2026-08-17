@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>結 -YUI-</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --bg: #FFFFFF;
+    --surface: #FBF6F5;
+    --ink: #2E2320;
+    --ink-soft: #8C7A76;
+    --rose: #C97B86;
+    --thread: #B99A6B;
+    --line: #F0E4E1;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #211917;
+      --surface: #2B211E;
+      --ink: #F6EDEA;
+      --ink-soft: #C2AFA9;
+      --line: #3B2E29;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #211917;
+    --surface: #2B211E;
+    --ink: #F6EDEA;
+    --ink-soft: #C2AFA9;
+    --line: #3B2E29;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Sans","Yu Gothic UI","Noto Sans JP",system-ui,sans-serif;
+    font-size: 19px;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img,canvas,svg{ display:block; max-width:100%; }
+  a{ color:inherit; }
+  .wrap{ max-width: 1140px; margin: 0 auto; padding: 0 28px; }
+  section{ position: relative; }
+  .serif{ font-family: "Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif; }
+
+  .eyebrow{ font-weight: 700; letter-spacing: .3em; text-transform: uppercase; font-size: 12.5px; color: var(--rose); }
+  h1,h2,h3{ text-wrap: balance; margin:0; }
+
+  /* ---------------- NAV ---------------- */
+  header.nav{
+    position: sticky; top:0; z-index:40;
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .navrow{ display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1140px; margin:0 auto; }
+  .navlogo{ font-weight:600; font-size:21px; letter-spacing:.02em; }
+  .navlogo span{ color: var(--rose); }
+  nav.links{ display:flex; gap:26px; font-weight:700; font-size:15px; }
+  nav.links a{ text-decoration:none; opacity:.78; }
+  nav.links a:hover, nav.links a:focus-visible{ opacity:1; }
+  .navcta{ font-weight:700; font-size:14px; padding:10px 20px; border-radius:999px; background: var(--ink); color: var(--bg); text-decoration:none; }
+  @media (max-width:760px){ nav.links{ display:none; } }
+
+  /* ---------------- HERO ---------------- */
+  .hero{ padding: 92px 0 70px; display:grid; grid-template-columns: 1.05fr .95fr; gap:44px; align-items:center; }
+  @media (max-width:900px){ .hero{ grid-template-columns:1fr; padding-top:56px; } }
+  .hero-jp{ font-weight:700; letter-spacing:.28em; font-size:13px; color: var(--ink-soft); margin-bottom: 18px; }
+  .hero-logo{ font-weight:500; font-size: clamp(46px, 9vw, 96px); line-height:1.05; margin: 0 0 24px; }
+  .hero-logo .en{ color: var(--rose); font-size: .42em; display:block; letter-spacing:.14em; margin-top: 10px; }
+  .hero-sub{ font-size: clamp(20px,2.1vw,26px); font-weight:600; max-width:17ch; margin-bottom:18px; }
+  .hero-copy{ max-width: 46ch; color: var(--ink-soft); font-size:18px; }
+  .hero-ctas{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:16px; padding:15px 28px; border-radius:999px; text-decoration:none; border:none; cursor:pointer; }
+  .btn-primary{ background: var(--ink); color: var(--bg); }
+  .btn-primary:hover{ opacity:.86; }
+  .btn-ghost{ background:transparent; border:2px solid var(--line); color: var(--ink); }
+  .btn-ghost:hover{ border-color: var(--rose); }
+
+  .ribbonwrap{ position:relative; aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center; }
+  #ribbon{ width: 78%; height: 78%; animation: sway 6s ease-in-out infinite; transform-origin: 50% 20%; }
+  @keyframes sway{ 0%,100%{ transform: rotate(-2.2deg); } 50%{ transform: rotate(2.2deg); } }
+  @media (prefers-reduced-motion: reduce){ #ribbon{ animation: none; } }
+  .ribbon-chip{ position:absolute; background: var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 14px; font-weight:700; font-size:13px; box-shadow: 0 12px 30px -14px rgba(46,35,32,.3); font-variant-numeric: tabular-nums; }
+  .ribbon-chip.c1{ top:6%; left:-2%; }
+  .ribbon-chip.c2{ bottom:8%; right:-2%; }
+  .ribbon-chip .num{ color: var(--rose); font-size:16px; }
+  @media (max-width:900px){ .ribbonwrap{ max-width:320px; margin:0 auto; } }
+
+  /* ---------------- CONCEPT ---------------- */
+  .concept{ padding:88px 0; border-top:1px solid var(--line); }
+  .concept-head{ max-width:62ch; margin-bottom:52px; }
+  .concept-head h2{ font-size: clamp(32px,4.2vw,52px); font-weight:500; margin-top:10px; }
+  .principles{ display:grid; grid-template-columns: repeat(3,1fr); gap:22px; }
+  @media (max-width:860px){ .principles{ grid-template-columns:1fr; } }
+  .principle{ background: var(--surface); border:1px solid var(--line); border-radius:18px; padding:30px 26px; min-height:220px; display:flex; flex-direction:column; gap:14px; }
+  .principle .jp{ font-weight:700; font-size:15px; color: var(--rose); letter-spacing:.08em; }
+  .principle h3{ font-size:21px; font-weight:600; }
+  .principle p{ color: var(--ink-soft); font-size:16px; margin:0; }
+
+  /* ---------------- MENU ---------------- */
+  .menu{ padding:88px 0; border-top:1px solid var(--line); background: var(--surface); }
+  .menu-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:44px; flex-wrap:wrap; }
+  .menu-head h2{ font-size: clamp(32px,4.2vw,52px); font-weight:500; margin-top:10px; }
+  .menu-hint{ color: var(--ink-soft); font-size:15px; max-width:28ch; font-weight:700; }
+  .menu-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:26px; }
+  .dish{ position:relative; background: var(--bg); border:1px solid var(--line); border-radius:16px; padding: 30px 24px 24px; text-align:center; }
+  .ribbon-tab{ position:absolute; top:-14px; left:50%; transform: translateX(-50%); background: var(--rose); color:#fff; font-weight:700; font-size:13px; padding: 6px 16px; border-radius:999px; box-shadow: 0 8px 18px -8px rgba(201,123,134,.6); font-variant-numeric: tabular-nums; }
+  .dish-art{ height: 92px; border-radius: 12px; margin: 10px 0 18px; position:relative; overflow:hidden; }
+  .dish h3{ font-size:20px; font-weight:600; margin-bottom:8px; }
+  .dish p.desc{ color: var(--ink-soft); font-size:15px; margin:0; }
+
+  /* ---------------- BUZZ ---------------- */
+  .buzz{ padding:84px 0; text-align:center; }
+  .buzz h2{ font-size: clamp(28px,3.8vw,42px); font-weight:500; max-width:22ch; margin: 10px auto 46px; }
+  .buzz-stats{ display:grid; grid-template-columns: repeat(4,1fr); gap:18px; margin-bottom: 48px; }
+  @media (max-width:760px){ .buzz-stats{ grid-template-columns: repeat(2,1fr); } }
+  .stat{ padding:8px; }
+  .stat .n{ font-weight:700; font-size: clamp(28px,3.6vw,40px); font-variant-numeric: tabular-nums; color: var(--rose); }
+  .stat .l{ color: var(--ink-soft); font-weight:700; font-size:14px; margin-top:6px; }
+  .post-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+  @media (max-width:760px){ .post-grid{ grid-template-columns: repeat(2,1fr); } }
+  .post{ aspect-ratio:1/1; border-radius:12px; position:relative; overflow:hidden; display:flex; align-items:flex-end; }
+  .post span{ position:relative; color:#fff; font-weight:700; font-size:13px; padding:10px; text-shadow:0 2px 8px rgba(0,0,0,.35); }
+
+  /* ---------------- GALLERY ---------------- */
+  .gallery{ padding:88px 0; border-top:1px solid var(--line); }
+  .gallery-head{ max-width:58ch; margin-bottom:40px; }
+  .gallery-head h2{ font-size: clamp(32px,4.2vw,52px); font-weight:500; margin-top:10px; }
+  .grid-art{ display:grid; grid-template-columns: repeat(4,1fr); grid-auto-rows:150px; gap:14px; }
+  @media (max-width:860px){ .grid-art{ grid-template-columns: repeat(2,1fr); } }
+  .tile{ border-radius:14px; position:relative; overflow:hidden; }
+  .tile span{ position:absolute; left:14px; bottom:12px; color:#fff; font-weight:700; font-size:13px; text-shadow:0 2px 10px rgba(0,0,0,.3); }
+  .tile.big{ grid-column: span 2; grid-row: span 2; }
+
+  /* ---------------- ACCESS ---------------- */
+  .access{ padding:88px 0; border-top:1px solid var(--line); background: var(--surface); }
+  .access-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:40px; }
+  @media (max-width:860px){ .access-grid{ grid-template-columns:1fr; } }
+  .access h2{ font-size: clamp(28px,3.8vw,42px); font-weight:500; margin:10px 0 22px; }
+  dl.info{ display:grid; grid-template-columns: auto 1fr; gap:14px 22px; font-size:16px; }
+  dl.info dt{ font-weight:700; color: var(--ink-soft); font-size:13px; letter-spacing:.06em; text-transform:uppercase; padding-top:3px; }
+  dl.info dd{ margin:0; }
+  .map-card{ border-radius:16px; background: var(--bg); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; min-height:260px; position:relative; overflow:hidden; }
+  .map-card svg{ width:76%; }
+
+  /* ---------------- FOOTER ---------------- */
+  footer{ padding:60px 0 40px; border-top:1px solid var(--line); }
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+  .foot-logo{ font-weight:600; font-size:21px; }
+  .foot-logo span{ color: var(--rose); }
+  .foot-links{ display:flex; gap:22px; font-weight:700; font-size:14px; opacity:.78; flex-wrap:wrap; }
+  .foot-links a{ text-decoration:none; }
+  .copyright{ color: var(--ink-soft); font-size:13px; margin-top:26px; }
+  .note{ color: var(--ink-soft); font-size:12.5px; margin-top:8px; }
+
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="navrow">
+    <div class="navlogo serif">結 <span>-YUI-</span></div>
+    <nav class="links">
+      <a href="#concept">コンセプト</a>
+      <a href="#menu">メニュー</a>
+      <a href="#gallery">ギャラリー</a>
+      <a href="#access">アクセス</a>
+    </nav>
+    <a class="navcta" href="#access">来店情報を見る</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <p class="eyebrow">OSAKA UMEDA</p>
+      <h1 class="hero-logo serif">結<span class="en">- Y U I -</span></h1>
+      <p class="hero-sub">ひとつ、結んで。自分へのご褒美に。</p>
+      <p class="hero-copy">
+        大阪梅田でいちばんInstagramがバズっている、大人かわいいリボン菓子店。
+        モンブランにも、フルーツサンドにも、最後にひとつリボンを結びます。
+        淡い色と静かな余白の中で、自分のための時間を。
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#menu">メニューを見る</a>
+        <a class="btn btn-ghost" href="#access">来店情報</a>
+      </div>
+    </div>
+    <div class="ribbonwrap">
+      <svg id="ribbon" viewBox="0 0 300 300" aria-hidden="true">
+        <path d="M150 150 C 90 90, 20 100, 20 150 C 20 200, 90 210, 150 150 Z" fill="none" stroke="var(--rose)" stroke-width="14" stroke-linejoin="round"/>
+        <path d="M150 150 C 210 90, 280 100, 280 150 C 280 200, 210 210, 150 150 Z" fill="none" stroke="var(--rose)" stroke-width="14" stroke-linejoin="round"/>
+        <circle cx="150" cy="150" r="16" fill="var(--thread)"/>
+        <path d="M150 158 L 128 230 L 150 216 L 172 230 Z" fill="var(--rose)"/>
+      </svg>
+      <div class="ribbon-chip c1">本日の一皿<br><span class="num">苺のリボンサンド</span></div>
+      <div class="ribbon-chip c2">土日午後<br><span class="num">整理券配布あり</span></div>
+    </div>
+  </section>
+
+  <!-- CONCEPT -->
+  <section class="concept" id="concept">
+    <div class="concept-head">
+      <p class="eyebrow">CONCEPT</p>
+      <h2 class="serif">結の、3つの約束。</h2>
+    </div>
+    <div class="principles">
+      <div class="principle">
+        <div class="jp">結ぶ</div>
+        <h3>最後に、ひとつ</h3>
+        <p>飴細工やレース、生地のリボンを、仕上げに必ずひとつ結びます。切った瞬間に見える一手間です。</p>
+      </div>
+      <div class="principle">
+        <div class="jp">淡い</div>
+        <h3>色は、控えめに</h3>
+        <p>甘さも色も、はっきりさせすぎない。ダスティローズと白だけで、大人の可愛さをつくります。</p>
+      </div>
+      <div class="principle">
+        <div class="jp">余白</div>
+        <h3>詰め込まない</h3>
+        <p>器にも、時間にも、余白を残す。忙しい日常から、少しだけ離れる時間を用意しています。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section class="menu" id="menu">
+    <div class="wrap" style="padding:0;">
+      <div class="menu-head">
+        <div>
+          <p class="eyebrow">SIGNATURE MENU</p>
+          <h2 class="serif">結んで、仕上げる5品。</h2>
+        </div>
+        <p class="menu-hint">すべて、最後にリボンをひとつ結んでお出しします。</p>
+      </div>
+      <div class="menu-grid">
+
+        <article class="dish">
+          <div class="ribbon-tab">¥880</div>
+          <div class="dish-art" style="background:linear-gradient(135deg,var(--rose),#E8C9CD 60%,var(--thread));"></div>
+          <h3>リボンモンブラン</h3>
+          <p class="desc">栗のクリームの上に、飴細工のリボンを一本。パリッと割って、栗と一緒に。</p>
+        </article>
+
+        <article class="dish">
+          <div class="ribbon-tab">¥780</div>
+          <div class="dish-art" style="background:linear-gradient(135deg,#E8C9CD,var(--rose) 60%,#F6E6C8);"></div>
+          <h3>苺のリボンサンド</h3>
+          <p class="desc">切った断面にクリームのリボン模様。苺は毎朝、断面が美しいものだけを選びます。</p>
+        </article>
+
+        <article class="dish">
+          <div class="ribbon-tab">¥980</div>
+          <div class="dish-art" style="background:linear-gradient(135deg,#F6E6C8,var(--thread) 60%,var(--rose));"></div>
+          <h3>白桃のリボンパルフェ</h3>
+          <p class="desc">白桃のムースにレースクッキーを立てて。桃の香りが、グラスの中でふわりと広がります。</p>
+        </article>
+
+        <article class="dish">
+          <div class="ribbon-tab">¥520</div>
+          <div class="dish-art" style="background:linear-gradient(135deg,var(--thread),#E8C9CD 60%,var(--rose));"></div>
+          <h3>レースクッキー結び</h3>
+          <p class="desc">薄く焼いたレース生地を、リボンの形にひとつ結び。紅茶のお供にどうぞ。</p>
+        </article>
+
+        <article class="dish">
+          <div class="ribbon-tab">¥850</div>
+          <div class="dish-art" style="background:linear-gradient(135deg,var(--rose),var(--thread) 55%,#F6E6C8);"></div>
+          <h3>アールグレイのリボンショコラ</h3>
+          <p class="desc">ベルガモットの香りのガナッシュに、金糸のようなリボンを一筋。</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BUZZ -->
+  <section class="buzz">
+    <p class="eyebrow">ON YOUR FEED</p>
+    <h2 class="serif">「結ぶ瞬間」が、そのまま投稿になる。</h2>
+    <div class="buzz-stats">
+      <div class="stat"><div class="n">3,100万</div><div class="l">#結ゆい 累計再生</div></div>
+      <div class="stat"><div class="n">35分</div><div class="l">土日の平均待ち時間</div></div>
+      <div class="stat"><div class="n">5品</div><div class="l">結んで仕上げるシグネチャー</div></div>
+      <div class="stat"><div class="n">11:00</div><div class="l">整理券配布開始</div></div>
+    </div>
+    <div class="post-grid">
+      <div class="post" style="background:linear-gradient(150deg,var(--rose),#E8C9CD);"><span>リボンモンブラン</span></div>
+      <div class="post" style="background:linear-gradient(150deg,#E8C9CD,var(--thread));"><span>苺のリボンサンド</span></div>
+      <div class="post" style="background:linear-gradient(150deg,var(--thread),var(--rose));"><span>白桃のリボンパルフェ</span></div>
+      <div class="post" style="background:linear-gradient(150deg,#F6E6C8,var(--rose));"><span>レースクッキー結び</span></div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-head">
+      <p class="eyebrow">GALLERY</p>
+      <h2 class="serif">店内も、静かに、淡く。</h2>
+    </div>
+    <div class="grid-art">
+      <div class="tile big" style="background:linear-gradient(150deg,var(--rose),#E8C9CD 60%,var(--thread));"><span>窓辺のリボン棚</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#F6E6C8,var(--thread));"><span>焼き菓子の並ぶ棚</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,var(--thread),var(--rose));"><span>アンティークの器</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#E8C9CD,var(--rose));"><span>レースのテーブルクロス</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,var(--rose),#F6E6C8);"><span>包装のリボン結び</span></div>
+    </div>
+  </section>
+
+  <!-- ACCESS -->
+  <section class="access" id="access">
+    <div class="wrap" style="padding:0;">
+      <div class="access-grid">
+        <div>
+          <p class="eyebrow">ACCESS</p>
+          <h2 class="serif">来店情報</h2>
+          <dl class="info">
+            <dt>住所</dt><dd>大阪府大阪市北区 梅田(架空設定)</dd>
+            <dt>営業時間</dt><dd>11:00 〜 19:00(整理券は11:00〜配布・なくなり次第終了)</dd>
+            <dt>定休日</dt><dd>火曜</dd>
+            <dt>最寄り</dt><dd>JR大阪駅 中央改札より徒歩5分</dd>
+            <dt>会計</dt><dd>現金 / 主要スマホ決済 / カード</dd>
+          </dl>
+        </div>
+        <div class="map-card">
+          <svg viewBox="0 0 300 220" aria-hidden="true">
+            <path d="M20 190 L60 40 L120 90 L160 20 L220 100 L260 60 L280 190 Z" fill="none" stroke="var(--line)" stroke-width="3"/>
+            <circle cx="160" cy="20" r="9" fill="var(--rose)"/>
+            <path d="M10 200 H290" stroke="var(--line)" stroke-width="3"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="foot-logo serif">結 <span>-YUI-</span></div>
+      <div class="foot-links">
+        <a href="#concept">コンセプト</a>
+        <a href="#menu">メニュー</a>
+        <a href="#gallery">ギャラリー</a>
+        <a href="#access">アクセス</a>
+      </div>
+    </div>
+    <p class="copyright">ひとつ、結んで。自分へのご褒美に。― 結 -YUI-, Umeda.</p>
+    <p class="note">※本サイトはデザイン検討用の架空店舗コンセプトです。</p>
+  </div>
+</footer>
+
+</body>
+</html>
