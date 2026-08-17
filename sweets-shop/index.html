@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BAKEBAKE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --bg: #FFFFFF;
+    --surface: #FBF8FC;
+    --ink: #18121F;
+    --ink-soft: #6E6478;
+    --before: #FF2D6F;
+    --after: #17D9C4;
+    --line: #ECE4F3;
+    --grad: linear-gradient(100deg, var(--before) 0%, #FF7A46 42%, var(--after) 100%);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #120E18;
+      --surface: #1C1624;
+      --ink: #F6F1FA;
+      --ink-soft: #B0A6BE;
+      --line: #33293F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #120E18;
+    --surface: #1C1624;
+    --ink: #F6F1FA;
+    --ink-soft: #B0A6BE;
+    --line: #33293F;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Sans","Yu Gothic UI","Noto Sans JP",system-ui,sans-serif;
+    font-size: 19px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img,canvas,svg{ display:block; max-width:100%; }
+  a{ color: inherit; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  section{ position: relative; }
+
+  .eyebrow{
+    font-weight: 900;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: var(--before);
+  }
+  h1,h2,h3{ text-wrap: balance; margin: 0; }
+
+  /* ---------------- NAV ---------------- */
+  header.nav{
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .navrow{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 28px; max-width: 1180px; margin:0 auto;
+  }
+  .navlogo{ font-weight:900; font-size: 22px; letter-spacing: -0.02em; }
+  .navlogo span{ background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  nav.links{ display:flex; gap: 28px; font-weight:700; font-size: 15px; }
+  nav.links a{ text-decoration:none; opacity:.82; }
+  nav.links a:hover, nav.links a:focus-visible{ opacity:1; }
+  .navcta{
+    font-weight:900; font-size:14px; padding: 10px 20px; border-radius: 999px;
+    background: var(--ink); color: var(--bg); text-decoration:none;
+  }
+  @media (max-width: 720px){ nav.links{ display:none; } }
+
+  /* ---------------- HERO ---------------- */
+  .hero{
+    padding: 96px 0 70px;
+    display:grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items:center;
+  }
+  @media (max-width: 900px){ .hero{ grid-template-columns:1fr; padding-top:56px; } }
+  .hero-logo{
+    font-weight: 900;
+    font-size: clamp(40px, 12vw, 132px);
+    line-height: .88;
+    letter-spacing: -0.03em;
+    margin: 14px 0 22px;
+  }
+  .hero-logo .bake-a{ background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero-sub{
+    font-size: clamp(20px, 2.1vw, 27px);
+    font-weight: 800;
+    max-width: 15ch;
+    margin-bottom: 18px;
+  }
+  .hero-copy{ max-width: 46ch; color: var(--ink-soft); font-size: 18px; }
+  .hero-ctas{ display:flex; gap:14px; margin-top: 34px; flex-wrap: wrap; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-weight:900; font-size:16px; padding: 15px 28px; border-radius: 999px;
+    text-decoration:none; border: none; cursor:pointer;
+  }
+  .btn-primary{ background: var(--ink); color: var(--bg); }
+  .btn-primary:hover{ opacity:.86; }
+  .btn-ghost{ background: transparent; border: 2px solid var(--line); color: var(--ink); }
+  .btn-ghost:hover{ border-color: var(--before); }
+
+  .blobwrap{ position:relative; aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center; }
+  #blob{ width: 100%; height: 100%; }
+  .blob-chip{
+    position:absolute; background: var(--surface); border:1px solid var(--line);
+    border-radius: 14px; padding: 10px 14px; font-weight:900; font-size: 13px;
+    box-shadow: 0 12px 30px -14px rgba(24,18,31,.35);
+    font-variant-numeric: tabular-nums;
+  }
+  .blob-chip.c1{ top: 4%; left: -4%; }
+  .blob-chip.c2{ bottom: 8%; right: -6%; }
+  .blob-chip .num{ color: var(--before); font-size:16px; }
+  @media (max-width: 900px){ .blobwrap{ max-width: 340px; margin: 0 auto; } }
+
+  /* ---------------- CONCEPT ---------------- */
+  .concept{ padding: 90px 0; border-top: 1px solid var(--line); }
+  .concept-head{ max-width: 62ch; margin-bottom: 56px; }
+  .concept-head h2{ font-size: clamp(34px,4.4vw,54px); font-weight:900; margin-top:10px; }
+  .principles{ display:grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+  @media (max-width: 860px){ .principles{ grid-template-columns:1fr; } }
+  .principle{
+    background: var(--surface); border:1px solid var(--line); border-radius: 20px;
+    padding: 30px 26px; min-height: 220px; display:flex; flex-direction:column; gap:14px;
+  }
+  .principle .mark{
+    width: 46px; height:46px; border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:18px; color:#fff;
+  }
+  .principle:nth-child(1) .mark{ background: var(--before); }
+  .principle:nth-child(2) .mark{ background: linear-gradient(120deg,var(--before),#FF7A46); }
+  .principle:nth-child(3) .mark{ background: var(--after); }
+  .principle h3{ font-size: 21px; font-weight:900; }
+  .principle p{ color: var(--ink-soft); font-size: 16px; margin:0; }
+
+  /* ---------------- MENU ---------------- */
+  .menu{ padding: 90px 0; border-top: 1px solid var(--line); background: var(--surface); }
+  .menu-head{ display:flex; justify-content:space-between; align-items:flex-end; gap: 20px; margin-bottom: 46px; flex-wrap:wrap; }
+  .menu-head h2{ font-size: clamp(34px,4.4vw,54px); font-weight:900; margin-top:10px; }
+  .menu-hint{ color: var(--ink-soft); font-size:15px; max-width: 30ch; font-weight:700; }
+  .menu-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 20px; }
+  .dish{
+    position:relative; background: var(--bg); border:1px solid var(--line); border-radius: 22px;
+    padding: 26px 24px 24px; overflow:hidden; isolation:isolate;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .dish:hover, .dish:focus-within{ transform: translateY(-6px); box-shadow: 0 22px 40px -22px rgba(24,18,31,.4); }
+  .dish-art{
+    height: 108px; border-radius: 16px; margin-bottom: 18px;
+    background: linear-gradient(135deg, var(--before), #FF7A46 55%, var(--after));
+    position:relative; overflow:hidden;
+  }
+  .dish-art::after{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(120px 60px at 30% 20%, rgba(255,255,255,.55), transparent 60%);
+  }
+  .dish-price{ position:absolute; top:10px; right:10px; font-weight:900; font-variant-numeric: tabular-nums; background: rgba(255,255,255,.92); color:var(--ink); padding: 4px 10px; border-radius: 999px; font-size:13px; z-index:1; }
+  .dish h3{ font-size: 20px; font-weight:900; margin-bottom: 6px; }
+  .dish .state{ font-size:13px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+  .dish .state.before{ color: var(--before); }
+  .dish .state.after{ color: var(--after); display:none; }
+  .dish:hover .state.before, .dish:focus-within .state.before{ display:none; }
+  .dish:hover .state.after, .dish:focus-within .state.after{ display:inline; }
+  .dish p.desc{ color: var(--ink-soft); font-size: 15px; margin: 8px 0 0; min-height: 44px; }
+  .dish .before-text{ display:block; }
+  .dish .after-text{ display:none; }
+  .dish:hover .before-text, .dish:focus-within .before-text{ display:none; }
+  .dish:hover .after-text, .dish:focus-within .after-text{ display:block; }
+
+  /* ---------------- BUZZ ---------------- */
+  .buzz{ padding: 84px 0; text-align:center; }
+  .buzz-eyebrow{ margin-bottom: 18px; }
+  .buzz h2{ font-size: clamp(30px,4vw,46px); font-weight:900; max-width: 20ch; margin: 0 auto 46px; }
+  .buzz-stats{ display:grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+  @media (max-width: 760px){ .buzz-stats{ grid-template-columns: repeat(2,1fr); } }
+  .stat{ padding: 8px; }
+  .stat .n{
+    font-weight:900; font-size: clamp(30px,4vw,46px); font-variant-numeric: tabular-nums;
+    background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .stat .l{ color: var(--ink-soft); font-weight:700; font-size: 14px; margin-top:6px; }
+
+  /* ---------------- GALLERY ---------------- */
+  .gallery{ padding: 90px 0; border-top: 1px solid var(--line); }
+  .gallery-head{ max-width: 58ch; margin-bottom: 40px; }
+  .gallery-head h2{ font-size: clamp(34px,4.4vw,54px); font-weight:900; margin-top:10px; }
+  .grid-art{ display:grid; grid-template-columns: repeat(4,1fr); grid-auto-rows: 150px; gap: 14px; }
+  @media (max-width: 860px){ .grid-art{ grid-template-columns: repeat(2,1fr); } }
+  .tile{ border-radius: 18px; position:relative; overflow:hidden; }
+  .tile span{
+    position:absolute; left:14px; bottom:12px; color:#fff; font-weight:900; font-size:13px;
+    text-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .tile.big{ grid-column: span 2; grid-row: span 2; }
+
+  /* ---------------- ACCESS ---------------- */
+  .access{ padding: 90px 0; border-top: 1px solid var(--line); background: var(--surface); }
+  .access-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  @media (max-width: 860px){ .access-grid{ grid-template-columns:1fr; } }
+  .access h2{ font-size: clamp(30px,4vw,44px); font-weight:900; margin: 10px 0 22px; }
+  dl.info{ display:grid; grid-template-columns: auto 1fr; gap: 14px 22px; font-size:16px; }
+  dl.info dt{ font-weight:900; color: var(--ink-soft); font-size:13px; letter-spacing:.06em; text-transform:uppercase; padding-top:3px; }
+  dl.info dd{ margin:0; }
+  .map-card{
+    border-radius: 22px; background: var(--bg); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; min-height: 260px;
+    position:relative; overflow:hidden;
+  }
+  .map-card svg{ width:80%; }
+
+  /* ---------------- FOOTER ---------------- */
+  footer{ padding: 60px 0 40px; border-top: 1px solid var(--line); }
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+  .foot-logo{ font-weight:900; font-size: 24px; }
+  .foot-logo span{ background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .foot-links{ display:flex; gap: 22px; font-weight:700; font-size:14px; opacity:.8; flex-wrap:wrap; }
+  .foot-links a{ text-decoration:none; }
+  .copyright{ color: var(--ink-soft); font-size: 13px; margin-top: 26px; }
+  .note{ color: var(--ink-soft); font-size: 12.5px; margin-top: 8px; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="navrow">
+    <div class="navlogo">BAKE<span>BAKE</span></div>
+    <nav class="links">
+      <a href="#concept">コンセプト</a>
+      <a href="#menu">メニュー</a>
+      <a href="#gallery">ギャラリー</a>
+      <a href="#access">アクセス</a>
+    </nav>
+    <a class="navcta" href="#access">来店情報を見る</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <p class="eyebrow">HARAJUKU TAKESHITA-DORI</p>
+      <h1 class="hero-logo">BAKE<span class="bake-a">BAKE</span></h1>
+      <p class="hero-sub">見たことのない“変化”を、ひと口で。</p>
+      <p class="hero-copy">
+        原宿・竹下通りでいちばんTikTokがバズっている、変化するスイーツの専門店。
+        色が変わるソーダ、割ると溢れるチーズタルト、煙とともに現れるパルフェ。
+        撮って、待って、変わる瞬間を見る ―― それがBAKEBAKEの楽しみ方です。
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#menu">メニューを見る</a>
+        <a class="btn btn-ghost" href="#access">来店情報</a>
+      </div>
+    </div>
+    <div class="blobwrap">
+      <canvas id="blob" width="600" height="600" aria-hidden="true"></canvas>
+      <div class="blob-chip c1">今週の変化<br><span class="num">オーロラサイダー</span></div>
+      <div class="blob-chip c2">整理券制<br><span class="num">平均待ち 40分</span></div>
+    </div>
+  </section>
+
+  <!-- CONCEPT -->
+  <section class="concept" id="concept">
+    <div class="concept-head">
+      <p class="eyebrow">CONCEPT</p>
+      <h2>なぜ、ばける?</h2>
+    </div>
+    <div class="principles">
+      <div class="principle">
+        <div class="mark">01</div>
+        <h3>色が変わる</h3>
+        <p>レモンを注ぐと紫からピンクへ。温度や酸で表情を変えるドリンクとデザートを軸に、一皿ごとに“変化前・変化後”の2つの顔を持たせています。</p>
+      </div>
+      <div class="principle">
+        <div class="mark">02</div>
+        <h3>中からあふれる</h3>
+        <p>フォークを入れた瞬間にとろけて溢れるチーズやソース。断面を見せることを前提に、内側の“もう一つの色”を必ず仕込みます。</p>
+      </div>
+      <div class="principle">
+        <div class="mark">03</div>
+        <h3>消えていく</h3>
+        <p>ドライアイスの煙、しゅわしゅわ溶ける氷。儚く消えるものほど、動画に残したくなる ―― その一瞬のためにメニューを設計しています。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section class="menu" id="menu">
+    <div class="wrap" style="padding:0;">
+      <div class="menu-head">
+        <div>
+          <p class="eyebrow">SIGNATURE MENU</p>
+          <h2>変化する、5品。</h2>
+        </div>
+        <p class="menu-hint">カードにカーソルを合わせる(タップする)と、変化後の姿が見られます。</p>
+      </div>
+      <div class="menu-grid">
+
+        <article class="dish" tabindex="0">
+          <div class="dish-art"><div class="dish-price">¥780</div></div>
+          <span class="state before">BEFORE</span><span class="state after">AFTER</span>
+          <h3>オーロラサイダー</h3>
+          <p class="desc before-text">澄んだ紫のバタフライピーソーダ。まだ何も起きていない、静かな一杯。</p>
+          <p class="desc after-text">レモンを一滴垂らすと数秒でピンクに変化。氷の中で色が渦を巻きます。</p>
+        </article>
+
+        <article class="dish" tabindex="0">
+          <div class="dish-art"><div class="dish-price">¥680</div></div>
+          <span class="state before">BEFORE</span><span class="state after">AFTER</span>
+          <h3>溶岩チーズタルト</h3>
+          <p class="desc before-text">こんがり焼き上げた見た目は、ふつうのチーズタルト。</p>
+          <p class="desc after-text">フォークを入れると中から熱々のチーズが溶岩のように流れ出します。</p>
+        </article>
+
+        <article class="dish" tabindex="0">
+          <div class="dish-art"><div class="dish-price">¥980</div></div>
+          <span class="state before">BEFORE</span><span class="state after">AFTER</span>
+          <h3>けむりパルフェ</h3>
+          <p class="desc before-text">テーブルに置かれた瞬間はまだ、白い霧に包まれたまま。</p>
+          <p class="desc after-text">ドライアイスの煙が晴れると、7層のパルフェが姿を現します。</p>
+        </article>
+
+        <article class="dish" tabindex="0">
+          <div class="dish-art"><div class="dish-price">¥650</div></div>
+          <span class="state before">BEFORE</span><span class="state after">AFTER</span>
+          <h3>のびのびもちドッグ</h3>
+          <p class="desc before-text">コンパクトな一本。持った瞬間はふつうのチーズドッグに見えます。</p>
+          <p class="desc after-text">半分に割ってゆっくり引くと、もちチーズが1mまで伸びます。</p>
+        </article>
+
+        <article class="dish" tabindex="0">
+          <div class="dish-art"><div class="dish-price">¥890</div></div>
+          <span class="state before">BEFORE</span><span class="state after">AFTER</span>
+          <h3>ジュエルかき氷</h3>
+          <p class="desc before-text">宝石のようにカットされた氷の塊が、山になって出てきます。</p>
+          <p class="desc after-text">シロップをかけると氷が溶けながら色が下から上へ広がっていきます。</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BUZZ -->
+  <section class="buzz">
+    <p class="eyebrow buzz-eyebrow">ON YOUR TIMELINE</p>
+    <h2>「変化する瞬間」が、そのまま投稿になる。</h2>
+    <div class="buzz-stats">
+      <div class="stat"><div class="n">4,200万</div><div class="l">#ばけばけ 累計再生</div></div>
+      <div class="stat"><div class="n">40分</div><div class="l">土日の平均待ち時間</div></div>
+      <div class="stat"><div class="n">5品</div><div class="l">変化するシグネチャー</div></div>
+      <div class="stat"><div class="n">11:00</div><div class="l">整理券配布開始</div></div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-head">
+      <p class="eyebrow">GALLERY</p>
+      <h2>店内も、変化でできている。</h2>
+    </div>
+    <div class="grid-art">
+      <div class="tile big" style="background:linear-gradient(135deg,var(--before),#FF7A46 60%,var(--after));"><span>オーロラサイダーの渦</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#FFB020,var(--before));"><span>溶岩チーズタルト</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,var(--after),#17A0D9);"><span>けむりパルフェ</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#FF6FA0,var(--after));"><span>ジュエルかき氷</span></div>
+      <div class="tile" style="background:linear-gradient(160deg,#7A5CFF,var(--before));"><span>のびのびもちドッグ</span></div>
+    </div>
+  </section>
+
+  <!-- ACCESS -->
+  <section class="access" id="access">
+    <div class="wrap" style="padding:0;">
+      <div class="access-grid">
+        <div>
+          <p class="eyebrow">ACCESS</p>
+          <h2>来店情報</h2>
+          <dl class="info">
+            <dt>住所</dt><dd>東京都渋谷区神宮前 竹下通り沿い(架空設定)</dd>
+            <dt>営業時間</dt><dd>11:00 〜 20:00(整理券は11:00〜配布・なくなり次第終了)</dd>
+            <dt>定休日</dt><dd>不定休</dd>
+            <dt>最寄り</dt><dd>JR原宿駅 竹下口より徒歩3分</dd>
+            <dt>会計</dt><dd>現金 / 主要スマホ決済</dd>
+          </dl>
+        </div>
+        <div class="map-card">
+          <svg viewBox="0 0 300 220" aria-hidden="true">
+            <path d="M20 190 L60 40 L120 90 L160 20 L220 100 L260 60 L280 190 Z" fill="none" stroke="var(--line)" stroke-width="3"/>
+            <circle cx="160" cy="20" r="9" fill="var(--before)"/>
+            <path d="M10 200 H290" stroke="var(--line)" stroke-width="3"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="foot-logo">BAKE<span>BAKE</span></div>
+      <div class="foot-links">
+        <a href="#concept">コンセプト</a>
+        <a href="#menu">メニュー</a>
+        <a href="#gallery">ギャラリー</a>
+        <a href="#access">アクセス</a>
+      </div>
+    </div>
+    <p class="copyright">変わる、あふれる、消えていく。― BAKEBAKE, Harajuku.</p>
+    <p class="note">※本サイトはデザイン検討用の架空店舗コンセプトです。</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var canvas = document.getElementById('blob');
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W = canvas.width, H = canvas.height;
+  var cx = W/2, cy = H/2, baseR = W*0.32;
+  var points = 16;
+  var t = 0;
+
+  var grad;
+  function makeGrad(){
+    grad = ctx.createLinearGradient(0,0,W,H);
+    grad.addColorStop(0, '#FF2D6F');
+    grad.addColorStop(0.5, '#FF7A46');
+    grad.addColorStop(1, '#17D9C4');
+  }
+  makeGrad();
+
+  function draw(time){
+    ctx.clearRect(0,0,W,H);
+    ctx.beginPath();
+    var pts = [];
+    for(var i=0;i<points;i++){
+      var ang = (i/points) * Math.PI*2;
+      var wob = Math.sin(ang*3 + t*0.9) * (W*0.045) + Math.cos(ang*2 - t*0.6) * (W*0.03);
+      var r = baseR + wob;
+      pts.push([cx + Math.cos(ang)*r, cy + Math.sin(ang)*r]);
+    }
+    ctx.moveTo((pts[0][0]+pts[points-1][0])/2, (pts[0][1]+pts[points-1][1])/2);
+    for(var i=0;i<points;i++){
+      var p0 = pts[i], p1 = pts[(i+1)%points];
+      var midX = (p0[0]+p1[0])/2, midY = (p0[1]+p1[1])/2;
+      ctx.quadraticCurveTo(p0[0], p0[1], midX, midY);
+    }
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.beginPath();
+    ctx.ellipse(cx - W*0.08, cy - H*0.12, W*0.14, H*0.08, -0.4, 0, Math.PI*2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill();
+    ctx.restore();
+
+    if(!reduce){ t += 0.012; requestAnimationFrame(draw); }
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>
