@@ -167,9 +167,16 @@ section{ position: relative; }
 }
 .hero-anpan-wrap{
   width: min(58vw, 460px);
+  aspect-ratio: 1 / 1;
   margin-bottom: 8px;
   filter: drop-shadow(0 40px 50px rgba(92,58,30,0.25));
   animation: anpan-rise 1.2s cubic-bezier(.2,.9,.25,1) both;
+}
+.anpan-photo{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 @keyframes anpan-rise{
   from{ opacity:0; transform: translateY(40px) scale(.9); }
@@ -331,6 +338,8 @@ section{ position: relative; }
 .menu-card.featured .plate{
   box-shadow: 0 0 0 3px var(--azuki), 0 20px 40px rgba(122,46,46,0.15);
 }
+.menu-card .plate.plate-photo{ padding: 0; overflow: hidden; }
+.plate-photo img{ width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .menu-card h3{
   font-family: var(--font-serif);
   font-weight: 700;
@@ -525,41 +534,7 @@ section{ position: relative; }
      ========================================================= -->
 <section id="hero" class="hero">
   <div class="hero-anpan-wrap">
-    <svg viewBox="0 0 400 400" class="anpan-svg" role="img" aria-label="まんまるのあんぱん">
-      <defs>
-        <radialGradient id="anpanBody" cx="38%" cy="32%" r="75%">
-          <stop offset="0%" stop-color="#C98A4B"/>
-          <stop offset="55%" stop-color="#8B5A2B"/>
-          <stop offset="100%" stop-color="#5C3A1E"/>
-        </radialGradient>
-        <radialGradient id="anpanShine" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55"/>
-          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="anpanNavel" cx="50%" cy="40%" r="60%">
-          <stop offset="0%" stop-color="#4A2E17"/>
-          <stop offset="100%" stop-color="#4A2E17" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-
-      <ellipse cx="200" cy="368" rx="130" ry="18" fill="#000" opacity="0.08"/>
-      <circle cx="200" cy="196" r="168" fill="url(#anpanBody)"/>
-      <circle cx="200" cy="196" r="168" fill="url(#anpanShine)" transform="translate(-40,-46)"/>
-      <circle cx="200" cy="205" r="46" fill="url(#anpanNavel)" opacity="0.65"/>
-
-      <g fill="#F4E8D8" opacity="0.92">
-        <ellipse cx="150" cy="120" rx="6" ry="3.4" transform="rotate(-18 150 120)"/>
-        <ellipse cx="205" cy="98"  rx="6" ry="3.4" transform="rotate(30 205 98)"/>
-        <ellipse cx="260" cy="128" rx="6" ry="3.4" transform="rotate(-40 260 128)"/>
-        <ellipse cx="118" cy="176" rx="6" ry="3.4" transform="rotate(60 118 176)"/>
-        <ellipse cx="280" cy="182" rx="6" ry="3.4" transform="rotate(-10 280 182)"/>
-        <ellipse cx="168" cy="248" rx="6" ry="3.4" transform="rotate(20 168 248)"/>
-        <ellipse cx="235" cy="252" rx="6" ry="3.4" transform="rotate(-55 235 252)"/>
-        <ellipse cx="200" cy="150" rx="6" ry="3.4" transform="rotate(75 200 150)"/>
-        <ellipse cx="140" cy="210" rx="6" ry="3.4" transform="rotate(-30 140 210)"/>
-        <ellipse cx="250" cy="216" rx="6" ry="3.4" transform="rotate(45 250 216)"/>
-      </g>
-    </svg>
+    <img class="anpan-photo" src="images/anpan-hero.png" alt="まるぱん堂のまんまるあんぱん" width="518" height="508">
   </div>
 
   <p class="hero-eyebrow reveal">創業 明治三十五年 ・ 京都</p>
@@ -652,11 +627,8 @@ section{ position: relative; }
     <div class="menu-grid">
 
       <div class="menu-card featured reveal">
-        <div class="plate">
-          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="#8B5A2B"/><circle cx="60" cy="60" r="52" fill="url(#g1)"/>
-            <defs><radialGradient id="g1" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#C98A4B"/><stop offset="100%" stop-color="#5C3A1E"/></radialGradient></defs>
-            <circle cx="60" cy="64" r="14" fill="#4A2E17" opacity="0.55"/>
-          </svg>
+        <div class="plate plate-photo">
+          <img src="images/anpan-hero.png" alt="まんまるあんぱん" loading="lazy">
         </div>
         <span class="badge">看板商品</span>
         <h3>まんまるあんぱん</h3>
