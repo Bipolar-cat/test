@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ホームページ制作 自動見積もりシミュレーター</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{
+  --ink:#1c1c1a; --sub:#6f6c66; --line:#e8e6e1; --line-dark:#c9c5bd;
+  --navy:#1f3a5f; --navy-bg:#f4f7fb; --gold:#a98b5d; --gold-bg:#fdf6e8;
+  --paper:#ffffff; --shell:#faf9f7;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --serif:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--shell); color:var(--ink); font-family:var(--sans);
+  font-size:18px; line-height:1.8; -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1340px;margin:0 auto;padding:0 32px 72px}
+
+/* ---------- ヘッダー ---------- */
+.site-head{padding:56px 0 32px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.eyebrow{font-size:14px;letter-spacing:.22em;color:var(--gold);margin:0 0 14px}
+.site-head h1{font-family:var(--serif);font-size:38px;line-height:1.4;margin:0 0 12px;font-weight:600}
+.site-head p{margin:0;color:var(--sub);font-size:16px}
+
+/* ---------- 2分割 ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,660px);gap:56px;align-items:start}
+@media (max-width:1040px){.split{grid-template-columns:1fr;gap:40px}}
+
+/* ---------- 質問コーナー ---------- */
+.q{padding:0 0 32px;margin-bottom:32px;border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:none}
+.q-no{font-size:13px;letter-spacing:.18em;color:var(--gold);margin:0 0 6px}
+.q-title{font-family:var(--serif);font-size:24px;margin:0 0 4px;font-weight:600}
+.q-note{font-size:15px;color:var(--sub);margin:0 0 20px}
+.opts{display:grid;gap:12px}
+.opts.cols-3{grid-template-columns:repeat(3,1fr)}
+.opts.cols-2{grid-template-columns:repeat(2,1fr)}
+@media (max-width:560px){.opts.cols-3,.opts.cols-2{grid-template-columns:1fr}}
+.opt{
+  text-align:left;font:inherit;color:inherit;background:var(--paper);
+  border:1px solid var(--line);border-radius:10px;padding:16px 20px;cursor:pointer;
+  transition:border-color .25s var(--ease),background .25s var(--ease);
+}
+.opt:hover{border-color:var(--line-dark)}
+.opt.on{border-color:var(--navy);background:var(--navy-bg)}
+.opt .oname{display:block;font-size:18px}
+.opt .odesc{display:block;font-size:14px;color:var(--sub);line-height:1.6;margin-top:2px}
+.opt .oprice{display:block;font-size:14px;color:var(--gold);margin-top:6px}
+.checkrow{display:flex;align-items:center;gap:12px}
+.tick{width:20px;height:20px;flex:0 0 20px;border:1px solid var(--line-dark);border-radius:5px;display:grid;place-items:center;font-size:13px;color:transparent;transition:.25s var(--ease)}
+.opt.on .tick{border-color:var(--navy);background:var(--navy);color:#fff}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.slider-val{font-family:var(--serif);font-size:30px;color:var(--navy)}
+input[type=range]{width:100%;accent-color:var(--navy);height:26px}
+.scale{display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}
+.hint{margin-top:12px;font-size:15px;color:var(--gold)}
+.reveal{animation:reveal .4s var(--ease) both}
+@keyframes reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- 見積書 ---------- */
+.sheet-col{position:relative}
+.sheet{
+  background:var(--paper);padding:40px 44px;
+  box-shadow:0 1px 3px rgba(0,0,0,.05),0 12px 34px rgba(0,0,0,.06);
+}
+.sheet-title{font-family:var(--serif);font-size:30px;letter-spacing:.32em;text-align:center;margin:0 0 6px;font-weight:600}
+.sheet-meta{text-align:center;font-size:14px;color:var(--sub);margin:0 0 28px}
+.parties{display:grid;grid-template-columns:minmax(230px,1fr) minmax(250px,1fr);gap:32px;margin-bottom:28px}
+@media (max-width:520px){.parties{grid-template-columns:1fr}}
+.party p{margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.to-name{font-family:var(--serif);font-size:22px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px !important}
+.to-note{font-size:14px;color:var(--sub)}
+.from{text-align:right;font-size:14px;line-height:1.9;color:var(--sub)}
+.from .co{font-size:17px;color:var(--ink);font-family:var(--serif)}
+.total-band{border-top:1px solid var(--line);border-bottom:2px solid var(--navy);padding:16px 0 18px;margin-bottom:28px;display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.total-band .lb{font-size:15px;letter-spacing:.14em;color:var(--sub);white-space:nowrap}
+.total-band .amt{font-family:var(--serif);font-size:44px;color:var(--navy);line-height:1.1;white-space:nowrap}
+.total-band .amt small{font-size:16px;margin-left:4px}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th{font-size:13px;letter-spacing:.14em;color:var(--sub);font-weight:400;text-align:left;border-bottom:1px solid var(--line);padding:0 0 8px}
+th.r,td.r{text-align:right}
+td{border-bottom:1px solid var(--line);padding:11px 0;vertical-align:top}
+td.r{white-space:nowrap;padding-left:12px}
+tr.enter td{animation:enter .38s var(--ease) both}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+tr.flash td{animation:flash .9s var(--ease) both}
+@keyframes flash{0%{background:var(--gold-bg)}70%{background:var(--gold-bg)}100%{background:transparent}}
+tr.gold td{color:var(--gold)}
+.item-sub{display:block;font-size:13px;color:var(--sub);line-height:1.5}
+.sums{margin-top:18px;margin-left:auto;width:min(300px,100%);font-size:16px}
+.sums div{display:flex;justify-content:space-between;padding:7px 0}
+.sums div.grand{border-top:1px solid var(--line);margin-top:6px;padding-top:12px;font-family:var(--serif);font-size:22px;color:var(--navy)}
+.remark{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.8}
+.remark b{font-weight:400;color:var(--ink)}
+
+/* ---------- 印刷ボタンまわり ---------- */
+.actions{margin-top:28px;text-align:center}
+.print-btn{
+  font:inherit;font-size:18px;color:#fff;background:var(--navy);border:none;
+  border-radius:10px;padding:16px 40px;cursor:pointer;letter-spacing:.06em;
+  transition:opacity .25s var(--ease);
+}
+.print-btn:hover{opacity:.86}
+.print-note{margin:14px auto 0;font-size:13px;color:var(--sub);line-height:1.8;max-width:520px}
+
+/* ---------- 印刷用 ---------- */
+@page{size:A4 portrait;margin:12mm}
+@media print{
+  body{background:#fff;font-size:12px}
+  .wrap{max-width:none;padding:0}
+  .site-head,.ask-col,.actions,.no-print{display:none !important}
+  .split{display:block}
+  .sheet-col{position:static}
+  .sheet{box-shadow:none;padding:0;width:100%}
+  .sheet-title{font-size:22px;margin-bottom:4px}
+  .sheet-meta{font-size:10px;margin-bottom:14px}
+  .parties{margin-bottom:14px;gap:20px}
+  .to-name{font-size:16px;padding-bottom:5px}
+  .to-note,.from{font-size:10px;line-height:1.7}
+  .from .co{font-size:12px}
+  .total-band{padding:9px 0 10px;margin-bottom:14px}
+  .total-band .amt{font-size:28px}
+  .total-band .lb{font-size:10px}
+  table{font-size:11px}
+  th{font-size:9px;padding-bottom:5px}
+  td{padding:5px 0}
+  .item-sub{font-size:9px}
+  .sums{font-size:11px;margin-top:10px}
+  .sums div{padding:3px 0}
+  .sums div.grand{font-size:15px;padding-top:7px}
+  .remark{font-size:9px;margin-top:12px;padding-top:8px;line-height:1.7}
+  tr.enter td,tr.flash td{animation:none !important;background:transparent !important}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const {useState,useEffect,useRef} = React;
+const yen = n => (n<0?"-":"") + "¥" + Math.abs(Math.round(n)).toLocaleString("ja-JP");
+
+/* ===== 料金マスタ ===== */
+const PLANS = {
+  ume:{name:"梅プラン",sub:"ライト",desc:"まずは名刺代わりに",unit:12000,items:[
+    {k:"u1",n:"サイト設計・構成",s:"ヒアリング／サイトマップ作成",p:60000},
+    {k:"u2",n:"テンプレートデザイン適用",s:"厳選テンプレートを配色調整",p:110000},
+    {k:"u3",n:"スマートフォン対応",s:"レスポンシブ実装",p:30000}]},
+  take:{name:"竹プラン",sub:"スタンダード",desc:"いちばん人気",unit:18000,items:[
+    {k:"t1",n:"サイト設計・構成",s:"ヒアリング／ワイヤーフレーム作成",p:90000},
+    {k:"t2",n:"オリジナルデザイン制作",s:"トップ＋下層のデザインカンプ",p:230000},
+    {k:"t3",n:"スマートフォン対応",s:"レスポンシブ実装＋表示速度調整",p:45000},
+    {k:"t4",n:"お問い合わせフォーム",s:"自動返信メール付き",p:40000}]},
+  matsu:{name:"松プラン",sub:"プレミアム",desc:"ブランドごと作り込む",unit:28000,items:[
+    {k:"m1",n:"ブランド設計・サイト構成",s:"競合調査／コンセプト設計込み",p:160000},
+    {k:"m2",n:"フルオーダーデザイン制作",s:"全ページ個別デザイン",p:420000},
+    {k:"m3",n:"スマートフォン対応",s:"レスポンシブ実装＋表示速度最適化",p:70000},
+    {k:"m4",n:"アニメーション演出",s:"スクロール連動の動きを実装",p:95000}]},
+};
+const OPTIONS = [
+  {k:"form",n:"お問い合わせフォーム",p:40000,note:"竹・松は標準で含まれます"},
+  {k:"cms",n:"ブログ機能（CMS）",p:90000},
+  {k:"seo",n:"SEO初期設定",p:60000},
+  {k:"multi",n:"多言語対応（英語）",p:120000},
+  {k:"logo",n:"ロゴ制作",p:80000},
+];
+const CARE = {
+  none:{n:"保守なし",p:0,d:"公開後はご自身で運用"},
+  light:{n:"月額ライト保守",p:8000,s:"サーバー監視・軽微な修正（12ヶ月分）",d:"月額 ¥8,000 × 12ヶ月"},
+  full:{n:"月額しっかり保守",p:20000,s:"更新代行 月2回・電話サポート（12ヶ月分）",d:"月額 ¥20,000 × 12ヶ月"},
+};
+const RUSH = {two:{n:"2週間以内",pct:30},month:{n:"1ヶ月以内",pct:15}};
+
+/* ===== 見積番号 ===== */
+const QNO = (()=>{const d=new Date(),p=n=>String(n).padStart(2,"0");
+  return `Q-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${String(Math.floor(Math.random()*900)+100)}`;})();
+const TODAY = (()=>{const d=new Date();return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;})();
+
+/* ===== 金額計算（条件分岐の中心） ===== */
+function calc(s){
+  const plan = PLANS[s.plan];
+  const rows = plan.items.map(i=>({key:i.k,name:i.n,sub:i.s,qty:"1式",amount:i.p}));
+
+  // ページ制作費 ＋ ② 数量による段階割引
+  const pageFee = plan.unit * s.pages;
+  rows.push({key:"pages",name:"ページ制作費",sub:`${plan.name}単価 ${yen(plan.unit)} × ${s.pages}ページ`,qty:`${s.pages}P`,amount:pageFee});
+  let offPct = 0;
+  if (s.pages >= 20) offPct = 15; else if (s.pages >= 10) offPct = 10;
+  if (offPct) rows.push({key:"bulk",name:`⭐ まとめ割 適用中（${s.pages}ページ）`,
+    sub:`10ページ以上で10％オフ／20ページ以上で15％オフ`,qty:`-${offPct}%`,amount:-Math.round(pageFee*offPct/100),gold:true});
+
+  // オプション（竹・松はフォーム標準装備）
+  OPTIONS.forEach(o=>{
+    if (o.k==="form" && s.plan!=="ume") return;
+    if (s.opts[o.k]) rows.push({key:"o_"+o.k,name:o.n,sub:o.s,qty:"1式",amount:o.p});
+  });
+  if (s.shoot) rows.push({key:"shoot",name:"撮影ディレクション",sub:"カメラマン手配・半日撮影",qty:"1式",amount:90000});
+
+  // 保守
+  if (s.care!=="none"){const c=CARE[s.care];
+    rows.push({key:"care",name:c.n,sub:c.s,qty:"12ヶ月",amount:c.p*12});}
+
+  // ① 前の答えで増える質問 → 特急料金
+  const base = rows.reduce((a,r)=>a+r.amount,0);
+  let rush = 0;
+  if (s.hurry==="yes" && s.due){ rush = Math.round(base*RUSH[s.due].pct/100);
+    rows.push({key:"rush",name:`特急料金（${RUSH[s.due].n}納品）`,sub:`制作費の${RUSH[s.due].pct}％`,qty:"1式",amount:rush,gold:true});}
+
+  const sub = base + rush, tax = Math.round(sub*.1);
+  return {rows, sub, tax, total: sub+tax, plan};
+}
+
+/* ===== 部品 ===== */
+function Q({no,title,note,children,fresh}){
+  return <section className={"q"+(fresh?" reveal":"")}>
+    <p className="q-no">Q{no}</p>
+    <h2 className="q-title">{title}</h2>
+    {note && <p className="q-note">{note}</p>}
+    {children}
+  </section>;
+}
+function Opt({on,onClick,name,desc,price,check}){
+  return <button className={"opt"+(on?" on":"")} onClick={onClick}>
+    <span className={check?"checkrow":""}>
+      {check && <span className="tick">✓</span>}
+      <span>
+        <span className="oname">{name}</span>
+        {desc && <span className="odesc">{desc}</span>}
+        {price!=null && <span className="oprice">{price===0?"標準で含まれます":"＋"+yen(price)}</span>}
+      </span>
+    </span>
+  </button>;
+}
+function CountUp({value}){
+  const [d,setD]=useState(value); const ref=useRef(value);
+  useEffect(()=>{
+    const from=ref.current,to=value,t0=performance.now(),dur=450;
+    if(from===to)return;
+    let id=requestAnimationFrame(function step(t){
+      const p=Math.min((t-t0)/dur,1), e=1-Math.pow(1-p,3);
+      const now=Math.round(from+(to-from)*e);
+      ref.current=now; setD(now);
+      if(p<1) id=requestAnimationFrame(step);
+    });
+    return ()=>cancelAnimationFrame(id);
+  },[value]);
+  return <span>{yen(d)}<small>（税込）</small></span>;
+}
+
+/* ===== 本体 ===== */
+function App(){
+  // 開いた瞬間からおすすめが選択済み
+  const [s,setS] = useState({plan:"take",pages:8,opts:{cms:true,seo:true},shoot:false,hurry:"no",due:null,care:"light"});
+  const set = (patch)=>setS(v=>({...v,...patch}));
+  const toggle = (k)=>setS(v=>({...v,opts:{...v.opts,[k]:!v.opts[k]}}));
+
+  const {rows,sub,tax,total,plan} = calc(s);
+
+  // 明細のアニメーション判定（新規＝ふわっと出現／変更＝ハイライト）
+  const seen = useRef(null);
+  const prev = seen.current;
+  const anim = rows.map(r => prev===null ? "enter" : !(r.key in prev) ? "enter" : prev[r.key]!==r.amount ? "flash" : "");
+  useEffect(()=>{ const m={}; rows.forEach(r=>m[r.key]=r.amount); seen.current=m; });
+
+  return <div className="wrap">
+    <header className="site-head">
+      <p className="eyebrow">WEB SITE ESTIMATE</p>
+      <h1>ホームページ制作 自動見積もりシミュレーター</h1>
+      <p>左の質問に答えるだけで、右のお見積書がその場で書き換わります。</p>
+    </header>
+
+    <div className="split">
+      {/* ---------- 左：質問コーナー ---------- */}
+      <div className="ask-col">
+        <Q no="1" title="どのプランで作りますか？" note="選ぶと見積書の品目リストごと入れ替わります。">
+          <div className="opts cols-3">
+            {["ume","take","matsu"].map(k=>
+              <Opt key={k} on={s.plan===k} onClick={()=>set({plan:k})}
+                name={PLANS[k].name} desc={PLANS[k].sub+"／"+PLANS[k].desc}/>)}
+          </div>
+        </Q>
+
+        <Q no="2" title="ページ数はどのくらい？" note="10ページ以上でまとめ割が自動で効きます。">
+          <div className="slider-head">
+            <span className="q-note" style={{margin:0}}>トップページを含む総ページ数</span>
+            <span className="slider-val">{s.pages}<span style={{fontSize:16}}> ページ</span></span>
+          </div>
+          <input type="range" min="1" max="30" value={s.pages} onChange={e=>set({pages:+e.target.value})}/>
+          <div className="scale"><span>1</span><span>15</span><span>30</span></div>
+          {s.pages>=10 && <p className="hint reveal">⭐ まとめ割 適用中（{s.pages>=20?"15":"10"}％オフ）</p>}
+        </Q>
+
+        <Q no="3" title="追加したい機能はありますか？" note="いくつでも選べます。">
+          <div className="opts cols-2">
+            {OPTIONS.map(o=>{
+              const std = o.k==="form" && s.plan!=="ume";
+              return <Opt key={o.k} check on={std?true:!!s.opts[o.k]}
+                onClick={()=>{if(!std) toggle(o.k);}}
+                name={o.n} price={std?null:o.p} desc={std?o.note:null}/>;
+            })}
+            <Opt check on={s.shoot} onClick={()=>set({shoot:!s.shoot})}
+              name="撮影ディレクション" price={90000} desc="写真素材がまだ無い方に"/>
+          </div>
+        </Q>
+
+        <Q no="4" title="お急ぎですか？" note="はい を選ぶと、納期の質問が増えます。">
+          <div className="opts cols-2">
+            <Opt on={s.hurry==="no"} onClick={()=>set({hurry:"no",due:null})} name="いいえ" desc="通常納期（約2〜3ヶ月）"/>
+            <Opt on={s.hurry==="yes"} onClick={()=>set({hurry:"yes",due:s.due||"month"})} name="はい、急いでいます" desc="特急料金がかかります"/>
+          </div>
+        </Q>
+
+        {s.hurry==="yes" &&
+          <Q no="5" title="いつまでに公開したいですか？" note="納期に応じて特急料金を加算します。" fresh>
+            <div className="opts cols-2">
+              <Opt on={s.due==="month"} onClick={()=>set({due:"month"})} name="1ヶ月以内" price={null} desc="制作費 ＋15％"/>
+              <Opt on={s.due==="two"} onClick={()=>set({due:"two"})} name="2週間以内" price={null} desc="制作費 ＋30％"/>
+            </div>
+          </Q>}
+
+        <Q no={s.hurry==="yes"?"6":"5"} title="公開後の保守はどうしますか？" note="初年度12ヶ月分をお見積りに含めます。">
+          <div className="opts cols-3">
+            {["none","light","full"].map(k=>
+              <Opt key={k} on={s.care===k} onClick={()=>set({care:k})}
+                name={CARE[k].n} desc={CARE[k].d}/>)}
+          </div>
+        </Q>
+      </div>
+
+      {/* ---------- 右：A4見積書 ---------- */}
+      <div className="sheet-col">
+        <div className="sheet">
+          <h2 className="sheet-title">御 見 積 書</h2>
+          <p className="sheet-meta">見積番号 {QNO}　／　発行日 {TODAY}　／　有効期限 発行日より30日</p>
+
+          <div className="parties">
+            <div className="party">
+              <p className="to-name">株式会社サンプル 御中</p>
+              <p className="to-note">件名：コーポレートサイト制作一式</p>
+              <p className="to-note">{plan.name}（{plan.sub}）／全{s.pages}ページ</p>
+            </div>
+            <div className="party from">
+              <p className="co">アトリエ・ミナモ合同会社</p>
+              <p>〒150-0002</p>
+              <p>東京都渋谷区渋谷 2-1-1 ミナモビル 5F</p>
+              <p>TEL 03-1234-5678</p>
+              <p>hello@atelier-minamo.example</p>
+            </div>
+          </div>
+
+          <div className="total-band">
+            <span className="lb">お見積り合計金額</span>
+            <span className="amt"><CountUp value={total}/></span>
+          </div>
+
+          <table>
+            <thead><tr><th>品目</th><th className="r">数量</th><th className="r">金額</th></tr></thead>
+            <tbody>
+              {rows.map((r,i)=>
+                <tr key={r.key+"|"+r.amount+"|"+anim[i]} className={anim[i]+(r.gold?" gold":"")}>
+                  <td>{r.name}{r.sub && <span className="item-sub">{r.sub}</span>}</td>
+                  <td className="r">{r.qty}</td>
+                  <td className="r">{yen(r.amount)}</td>
+                </tr>)}
+            </tbody>
+          </table>
+
+          <div className="sums">
+            <div><span>小計</span><span>{yen(sub)}</span></div>
+            <div><span>消費税（10％）</span><span>{yen(tax)}</span></div>
+            <div className="grand"><span>合計</span><span>{yen(total)}</span></div>
+          </div>
+
+          <div className="remark">
+            <b>備考</b><br/>
+            ・本見積りは概算です。詳細ヒアリング後に確定金額をご提示します。<br/>
+            ・お支払いは着手時50％／納品時50％の分割払いに対応しています。<br/>
+            ・サーバー・ドメイン費用、有料写真素材費は別途申し受けます。
+          </div>
+        </div>
+
+        <div className="actions">
+          <button className="print-btn" onClick={()=>window.print()}>この内容で印刷（PDF保存）</button>
+          <p className="print-note">
+            押すと質問コーナーは消え、見積書だけがA4 1枚で印刷されます。<br/>
+            Mac・Windows とも、印刷画面で「PDFとして保存」を選べばPDFになります。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
