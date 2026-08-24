@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>家計レポート 2026年8月12日〜18日</title>
+<style>
+  :root {
+    --ink: #1f2328;
+    --sub: #5c6570;
+    --line: #e6e8eb;
+    --bar-bg: #f0f2f5;
+    --c1: #2f7d6f;
+    --c2: #c2763b;
+    --c3: #4a6fa5;
+    --c4: #8a6bb0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: var(--ink);
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    font-size: 18px;
+    line-height: 1.8;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+  .period {
+    font-size: 17px;
+    color: var(--sub);
+    margin: 0 0 4px;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 28px;
+    font-weight: 700;
+  }
+  .total-box {
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .total-label {
+    font-size: 17px;
+    color: var(--sub);
+    margin: 0;
+  }
+  .total-amount {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 6px 0 2px;
+    letter-spacing: -0.02em;
+  }
+  .total-amount .yen { font-size: 30px; margin-left: 2px; }
+  .total-note {
+    font-size: 16px;
+    color: var(--sub);
+    margin: 0;
+  }
+  h2 {
+    font-size: 20px;
+    margin: 0 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--line);
+  }
+  .cat { margin-bottom: 22px; }
+  .cat-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .cat-name { font-size: 19px; font-weight: 700; }
+  .cat-amount { font-size: 19px; font-weight: 700; white-space: nowrap; }
+  .cat-sub { font-size: 15px; color: var(--sub); font-weight: 400; margin-left: 8px; }
+  .bar {
+    background: var(--bar-bg);
+    border-radius: 999px;
+    height: 20px;
+    overflow: hidden;
+  }
+  .bar span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+  }
+  .b1 { background: var(--c1); }
+  .b2 { background: var(--c2); }
+  .b3 { background: var(--c3); }
+  .b4 { background: var(--c4); }
+  .insight {
+    margin-top: 40px;
+    background: #f7f9fa;
+    border-left: 6px solid var(--c1);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .insight h2 {
+    border: none;
+    padding: 0;
+    margin: 0 0 8px;
+    font-size: 19px;
+  }
+  .insight p { margin: 0 0 10px; }
+  .insight p:last-child { margin-bottom: 0; }
+  h3 {
+    font-size: 18px;
+    margin: 40px 0 12px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  th { color: var(--sub); font-weight: 700; font-size: 15px; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: var(--sub);
+  }
+  @media (max-width: 480px) {
+    body { font-size: 17px; }
+    .total-amount { font-size: 44px; }
+    .wrap { padding: 24px 16px 48px; }
+    table { font-size: 15px; }
+    th, td { padding: 9px 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="period">2026年8月12日（火）〜 8月18日（月）</p>
+  <h1>今週の家計レポート</h1>
+
+  <div class="total-box">
+    <p class="total-label">今週の合計</p>
+    <p class="total-amount">13,950<span class="yen">円</span></p>
+    <p class="total-note">14件 ／ 1日あたり約 1,993円</p>
+  </div>
+
+  <h2>カテゴリ別の内訳</h2>
+
+  <div class="cat">
+    <div class="cat-head">
+      <span class="cat-name">食費<span class="cat-sub">7件</span></span>
+      <span class="cat-amount">8,410円 <span class="cat-sub">60.3%</span></span>
+    </div>
+    <div class="bar"><span class="b1" style="width:100%"></span></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head">
+      <span class="cat-name">娯楽<span class="cat-sub">3件</span></span>
+      <span class="cat-amount">3,400円 <span class="cat-sub">24.4%</span></span>
+    </div>
+    <div class="bar"><span class="b2" style="width:40.4%"></span></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head">
+      <span class="cat-name">日用品<span class="cat-sub">2件</span></span>
+      <span class="cat-amount">1,440円 <span class="cat-sub">10.3%</span></span>
+    </div>
+    <div class="bar"><span class="b3" style="width:17.1%"></span></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head">
+      <span class="cat-name">交通<span class="cat-sub">2件</span></span>
+      <span class="cat-amount">700円 <span class="cat-sub">5.0%</span></span>
+    </div>
+    <div class="bar"><span class="b4" style="width:8.3%"></span></div>
+  </div>
+
+  <div class="insight">
+    <h2>今週の気づき</h2>
+    <p>いちばん大きい出費は 8/17(日) のスーパーまとめ買い 3,120円。ただ、これは1週間分の食材をまとめて買った日なので、むしろ効率のいい買い方です。</p>
+    <p>もし1つだけ試すなら、コンビニでの少額の買い物（8/12 コーヒー 150円、8/18 昼食・飲み物 640円＝合計 790円）。回数を1回減らすくらいの気持ちで十分で、今週の使い方に問題があったわけではありません。</p>
+  </div>
+
+  <h3>支出の明細</h3>
+  <table>
+    <thead>
+      <tr><th>日付</th><th>品目</th><th class="num">金額</th><th>カテゴリ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>8/12(火)</td><td>スーパーで野菜・卵・牛乳</td><td class="num">1,280円</td><td>食費</td></tr>
+      <tr><td>8/12(火)</td><td>コンビニ コーヒー</td><td class="num">150円</td><td>食費</td></tr>
+      <tr><td>8/13(水)</td><td>電車 往復</td><td class="num">480円</td><td>交通</td></tr>
+      <tr><td>8/13(水)</td><td>ランチ 定食</td><td class="num">900円</td><td>食費</td></tr>
+      <tr><td>8/14(木)</td><td>ドラッグストア 洗剤・ティッシュ</td><td class="num">760円</td><td>日用品</td></tr>
+      <tr><td>8/14(木)</td><td>書店 文庫本</td><td class="num">880円</td><td>娯楽</td></tr>
+      <tr><td>8/15(金)</td><td>スーパー 夕飯の食材</td><td class="num">1,540円</td><td>食費</td></tr>
+      <tr><td>8/15(金)</td><td>カフェ お茶代</td><td class="num">620円</td><td>娯楽（推定）</td></tr>
+      <tr><td>8/16(土)</td><td>映画チケット</td><td class="num">1,900円</td><td>娯楽</td></tr>
+      <tr><td>8/16(土)</td><td>昼食 ハンバーガー</td><td class="num">780円</td><td>食費</td></tr>
+      <tr><td>8/17(日)</td><td>スーパー まとめ買い</td><td class="num">3,120円</td><td>食費</td></tr>
+      <tr><td>8/17(日)</td><td>日用品 シャンプー詰替</td><td class="num">680円</td><td>日用品</td></tr>
+      <tr><td>8/18(月)</td><td>バス代</td><td class="num">220円</td><td>交通</td></tr>
+      <tr><td>8/18(月)</td><td>コンビニ 昼食・飲み物</td><td class="num">640円</td><td>食費</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    データ元：kakei.md ／ 年とカテゴリの一部は内容からの推定を含みます。<br>
+    横棒の長さは、いちばん大きい食費を100%とした相対表示です。
+  </footer>
+
+</div>
+</body>
+</html>
