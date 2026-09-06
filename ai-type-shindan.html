@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI活用タイプ診断｜クラウドワークスを始めるフリーランスのための10問</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="description" content="10問でわかる、あなたのAI活用タイプ。クラウドワークスを始めるフリーランス向けの無料セルフ診断。">
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-soft:#f7f8fc;
+  --ink:#161a2b;
+  --ink-mid:#3a4059;
+  --ink-soft:#5b6178;
+  --line:#e8eaf2;
+  --a1:#4f46e5;
+  --a2:#7c3aed;
+  --a3:#f97362;
+  --grad:linear-gradient(100deg,#4f46e5,#7c3aed 55%,#f97362);
+  --grad-soft:linear-gradient(100deg,rgba(79,70,229,.10),rgba(124,58,237,.10) 55%,rgba(249,115,98,.10));
+  --shadow-s:0 6px 18px rgba(22,26,43,.06);
+  --shadow-m:0 18px 44px rgba(22,26,43,.08);
+  --shadow-l:0 28px 70px rgba(22,26,43,.12);
+  --r-s:14px;
+  --r-m:20px;
+  --r-l:28px;
+  --maxw:1080px;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:clamp(17px,1.05vw + 14px,19px);
+  line-height:1.85;
+  letter-spacing:.02em;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;}
+button{font:inherit;color:inherit;}
+
+/* ---------- layout ---------- */
+.wrap{width:min(100% - 40px,var(--maxw));margin-inline:auto;}
+.section{padding:clamp(64px,9vw,120px) 0;}
+.section--soft{background:var(--bg-soft);}
+.center{text-align:center;}
+
+/* ---------- typography ---------- */
+h1,h2,h3{line-height:1.35;letter-spacing:.01em;margin:0;font-weight:800;}
+.h-hero{font-size:clamp(32px,5.2vw,60px);letter-spacing:-.01em;}
+.h-sec{font-size:clamp(26px,3.4vw,42px);}
+.lead{color:var(--ink-soft);font-size:clamp(16px,1.1vw + 13px,20px);margin:20px 0 0;}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:15px;font-weight:700;letter-spacing:.14em;
+  color:var(--a1);background:rgba(79,70,229,.08);
+  border-radius:999px;padding:9px 20px;
+}
+.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grad);}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  min-height:60px;padding:18px 40px;border:0;border-radius:999px;
+  background:var(--grad);color:#fff;font-weight:800;
+  font-size:clamp(17px,.6vw + 15px,21px);
+  cursor:pointer;text-decoration:none;
+  box-shadow:0 14px 30px rgba(79,70,229,.28);
+  transition:transform .18s ease-out,box-shadow .18s ease-out,filter .18s ease-out;
+}
+.btn:hover,.btn:focus-visible{transform:translateY(-3px);box-shadow:0 22px 44px rgba(79,70,229,.34);filter:saturate(1.06);}
+.btn:active{transform:translateY(-1px);}
+.btn--ghost{
+  background:#fff;color:var(--ink);border:1px solid var(--line);
+  box-shadow:var(--shadow-s);
+}
+.btn--ghost:hover,.btn--ghost:focus-visible{box-shadow:var(--shadow-m);}
+.btn--wide{width:100%;max-width:520px;}
+.btn__note{display:block;margin-top:14px;font-size:14px;color:var(--ink-soft);}
+:focus-visible{outline:3px solid rgba(79,70,229,.45);outline-offset:3px;}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;padding:clamp(72px,10vw,132px) 0 clamp(56px,7vw,96px);}
+.hero::before,.hero::after{
+  content:"";position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;
+}
+.hero::before{width:520px;height:520px;top:-220px;right:-140px;background:rgba(124,58,237,.16);}
+.hero::after{width:460px;height:460px;bottom:-260px;left:-160px;background:rgba(249,115,98,.14);}
+.hero .wrap{position:relative;z-index:1;}
+.hero__title{margin-top:26px;}
+.hero__actions{margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.hero__meta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:34px;}
+.chip{
+  background:#fff;border:1px solid var(--line);border-radius:999px;
+  padding:10px 20px;font-size:15px;font-weight:700;color:var(--ink-mid);
+  box-shadow:var(--shadow-s);
+}
+
+/* ---------- cards ---------- */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-l);
+  padding:clamp(26px,3vw,38px);box-shadow:var(--shadow-m);
+  transition:transform .22s ease-out,box-shadow .22s ease-out;
+}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow-l);}
+.card__num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:16px;background:var(--grad);
+  color:#fff;font-weight:800;font-size:21px;margin-bottom:18px;
+}
+.card h3{font-size:clamp(19px,1.2vw + 15px,23px);}
+.card p{margin:12px 0 0;color:var(--ink-soft);font-size:16.5px;}
+
+/* ---------- reveal animation ---------- */
+.reveal{opacity:0;transform:translateY(26px);}
+.reveal.is-in{opacity:1;transform:none;transition:opacity .7s ease-out,transform .7s cubic-bezier(.22,1,.36,1);}
+
+/* 強制カラーモードではグラデーション文字が消えるため、通常色に戻す */
+@media (forced-colors:active){
+  .grad-text{color:CanvasText;background:none;-webkit-text-fill-color:CanvasText;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  .reveal{opacity:1;transform:none;}
+}
+
+/* ---------- quiz ---------- */
+.quiz{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-l);
+  box-shadow:var(--shadow-l);padding:clamp(24px,3.4vw,48px);
+  max-width:840px;margin:48px auto 0;
+}
+.progress__head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:15px;font-weight:700;color:var(--ink-soft);margin-bottom:12px;
+}
+.progress__count strong{font-size:24px;color:var(--ink);}
+.progress__track{height:12px;border-radius:999px;background:#eef0f7;overflow:hidden;}
+.progress__bar{
+  height:100%;width:0;border-radius:999px;background:var(--grad);
+  transition:width .45s cubic-bezier(.22,1,.36,1);
+}
+.q{margin-top:34px;}
+.q__title{font-size:clamp(20px,1.5vw + 16px,30px);font-weight:800;line-height:1.55;}
+.q__list{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:14px;}
+.opt{
+  width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);
+  border-radius:var(--r-m);padding:20px 24px;min-height:64px;cursor:pointer;
+  font-size:clamp(16px,.7vw + 14px,19px);font-weight:600;line-height:1.6;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .18s ease-out,box-shadow .18s ease-out,border-color .18s ease-out,background .18s ease-out;
+}
+.opt__mark{
+  flex:0 0 auto;width:34px;height:34px;border-radius:11px;
+  background:var(--bg-soft);color:var(--a1);font-weight:800;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .18s ease-out,color .18s ease-out;
+}
+.opt:hover,.opt:focus-visible{transform:translateY(-3px);border-color:rgba(79,70,229,.5);box-shadow:var(--shadow-m);}
+.opt:hover .opt__mark,.opt:focus-visible .opt__mark{background:var(--grad);color:#fff;}
+.opt.is-picked{border-color:var(--a1);background:rgba(79,70,229,.05);}
+.q.slide-in-next{animation:slideNext .32s cubic-bezier(.22,1,.36,1) both;}
+.q.slide-in-prev{animation:slidePrev .32s cubic-bezier(.22,1,.36,1) both;}
+@keyframes slideNext{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
+@keyframes slidePrev{from{opacity:0;transform:translateX(-40px);}to{opacity:1;transform:none;}}
+.quiz__foot{margin-top:26px;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.back{
+  background:none;border:0;padding:12px 4px;cursor:pointer;
+  color:var(--ink-soft);font-weight:700;font-size:16px;
+  transition:color .18s ease-out,transform .18s ease-out;
+}
+.back:hover:not(:disabled){color:var(--a1);transform:translateX(-3px);}
+.back:disabled{opacity:.35;cursor:default;}
+.quiz__hint{font-size:14.5px;color:var(--ink-soft);}
+
+/* ---------- result ---------- */
+.result__badge{
+  display:inline-block;padding:10px 22px;border-radius:999px;
+  background:var(--grad);color:#fff;font-weight:800;font-size:15px;letter-spacing:.1em;
+}
+.result__type{font-size:clamp(30px,4.6vw,52px);font-weight:800;margin-top:20px;line-height:1.3;}
+.result__catch{font-size:clamp(17px,1.1vw + 14px,21px);color:var(--ink-mid);margin-top:16px;font-weight:700;}
+.panel{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-l);
+  padding:clamp(26px,3.2vw,44px);box-shadow:var(--shadow-m);
+}
+.panel + .panel{margin-top:24px;}
+.panel h3{font-size:clamp(19px,1.1vw + 15px,24px);display:flex;align-items:center;gap:12px;}
+.panel h3::before{content:"";width:10px;height:26px;border-radius:6px;background:var(--grad);flex:0 0 auto;}
+.tick{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px;}
+.tick li{position:relative;padding-left:38px;color:var(--ink-mid);font-size:17px;}
+.tick li::before{
+  content:"";position:absolute;left:0;top:.5em;width:22px;height:22px;border-radius:8px;
+  background:var(--grad-soft);border:1.5px solid rgba(79,70,229,.35);
+}
+.tick li::after{
+  content:"";position:absolute;left:7px;top:calc(.5em + 5px);width:6px;height:11px;
+  border-right:2.5px solid var(--a1);border-bottom:2.5px solid var(--a1);transform:rotate(42deg);
+}
+.step1{
+  margin-top:20px;background:var(--grad-soft);border-radius:var(--r-m);
+  padding:24px 26px;font-size:17.5px;color:var(--ink);font-weight:600;
+}
+.scores{display:grid;gap:22px;margin-top:24px;}
+.score__head{display:flex;justify-content:space-between;font-size:16px;font-weight:700;}
+.score__head span:last-child{color:var(--a1);}
+.score__track{height:14px;border-radius:999px;background:#eef0f7;overflow:hidden;margin-top:8px;}
+.score__bar{height:100%;width:0;border-radius:999px;background:var(--grad);transition:width .9s cubic-bezier(.22,1,.36,1);}
+.score__note{font-size:14.5px;color:var(--ink-soft);margin:6px 0 0;}
+
+/* ---------- cta ---------- */
+.cta{
+  position:relative;overflow:hidden;border-radius:var(--r-l);
+  background:linear-gradient(160deg,#1b1f36,#241c46 60%,#3a2350);
+  color:#fff;padding:clamp(34px,4.6vw,64px);margin-top:40px;
+  box-shadow:var(--shadow-l);
+}
+.cta::after{
+  content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+  top:-190px;right:-150px;background:rgba(249,115,98,.28);filter:blur(80px);pointer-events:none;
+}
+.cta > *{position:relative;z-index:1;}
+.cta h2{font-size:clamp(24px,3vw,38px);margin-top:18px;}
+.cta__lead{color:rgba(255,255,255,.82);margin-top:18px;font-size:17.5px;}
+.cta__reasons{list-style:none;margin:32px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.cta__reasons li{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+  border-radius:var(--r-m);padding:22px 24px;font-size:16.5px;line-height:1.7;
+}
+.cta__reasons b{display:block;font-size:18px;margin-bottom:8px;}
+.cta__box{margin-top:36px;text-align:center;}
+.cta .btn{background:#fff;color:#241c46;box-shadow:0 16px 34px rgba(0,0,0,.28);}
+.cta .btn:hover{box-shadow:0 24px 48px rgba(0,0,0,.34);}
+.cta__fine{color:rgba(255,255,255,.6);font-size:14px;margin-top:16px;}
+
+.again{margin-top:36px;text-align:center;}
+.footer{padding:56px 0 72px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:14.5px;}
+.footer p{margin:6px 0;}
+
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60;}
+[hidden]{display:none !important;}
+
+@media (max-width:900px){
+  .grid3{grid-template-columns:1fr;gap:18px;margin-top:40px;}
+  .cta__reasons{grid-template-columns:1fr;}
+}
+@media (max-width:640px){
+  .wrap{width:min(100% - 32px,var(--maxw));}
+  .btn{width:100%;padding:18px 24px;}
+  .hero__actions{align-items:stretch;}
+  .quiz__foot{flex-direction:column;align-items:flex-start;gap:8px;}
+  .opt{padding:18px 18px;gap:12px;}
+}
+</style>
+<noscript><style>.reveal{opacity:1;transform:none;}</style></noscript>
+</head>
+<body>
+
+<!-- ========== ヒーロー ========== -->
+<header class="hero">
+  <div class="wrap center">
+    <span class="eyebrow reveal">クラウドワークスを始めるフリーランスへ</span>
+    <h1 class="h-hero hero__title reveal">10問でわかる<br><span class="grad-text">あなたのAI活用タイプ</span></h1>
+    <p class="lead reveal">「AIを使ったほうがいいのは分かる。でも、どこから手をつければいいの？」<br>
+      その答えは、いまのあなたの働き方の中にあります。約2分の診断で、次の1歩まで持ち帰ってください。</p>
+    <div class="hero__actions reveal">
+      <button class="btn" id="startBtn" type="button">診断をはじめる</button>
+      <span class="btn__note">全10問・約2分／登録不要・無料</span>
+    </div>
+    <div class="hero__meta reveal">
+      <span class="chip">4タイプで判定</span>
+      <span class="chip">スコアで可視化</span>
+      <span class="chip">スマホ対応</span>
+    </div>
+  </div>
+</header>
+
+<!-- ========== 特徴 ========== -->
+<section class="section section--soft">
+  <div class="wrap">
+    <div class="center">
+      <h2 class="h-sec reveal">この診断でわかる3つのこと</h2>
+      <p class="lead reveal">単なる性格診断ではありません。受注につながる「次の行動」まで出します。</p>
+    </div>
+    <div class="grid3">
+      <article class="card reveal">
+        <div class="card__num">1</div>
+        <h3>あなたの現在地</h3>
+        <p>AIを「触っている」だけなのか、「稼ぎに変えている」のか。4つの軸のスコアで、いまの立ち位置がはっきりします。</p>
+      </article>
+      <article class="card reveal">
+        <div class="card__num">2</div>
+        <h3>相性のいい使い方</h3>
+        <p>あなたのタイプに合ったAIの使いどころを提案。提案文、リサーチ、納品物づくり、どこに効かせるかが決まります。</p>
+      </article>
+      <article class="card reveal">
+        <div class="card__num">3</div>
+        <h3>次にやるべき1歩</h3>
+        <p>抽象論で終わらせません。今日か明日にそのまま実行できる、具体的な行動をひとつだけお渡しします。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 診断 ========== -->
+<section class="section" id="quizSection">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow reveal">DIAGNOSIS</span>
+      <h2 class="h-sec reveal" style="margin-top:20px;">AI活用タイプ診断（全10問）</h2>
+      <p class="lead reveal">直感で、いまの自分にいちばん近いものを選んでください。</p>
+    </div>
+
+    <div class="quiz reveal" id="quizCard">
+      <div class="progress">
+        <div class="progress__head">
+          <span class="progress__count"><strong id="qNow">1</strong> / 10 問</span>
+          <span id="qPercent">0%</span>
+        </div>
+        <div class="progress__track">
+          <div class="progress__bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="q" id="qBox" role="group" aria-labelledby="qTitle">
+        <h3 class="q__title" id="qTitle" tabindex="-1">質問を読み込み中です</h3>
+        <ul class="q__list" id="qList"></ul>
+      </div>
+
+      <div class="quiz__foot">
+        <button class="back" id="backBtn" type="button" disabled>← 1つ前に戻る</button>
+        <span class="quiz__hint">選ぶと自動で次の質問へ進みます</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 結果 ========== -->
+<section class="section section--soft" id="resultSection" hidden>
+  <div class="wrap">
+    <div class="center">
+      <span class="result__badge">あなたのタイプ</span>
+      <h2 class="result__type grad-text" id="typeName">—</h2>
+      <p class="result__catch" id="typeCatch">—</p>
+    </div>
+
+    <div style="margin-top:48px;">
+      <div class="panel">
+        <h3>このタイプの特徴</h3>
+        <ul class="tick" id="typeFeatures"></ul>
+      </div>
+      <div class="panel">
+        <h3>向いているAIの使い方</h3>
+        <ul class="tick" id="typeUses"></ul>
+      </div>
+      <div class="panel">
+        <h3>次にやるべき1歩</h3>
+        <p class="step1" id="typeStep">—</p>
+      </div>
+      <div class="panel">
+        <h3>あなたの回答傾向スコア</h3>
+        <div class="scores" id="scoreList"></div>
+        <p class="score__note">スコアは10問の回答から算出した相対的な目安です。点数の高低に優劣はありません。</p>
+      </div>
+
+      <!-- ===== 購入・申込みCTA ===== -->
+      <div class="cta">
+        <span class="eyebrow" style="background:rgba(255,255,255,.14);color:#fff;">NEXT STEP</span>
+        <h2 id="ctaTitle">AIフリーランス スタートキット（サンプル商品）</h2>
+        <p class="cta__lead" id="ctaLead">—</p>
+        <ul class="cta__reasons">
+          <li><b>1. 型が手に入る</b>提案文・ヒアリング・納品チェックまで、そのまま貼って使えるプロンプトの型を収録。</li>
+          <li><b>2. 実案件ベース</b>クラウドワークスでよくある案件を題材に、受注から納品までの手順を追って学べます。</li>
+          <li><b>3. 迷ったら相談できる</b>「この案件、AIをどう使う？」を質問できる場つき。ひとりで止まらずに進められます。</li>
+        </ul>
+        <div class="cta__box">
+          <a class="btn btn--wide" id="ctaBtn" href="#">詳しい内容を見てみる</a>
+          <p class="cta__fine">こちらは診断デモ用のサンプル商品です。実際の申込先URLに差し替えてご利用ください。</p>
+        </div>
+      </div>
+
+      <div class="again">
+        <button class="btn btn--ghost" id="retryBtn" type="button">もう一度診断する</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap center">
+    <p>AI活用タイプ診断｜クラウドワークスを始めるフリーランス向け</p>
+    <p>本診断は簡易的な自己チェックです。結果は現時点の傾向を示す目安としてご活用ください。</p>
+  </div>
+</footer>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ====== 設定：CTA（質問2の回答に応じて差し替え可能） ====== */
+  var PRODUCT = {
+    name: "AIフリーランス スタートキット（サンプル商品）",
+    url: ""   // 誘導したいURLがあればここに入れる（空ならページ内で完結）
+  };
+
+  /* ====== 設問データ ======
+     軸: practice=実務での実践量 / speed=時短 / proposal=提案・営業 / system=仕組み化 */
+  var QUESTIONS = [
+    { t:"いま、仕事でAIを使う頻度はどのくらいですか？", o:[
+      { l:"ほとんど使っていない（触ったことがある程度）", s:{practice:0,speed:0,proposal:0,system:0} },
+      { l:"週に1〜2回、思い出したときに使う", s:{practice:2,speed:1,proposal:1,system:0} },
+      { l:"ほぼ毎日、なにかしら使っている", s:{practice:3,speed:2,proposal:2,system:1} },
+      { l:"毎日使い、使う場面も決まっている", s:{practice:3,speed:3,proposal:2,system:3} }
+    ]},
+    { t:"クラウドワークスの提案文（応募メッセージ）はどう書いていますか？", o:[
+      { l:"毎回ゼロから、手書きで考えている", s:{practice:1,speed:0,proposal:1,system:0} },
+      { l:"AIに下書きを作ってもらい、自分で直す", s:{practice:3,speed:2,proposal:3,system:1} },
+      { l:"自分の型（テンプレ）があり、案件ごとに手で調整する", s:{practice:1,speed:2,proposal:3,system:2} },
+      { l:"型をAIに読ませて、案件ごとに自動で作り分けている", s:{practice:3,speed:3,proposal:3,system:3} }
+    ]},
+    { t:"はじめての分野の案件に応募するとき、最初にすることは？", o:[
+      { l:"難しそうなので、その案件は見送ることが多い", s:{practice:0,speed:0,proposal:0,system:0} },
+      { l:"検索して自分で調べる", s:{practice:1,speed:1,proposal:1,system:1} },
+      { l:"AIに業界用語や相場をまとめてもらう", s:{practice:3,speed:3,proposal:2,system:1} },
+      { l:"AIに調べさせ、そのまま提案の切り口まで作らせる", s:{practice:3,speed:2,proposal:3,system:2} }
+    ]},
+    { t:"作業時間を短くするために、いちばん力を入れていることは？", o:[
+      { l:"特にない。とにかく手を動かしている", s:{practice:0,speed:0,proposal:0,system:0} },
+      { l:"作業に集中できる時間帯を確保している", s:{practice:1,speed:2,proposal:0,system:1} },
+      { l:"AIに下書き・要約・整形をやらせている", s:{practice:3,speed:3,proposal:1,system:1} },
+      { l:"よく使う指示文を保存して、毎回使い回している", s:{practice:2,speed:3,proposal:1,system:3} }
+    ]},
+    { t:"AIが出した文章に納得できないとき、どうしますか？", o:[
+      { l:"使えないと判断して、自分で書き直す", s:{practice:1,speed:1,proposal:1,system:0} },
+      { l:"何度か言い方を変えて頼み直す", s:{practice:3,speed:2,proposal:2,system:1} },
+      { l:"読み手・目的・文字数など条件を足して指示し直す", s:{practice:3,speed:2,proposal:3,system:2} },
+      { l:"うまくいった指示を記録して、次から再利用する", s:{practice:2,speed:2,proposal:2,system:3} }
+    ]},
+    { t:"クライアントとのやりとり（ヒアリングや進捗連絡）でAIをどう使っていますか？", o:[
+      { l:"使っていない。すべて自分の言葉で書く", s:{practice:0,speed:0,proposal:1,system:0} },
+      { l:"文面が丁寧か、AIにチェックしてもらう", s:{practice:2,speed:2,proposal:2,system:1} },
+      { l:"ヒアリングで聞くべき項目をAIに洗い出させる", s:{practice:3,speed:2,proposal:3,system:2} },
+      { l:"報告フォーマットを決めて、毎回AIに流し込ませている", s:{practice:2,speed:3,proposal:2,system:3} }
+    ]},
+    { t:"納品前のチェックはどうしていますか？", o:[
+      { l:"読み返して、気になったところを直す", s:{practice:1,speed:0,proposal:1,system:0} },
+      { l:"AIに誤字や読みにくい箇所を指摘してもらう", s:{practice:3,speed:3,proposal:1,system:1} },
+      { l:"依頼内容とズレていないかAIに突き合わせさせる", s:{practice:3,speed:2,proposal:2,system:2} },
+      { l:"チェック項目リストを作り、毎回同じ手順で確認している", s:{practice:2,speed:2,proposal:1,system:3} }
+    ]},
+    { t:"自分の単価や提供メニューについて、いまの状態は？", o:[
+      { l:"募集案件の提示額に合わせている", s:{practice:0,speed:0,proposal:0,system:0} },
+      { l:"少しずつ上げたいが、伝え方が分からない", s:{practice:1,speed:1,proposal:1,system:0} },
+      { l:"できることを言語化して、提案で価値を伝えている", s:{practice:2,speed:1,proposal:3,system:2} },
+      { l:"メニュー化して、同じ流れで受注できている", s:{practice:2,speed:2,proposal:3,system:3} }
+    ]},
+    { t:"AIを使った作業の「手順」は残していますか？", o:[
+      { l:"残していない。そのつど考えている", s:{practice:1,speed:0,proposal:0,system:0} },
+      { l:"チャット履歴をさかのぼって探す", s:{practice:2,speed:1,proposal:1,system:1} },
+      { l:"よく使う指示文をメモに保存している", s:{practice:2,speed:2,proposal:1,system:3} },
+      { l:"案件の種類ごとに手順書としてまとめている", s:{practice:2,speed:3,proposal:2,system:3} }
+    ]},
+    { t:"これから半年で、いちばん実現したいことは？", o:[
+      { l:"まずは1件、自信をもって受注したい", s:{practice:3,speed:1,proposal:1,system:0} },
+      { l:"同じ作業時間で、こなせる件数を増やしたい", s:{practice:1,speed:3,proposal:1,system:2} },
+      { l:"単価の高い案件を、提案で勝ち取りたい", s:{practice:1,speed:1,proposal:3,system:1} },
+      { l:"自分がいなくても回る仕事の型をつくりたい", s:{practice:1,speed:2,proposal:1,system:3} }
+    ]}
+  ];
+
+  var AXES = [
+    { key:"practice", label:"実践量（AIに触れている量）" },
+    { key:"speed",    label:"時短力（作業を速くする工夫）" },
+    { key:"proposal", label:"提案力（価値の伝え方）" },
+    { key:"system",   label:"仕組み化（型にして繰り返す力）" }
+  ];
+
+  var TYPES = {
+    practice:{
+      name:"はじめの一歩型",
+      catch:"伸びしろがいちばん大きい位置にいます。使う場面を1つ決めるだけで景色が変わります。",
+      features:[
+        "AIへの興味はあるが、仕事のどこに置くかがまだ定まっていない",
+        "自分の手で書ききる力があり、品質へのこだわりが強い",
+        "最初の一手で効果が出やすく、成長を実感しやすい段階にいる"
+      ],
+      uses:[
+        "案件のリサーチ：業界用語や相場をAIに要約させてから提案を書く",
+        "提案文の下書き：自分の実績を渡して、構成だけAIに作らせる",
+        "作業の言語化：やったことを箇条書きで投げ、報告文に整えてもらう"
+      ],
+      step:"今日、応募したい案件を1件選び、募集文をそのままAIに貼って「この依頼主が不安に思っていることを3つ挙げて」と聞いてみてください。その3つに答える形で提案文を書くだけで、通過率は変わります。",
+      cta:"まずは「AIを置く場所」を決めるところから。最初の1件を受注するまでの手順を、順番どおりになぞれる形でまとめています。"
+    },
+    speed:{
+      name:"時短マスター型",
+      catch:"作業を速くする勘所をつかんでいます。次は空いた時間を「単価」に変える番です。",
+      features:[
+        "下書き・要約・整形といった手数のかかる作業をAIに任せられている",
+        "同じ時間でこなせる件数が増え、納期に余裕が生まれつつある",
+        "速さが価値になる一方、単価が作業量に連動しやすい状態でもある"
+      ],
+      uses:[
+        "定型作業のテンプレ化：毎回使う指示文を保存して呼び出す",
+        "チェックの自動化：納品前に依頼文と成果物を突き合わせさせる",
+        "空いた時間の再投資：短縮できた分を提案文の質に回す"
+      ],
+      step:"直近1週間でAIに投げた指示のうち、うまくいったものを3つコピーしてメモに保存してください。名前を付けて置いておくだけで、次から考える時間がゼロになります。",
+      cta:"速さはもう武器になっています。あとは「速い人」から「頼みたい人」へ。提案と価格の伝え方をまとめて用意しました。"
+    },
+    proposal:{
+      name:"提案クリエイター型",
+      catch:"AIを、作業ではなく「伝え方」に使えています。単価を上げやすいタイプです。",
+      features:[
+        "依頼主の目的や不安を読み取り、それに答える形で提案できる",
+        "AIを壁打ち相手として使い、ひとつの案件を複数の角度から考えられる",
+        "文章で価値を伝えられるため、価格競争から抜け出しやすい"
+      ],
+      uses:[
+        "提案の壁打ち：同じ案件に3通りの切り口を出させ、いちばん刺さる形を選ぶ",
+        "ヒアリング設計：初回打ち合わせで聞くべき項目を洗い出させる",
+        "実績の言語化：過去案件を成果ベースの文章に書き直させる"
+      ],
+      step:"直近で受注できた案件を1つ選び、「なぜ自分が選ばれたと思うか」をAIと一緒に3つ言語化してください。その3つを提案文の冒頭に置くと、次から同じ理由で選ばれます。",
+      cta:"伝える力はすでにあります。次は再現性。勝ちパターンを型にして、毎回同じ強さで提案できる状態をつくります。"
+    },
+    system:{
+      name:"仕組み化ディレクター型",
+      catch:"個人の作業を「回る仕組み」に変えられる人。事業として伸ばせる段階です。",
+      features:[
+        "案件ごとの手順を記録し、次に再利用する習慣がある",
+        "受注から納品までの流れが決まっていて、品質が安定している",
+        "自分の作業時間と売上を切り離して考えられる"
+      ],
+      uses:[
+        "手順書づくり：案件タイプごとの標準フローをAIと整備する",
+        "品質チェック：納品前チェックリストを毎回AIに走らせる",
+        "メニュー設計：提供内容をパッケージにして提示する"
+      ],
+      step:"いちばん受注が多い案件タイプを1つ選び、受注から納品までの工程をAIに書き出させて手順書にしてください。次の案件でその手順書どおりに進め、詰まった箇所だけ直せば、あなたの型が完成します。",
+      cta:"仕組みがある人ほど、外からの視点が効きます。型の抜けを埋めて、受注の入口を広げるところまで一緒に設計します。"
+    }
+  };
+
+  /* ====== 状態 ====== */
+  var answers = new Array(QUESTIONS.length).fill(null);
+  var idx = 0;
+  var locked = false;      // 連打で設問を飛ばさないためのロック
+  var advanceTimer = null;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var scrollOpt = { behavior: reduceMotion ? "auto" : "smooth", block:"start" };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var qTitle=$("qTitle"), qList=$("qList"), qBox=$("qBox"),
+      bar=$("progressBar"), qNow=$("qNow"), qPercent=$("qPercent"),
+      backBtn=$("backBtn"), quizSection=$("quizSection"), resultSection=$("resultSection");
+
+  function updateProgress(){
+    // 表示中の設問に回答済みならその分も進捗に含める（表示件数と割合の基準をそろえる）
+    var pct = Math.round((idx + (answers[idx] !== null ? 1 : 0)) / QUESTIONS.length * 100);
+    bar.style.width = pct + "%";
+    qNow.textContent = Math.min(idx + 1, QUESTIONS.length);
+    qPercent.textContent = pct + "%";
+  }
+
+  function render(dir, moveFocus){
+    var q = QUESTIONS[idx];
+    qTitle.textContent = "Q" + (idx + 1) + ". " + q.t;
+    qList.textContent = "";
+    q.o.forEach(function(opt, i){
+      var li = document.createElement("li");
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt" + (answers[idx] === i ? " is-picked" : "");
+      btn.setAttribute("aria-pressed", answers[idx] === i ? "true" : "false");
+      var mark = document.createElement("span");
+      mark.className = "opt__mark";
+      mark.textContent = String.fromCharCode(65 + i);
+      var txt = document.createElement("span");
+      txt.textContent = opt.l;
+      btn.appendChild(mark);
+      btn.appendChild(txt);
+      btn.addEventListener("click", function(){ choose(i); });
+      li.appendChild(btn);
+      qList.appendChild(li);
+    });
+    qBox.classList.remove("slide-in-next","slide-in-prev");
+    void qBox.offsetWidth;
+    qBox.classList.add(dir === "prev" ? "slide-in-prev" : "slide-in-next");
+    backBtn.disabled = (idx === 0);
+    updateProgress();
+    locked = false;
+    // 選択後もキーボード操作を続けられるよう、設問見出しへフォーカスを移す
+    if (moveFocus){
+      qTitle.focus({ preventScroll:true });
+    }
+  }
+
+  function choose(i){
+    if (locked) return;
+    locked = true;
+    answers[idx] = i;
+    updateProgress();
+    var picked = qList.querySelectorAll(".opt");
+    for (var n = 0; n < picked.length; n++){
+      var on = (n === i);
+      picked[n].classList.toggle("is-picked", on);
+      picked[n].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    advanceTimer = window.setTimeout(function(){
+      advanceTimer = null;
+      if (idx < QUESTIONS.length - 1){
+        idx++;
+        render("next", true);
+      } else {
+        showResult();
+      }
+    }, 260);
+  }
+
+  backBtn.addEventListener("click", function(){
+    if (advanceTimer){ window.clearTimeout(advanceTimer); advanceTimer = null; }
+    locked = false;
+    if (idx > 0){ idx--; render("prev", true); }
+  });
+
+  /* ====== 判定 ====== */
+  function calc(){
+    var order = ["practice","speed","proposal","system"];
+    var total = { practice:0, speed:0, proposal:0, system:0 };
+    var max   = { practice:0, speed:0, proposal:0, system:0 };
+    var mid   = { practice:0, speed:0, proposal:0, system:0 }; // 軸ごとの平均的な回答での得点
+    QUESTIONS.forEach(function(q, i){
+      var a = answers[i];
+      order.forEach(function(k){
+        var best = 0, sum = 0;
+        q.o.forEach(function(o){ sum += o.s[k]; if (o.s[k] > best) best = o.s[k]; });
+        max[k] += best;
+        mid[k] += sum / q.o.length;
+        if (a !== null) total[k] += q.o[a].s[k];
+      });
+    });
+    // 表示用は達成率（0-100）。判定は軸ごとの平均点を基準にした相対スコアで行い、
+    // 出やすい軸・出にくい軸の差をならす。
+    var pct = {}, rel = {};
+    order.forEach(function(k){
+      pct[k] = max[k] ? Math.round(total[k] / max[k] * 100) : 0;
+      rel[k] = (max[k] - mid[k]) ? (total[k] - mid[k]) / (max[k] - mid[k]) : 0;
+    });
+    var top = order[0];
+    order.forEach(function(k){ if (rel[k] > rel[top]) top = k; });
+    // どの軸もまだ育っていない場合は、まず土台づくりの「はじめの一歩型」とする
+    var highest = 0;
+    order.forEach(function(k){ if (pct[k] > highest) highest = pct[k]; });
+    if (highest <= 40) top = "practice";
+    return { top:top, pct:pct };
+  }
+
+  function showResult(){
+    var r = calc();
+    var t = TYPES[r.top];
+
+    $("typeName").textContent = t.name;
+    $("typeCatch").textContent = t.catch;
+    fillList($("typeFeatures"), t.features);
+    fillList($("typeUses"), t.uses);
+    $("typeStep").textContent = t.step;
+
+    $("ctaTitle").textContent = PRODUCT.name;
+    $("ctaLead").textContent = t.cta;
+    var ctaBtn = $("ctaBtn");
+    var safeUrl = toSafeUrl(PRODUCT.url);
+    if (safeUrl){
+      ctaBtn.setAttribute("href", safeUrl);
+      ctaBtn.setAttribute("target", "_blank");
+      ctaBtn.setAttribute("rel", "noopener noreferrer");
+    } else {
+      // URL未設定のときは先頭へ飛ばさず、差し替え案内だけを出す
+      ctaBtn.removeAttribute("target");
+      ctaBtn.removeAttribute("rel");
+      ctaBtn.setAttribute("href", "#resultSection");
+      ctaBtn.dataset.sample = "true";
+    }
+
+    var list = $("scoreList");
+    list.textContent = "";
+    var bars = [];
+    AXES.forEach(function(ax){
+      var row = document.createElement("div");
+      var head = document.createElement("div");
+      head.className = "score__head";
+      var l = document.createElement("span"); l.textContent = ax.label;
+      var v = document.createElement("span"); v.textContent = r.pct[ax.key] + "%";
+      head.appendChild(l); head.appendChild(v);
+      var track = document.createElement("div"); track.className = "score__track";
+      var b = document.createElement("div"); b.className = "score__bar";
+      track.appendChild(b);
+      row.appendChild(head); row.appendChild(track);
+      list.appendChild(row);
+      bars.push({ el:b, v:r.pct[ax.key] });
+    });
+
+    quizSection.hidden = true;
+    resultSection.hidden = false;
+    resultSection.scrollIntoView(scrollOpt);
+
+    window.setTimeout(function(){
+      bars.forEach(function(b, i){
+        window.setTimeout(function(){ b.el.style.width = b.v + "%"; }, i * 120);
+      });
+    }, 260);
+
+    confetti();
+  }
+
+  // 設定したURLは http / https / mailto のみ通す（javascript: などの混入を防ぐ）
+  function toSafeUrl(raw){
+    if (!raw) return "";
+    try {
+      var u = new URL(raw, window.location.href);
+      if (u.protocol === "http:" || u.protocol === "https:" || u.protocol === "mailto:") return u.href;
+    } catch (e) {}
+    return "";
+  }
+
+  function fillList(ul, items){
+    ul.textContent = "";
+    items.forEach(function(s){
+      var li = document.createElement("li");
+      li.textContent = s;
+      ul.appendChild(li);
+    });
+  }
+
+  /* ====== もう一度 / スタート ====== */
+  $("retryBtn").addEventListener("click", function(){
+    answers = new Array(QUESTIONS.length).fill(null);
+    idx = 0;
+    resultSection.hidden = true;
+    quizSection.hidden = false;
+    render("next");
+    quizSection.scrollIntoView(scrollOpt);
+  });
+
+  $("ctaBtn").addEventListener("click", function(e){
+    if (this.dataset.sample === "true") e.preventDefault();
+  });
+
+  $("startBtn").addEventListener("click", function(){
+    quizSection.scrollIntoView(scrollOpt);
+  });
+
+  /* ====== 紙吹雪（外部ライブラリ不使用） ====== */
+  function confetti(){
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var cv = $("confetti");
+    var ctx = cv.getContext("2d");
+    var dpr = window.devicePixelRatio || 1;
+    var W = cv.width = window.innerWidth * dpr;
+    var H = cv.height = window.innerHeight * dpr;
+    var colors = ["#4f46e5","#7c3aed","#f97362","#fbbf24","#34d399"];
+    var pieces = [];
+    for (var i = 0; i < 130; i++){
+      pieces.push({
+        x: Math.random() * W,
+        y: -Math.random() * H * .5,
+        w: (6 + Math.random() * 8) * dpr,
+        h: (9 + Math.random() * 12) * dpr,
+        vy: (2.2 + Math.random() * 3.4) * dpr,
+        vx: (Math.random() - .5) * 2.4 * dpr,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - .5) * .22,
+        c: colors[i % colors.length]
+      });
+    }
+    var onResize = function(){
+      W = cv.width = window.innerWidth * dpr;
+      H = cv.height = window.innerHeight * dpr;
+    };
+    window.addEventListener("resize", onResize);
+    var start = performance.now();
+    var DUR = 2600;
+    function frame(now){
+      var t = now - start;
+      ctx.clearRect(0, 0, W, H);
+      var alpha = t > DUR - 700 ? Math.max(0, (DUR - t) / 700) : 1;
+      ctx.globalAlpha = alpha;
+      pieces.forEach(function(p){
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (t < DUR){
+        window.requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0, 0, W, H);
+        window.removeEventListener("resize", onResize);
+      }
+    }
+    window.requestAnimationFrame(frame);
+  }
+
+  /* ====== 入場アニメーション ====== */
+  var reveals = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add("is-in"); io.unobserve(e.target); }
+      });
+    }, { threshold:.12 });
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add("is-in"); });
+  }
+  window.addEventListener("load", function(){
+    var heroReveals = document.querySelectorAll(".hero .reveal");
+    heroReveals.forEach(function(el, i){
+      window.setTimeout(function(){ el.classList.add("is-in"); }, 80 + i * 90);
+    });
+  });
+
+  render("next");
+})();
+</script>
+</body>
+</html>
