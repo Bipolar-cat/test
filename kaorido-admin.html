@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>果織堂 管理画面｜受付から仕込みまでの引き継ぎ台帳</title>
+<link rel="icon" href="data:,">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<script>
+try{
+  var t = JSON.parse(localStorage.getItem("kaorido.theme") || "null");
+  if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+}catch(e){}
+</script>
+<style>
+/* ==========================================================
+   DESIGN-kaorido.md 準拠。表と同じ色・同じ書体で、密度だけ上げる
+   ========================================================== */
+:root{
+  --paper:#fff; --tint:#faf8f5; --ink:#1b1b19; --sub:#6f6b63;
+  --line:#e8e3da; --kaki:#d1603d; --take:#5f8a6a; --amber:#c9973a; --red:#a8443c;
+  --shadow:0 1px 2px rgba(27,27,25,.04),0 16px 36px -18px rgba(27,27,25,.16);
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  --gothic:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Segoe UI",Roboto,sans-serif;
+}
+html[data-theme="dark"]{
+  --paper:#15140f; --tint:#1d1c16; --ink:#f2efe8; --sub:#a8a298;
+  --line:rgba(255,255,255,.12); --kaki:#e87b56; --take:#84b28e; --amber:#dcb05c; --red:#d1685f;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 36px -18px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+/* overflow-x は html にだけ。body に付けると sticky ヘッダーが効かなくなる */
+html{overflow-x:hidden}
+html,body{margin:0;padding:0;max-width:100%}
+body{background:var(--tint);color:var(--ink);font-family:var(--gothic);font-size:19px;line-height:1.85;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--mincho);font-weight:600;margin:0;line-height:1.45}
+p{margin:0}
+button{font:inherit;color:inherit}
+.wrap{width:min(1240px,100% - 48px);margin-inline:auto}
+@media(max-width:640px){.wrap{width:calc(100% - 24px)}}
+
+/* ---- ヘッダー・タブ ---- */
+header{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.hbar{display:flex;align-items:center;gap:18px;padding:16px 0;flex-wrap:wrap}
+.brand{font-family:var(--mincho);font-size:22px;letter-spacing:.1em;text-decoration:none;white-space:nowrap}
+.brand span{display:block;font-family:var(--gothic);font-size:11px;letter-spacing:.24em;color:var(--sub)}
+.hbar .right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:15px;text-decoration:none;background:var(--paper);cursor:pointer;transition:.24s var(--ease);min-height:42px;display:inline-flex;align-items:center;gap:7px}
+.pill:hover{border-color:var(--kaki);color:var(--kaki);transform:translateY(-2px)}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-top:1px solid var(--line);scrollbar-width:thin}
+.tab{
+  background:none;border:none;border-bottom:3px solid transparent;padding:16px 20px;cursor:pointer;
+  font-size:17px;white-space:nowrap;color:var(--sub);transition:.24s var(--ease);min-height:52px;
+}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--kaki);border-bottom-color:var(--kaki);font-weight:700}
+.tab .dot{display:inline-block;min-width:22px;height:22px;border-radius:999px;background:var(--kaki);color:#fff;font-size:12px;font-weight:700;line-height:22px;text-align:center;margin-left:7px;padding:0 6px}
+
+/* ---- ページ ---- */
+.page{display:none;padding:32px 0 80px;animation:fade .4s var(--ease) both}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.ptitle{font-size:clamp(24px,3vw,32px);margin-bottom:6px}
+.psub{color:var(--sub);font-size:16px;margin-bottom:24px}
+
+/* AIヒント */
+.hint{
+  border:1px solid var(--line);border-left:4px solid var(--kaki);border-radius:12px;
+  background:var(--paper);padding:20px 24px;margin-bottom:28px;
+}
+.hint b{display:block;font-size:15px;letter-spacing:.1em;color:var(--kaki);margin-bottom:8px}
+.hint ul{margin:0;padding-left:1.25em;color:var(--sub);font-size:16px;line-height:1.9}
+
+/* カード・KPI */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.kpis{grid-template-columns:1fr}}
+.kpi .k{font-size:14px;letter-spacing:.12em;color:var(--sub)}
+.kpi .v{font-family:var(--mincho);font-size:40px;line-height:1.2;margin-top:4px}
+.kpi .v small{font-size:16px;font-family:var(--gothic);color:var(--sub);margin-left:4px}
+.kpi .d{font-size:14px;color:var(--sub);margin-top:2px}
+.kpi.warn .v{color:var(--amber)}
+.kpi.good .v{color:var(--take)}
+.two{grid-template-columns:1.35fr .65fr}
+@media(max-width:960px){.two{grid-template-columns:1fr}}
+.sect-h{font-size:20px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sect-h .tag{font-size:13px;color:var(--sub);font-family:var(--gothic)}
+
+/* ---- 表 ---- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+table{width:100%;border-collapse:collapse;font-size:16px;min-width:720px}
+th{text-align:left;font-weight:400;font-size:13px;letter-spacing:.1em;color:var(--sub);padding:13px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--tint)}
+td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .2s var(--ease)}
+tbody tr:hover{background:var(--tint)}
+td .who{font-size:15px;color:var(--sub);display:block}
+td .snip{font-size:15px;color:var(--sub);display:block;max-width:18ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nowrap{white-space:nowrap}
+/* 操作列は折り返さず、必要なぶんだけ幅を取る */
+th.actcell,td.actcell{white-space:nowrap;width:1%}
+td.actcell .act{flex-wrap:nowrap;gap:6px}
+td.actcell .btn{padding:8px 12px;font-size:14px}
+
+/* バッジ */
+.badge{display:inline-block;border-radius:999px;padding:4px 13px;font-size:14px;white-space:nowrap;border:1px solid}
+.b-auto{color:var(--take);border-color:var(--take);background:color-mix(in srgb,var(--take) 10%,transparent)}
+.b-review{color:var(--amber);border-color:var(--amber);background:color-mix(in srgb,var(--amber) 10%,transparent)}
+.b-reject{color:var(--red);border-color:var(--red);background:color-mix(in srgb,var(--red) 10%,transparent)}
+.b-plain{color:var(--sub);border-color:var(--line)}
+@supports not (background:color-mix(in srgb,red 10%,transparent)){.b-auto,.b-review,.b-reject{background:transparent}}
+
+/* スコア */
+.score{display:flex;align-items:center;gap:10px}
+.score .n{font-family:var(--mincho);font-size:24px;min-width:2.4em}
+.score .bar{width:74px;height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.score .bar i{display:block;height:100%;border-radius:999px;transition:width .7s var(--ease)}
+
+/* 段階（承認ゲート）— 1行におさめる */
+.steps{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:14px;color:var(--sub)}
+.steps i{width:9px;height:9px;border-radius:50%;background:var(--line);display:inline-block;flex:0 0 9px}
+.steps i.done{background:var(--take)}
+.steps i.now{background:var(--kaki);box-shadow:0 0 0 3px rgba(209,96,61,.22)}
+.steps b{color:var(--ink);font-weight:700;margin-left:5px}
+.steps .gate{color:var(--kaki);font-size:13px}
+
+/* 操作ボタン */
+.act{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px 16px;font-size:15px;cursor:pointer;min-height:42px;transition:.22s var(--ease);white-space:nowrap}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--kaki)}
+.btn.primary{background:var(--kaki);border-color:var(--kaki);color:#fff}
+.btn.primary:hover{opacity:.9}
+.btn.ok{border-color:var(--take);color:var(--take)}
+.btn.bad{border-color:var(--red);color:var(--red)}
+.btn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}
+
+/* フィルタ */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.filters input,.filters select{font:inherit;font-size:16px;padding:11px 15px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);min-height:44px}
+.filters input:focus,.filters select:focus{outline:none;border-color:var(--kaki)}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 16px;font-size:15px;cursor:pointer;min-height:40px;transition:.22s var(--ease)}
+.chip:hover{border-color:var(--kaki)}
+.chip.on{background:var(--kaki);border-color:var(--kaki);color:#fff}
+
+/* 棒グラフ */
+.chart{display:flex;align-items:flex-end;gap:10px;height:150px;margin-top:10px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px}
+.chart .bar{width:100%;border-radius:7px 7px 0 0;background:var(--kaki);opacity:.85;transition:height .8s var(--ease);min-height:3px}
+.chart .cap{font-size:13px;color:var(--sub)}
+
+/* 在庫 */
+.stock{height:9px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:7px}
+.stock i{display:block;height:100%;border-radius:999px;transition:width .7s var(--ease)}
+.alert{border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:12px;padding:16px 20px;background:var(--paper);font-size:16px;margin-bottom:16px}
+.alert b{color:var(--amber)}
+
+/* モーダル（confirmは使わない） */
+.mask{position:fixed;inset:0;background:rgba(27,27,25,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:none;place-items:center;z-index:80;padding:20px}
+.mask.on{display:grid;animation:fade .25s var(--ease) both}
+.modal{background:var(--paper);border-radius:18px;max-width:600px;width:100%;padding:34px;box-shadow:0 40px 90px -30px rgba(0,0,0,.5);animation:pop .3s var(--ease) both;max-height:88vh;overflow:auto}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.modal h3{font-size:24px;margin-bottom:12px}
+.modal .m-body{color:var(--sub);font-size:17px;margin-bottom:22px}
+.modal .m-body .quote{border-left:3px solid var(--line);padding:10px 0 10px 16px;margin-top:14px;color:var(--ink);font-size:16px;white-space:pre-wrap;line-height:1.8}
+.modal textarea{width:100%;font:inherit;font-size:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tint);color:var(--ink);min-height:170px;resize:vertical;line-height:1.8}
+.modal textarea:focus{outline:none;border-color:var(--kaki)}
+.m-act{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:22px}
+.m-act .btn{padding:13px 26px;font-size:16px;min-height:48px}
+
+/* トースト */
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);background:var(--ink);color:var(--paper);padding:15px 28px;border-radius:999px;font-size:16px;opacity:0;pointer-events:none;transition:.35s var(--ease);z-index:90;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+.empty{padding:60px 20px;text-align:center;color:var(--sub)}
+.keys{font-size:16px}
+.keys code{background:var(--tint);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:15px}
+.detail{background:var(--tint);border-top:1px solid var(--line)}
+.detail .in{padding:22px 26px;display:grid;gap:16px;grid-template-columns:1fr 1fr}
+@media(max-width:820px){.detail .in{grid-template-columns:1fr}}
+.detail h4{font-size:15px;letter-spacing:.1em;color:var(--sub);margin:0 0 8px;font-family:var(--gothic);font-weight:400}
+.breakdown{display:grid;gap:9px;font-size:15px}
+.breakdown .r{display:flex;align-items:center;gap:10px}
+.breakdown .r span:first-child{min-width:9.5em;color:var(--sub)}
+.breakdown .t{flex:1;height:7px;background:var(--line);border-radius:999px;overflow:hidden}
+.breakdown .t i{display:block;height:100%;background:var(--kaki);border-radius:999px}
+.body-text{white-space:pre-wrap;font-size:16px;line-height:1.85}
+
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="hbar">
+      <a class="brand" href="#">果織堂 管理画面<span>KAORIDO BACK OFFICE</span></a>
+      <div class="right">
+        <a class="pill" href="kaorido.html">← ホームページを見る</a>
+        <a class="pill" href="kaorido-system-map.html">システム全体図</a>
+        <button class="pill" id="themeBtn">◐ 表示切替</button>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ 1. ダッシュボード ============ -->
+  <section class="page" id="p-dash">
+    <h1 class="ptitle">ダッシュボード</h1>
+    <p class="psub">今日さわるべきものだけを上に出しています。</p>
+    <div class="hint">
+      <b>この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「未対応の問い合わせを、急ぎ順に3件だけ選んで理由を1行で」</li>
+        <li>「今日の予約12件を見て、仕込みが足りなくなりそうな品を教えて」</li>
+        <li>「先週と今週の問い合わせの傾向の違いを、3行でまとめて」</li>
+      </ul>
+    </div>
+    <div class="grid kpis" id="kpis"></div>
+    <div class="grid two" style="margin-top:16px">
+      <div class="card">
+        <h2 class="sect-h">いま人の手が要るもの <span class="tag">承認ゲートで止まっている案件</span></h2>
+        <div id="todo"></div>
+      </div>
+      <div class="card">
+        <h2 class="sect-h">直近7日の受付件数</h2>
+        <div class="chart" id="chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. 問い合わせ ============ -->
+  <section class="page" id="p-inq">
+    <h1 class="ptitle">問い合わせ</h1>
+    <p class="psub">届いた順に100点満点で採点し、3段階に振り分けています。送信は必ず人の承認を通します。</p>
+    <div class="hint">
+      <b>この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「却下候補に入った5件を読んで、本当に捨てて良いか1件ずつ判定して」</li>
+        <li>「この問い合わせへの返信を、断りつつ角が立たない言い方で書き直して」</li>
+        <li>「今週の問い合わせでいちばん多かった質問を、よくある質問に足す文にして」</li>
+      </ul>
+    </div>
+    <div class="filters">
+      <input id="inqSearch" type="search" placeholder="名前・本文で絞り込む" style="min-width:230px">
+      <button class="chip on" data-band="all">すべて</button>
+      <button class="chip" data-band="auto">自動でOK</button>
+      <button class="chip" data-band="review">人が確認</button>
+      <button class="chip" data-band="reject">却下候補</button>
+      <button class="chip" data-band="waiting">承認を待っているものだけ</button>
+      <button class="btn" id="draftAll" style="margin-left:auto">自動でOKの分の下書きをまとめて作る</button>
+    </div>
+    <div class="tablewrap"><table id="inqTable"></table></div>
+  </section>
+
+  <!-- ============ 3. 予約・受注 ============ -->
+  <section class="page" id="p-res">
+    <h1 class="ptitle">予約・受注</h1>
+    <p class="psub">仮予約は、席と仕込みの両方が足りることを人が確かめてから確定します。</p>
+    <div class="hint">
+      <b>この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「明日の予約を時間順に並べて、席が重なっている組み合わせを教えて」</li>
+        <li>「今週末の予約人数から、必要なパフェの食数を計算して」</li>
+        <li>「キャンセルが続いているお客様の傾向を教えて」</li>
+      </ul>
+    </div>
+    <div class="filters">
+      <button class="chip on" data-res="all">すべて</button>
+      <button class="chip" data-res="仮予約">仮予約</button>
+      <button class="chip" data-res="確定">確定</button>
+      <button class="chip" data-res="来店済">来店済</button>
+      <button class="chip" data-res="キャンセル">キャンセル</button>
+    </div>
+    <div class="tablewrap"><table id="resTable"></table></div>
+  </section>
+
+  <!-- ============ 4. 仕入れ・仕込み ============ -->
+  <section class="page" id="p-inv">
+    <h1 class="ptitle">仕入れ・仕込み</h1>
+    <p class="psub">確定した予約から、明日の朝5時に仕込む数を逆算しています。</p>
+    <div class="hint">
+      <b>この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「残り日数が短い果物から使う順番を組み直して」</li>
+        <li>「明日の予約数に対して、足りない材料と発注量を出して」</li>
+        <li>「先月の廃棄が多かった果物を挙げて、仕入れ量の見直し案を出して」</li>
+      </ul>
+    </div>
+    <div id="invAlerts"></div>
+    <div class="grid two">
+      <div class="card">
+        <h2 class="sect-h">果物の在庫 <span class="tag">その日ひと種類しか使わないので、残りは翌日に回します</span></h2>
+        <div class="tablewrap" style="border:none"><table id="invTable"></table></div>
+      </div>
+      <div class="card">
+        <h2 class="sect-h">明日の仕込み計画</h2>
+        <div id="plan"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. 全体像・設定 ============ -->
+  <section class="page" id="p-set">
+    <h1 class="ptitle">全体像・設定</h1>
+    <p class="psub">このシステムが何をどこに置いているかと、データの出し入れです。</p>
+    <div class="hint">
+      <b>この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「書き出したJSONを読んで、今月の売上見込みを出して」</li>
+        <li>「採点の配点を、取材依頼が拾われやすい配分に直す案を出して」</li>
+        <li>「このシステムに次に足すべき画面を、費用対効果の順に3つ」</li>
+      </ul>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h2 class="sect-h">採点のしくみ</h2>
+        <p style="color:var(--sub);font-size:16px">問い合わせ1件ごとに、次の4つを足して100点満点にしています。</p>
+        <div class="breakdown" style="margin-top:16px">
+          <div class="r"><span>購入意欲</span><span class="t"><i style="width:100%"></i></span><span class="nowrap">40点</span></div>
+          <div class="r"><span>内容の具体性</span><span class="t"><i style="width:75%"></i></span><span class="nowrap">30点</span></div>
+          <div class="r"><span>連絡先の確からしさ</span><span class="t"><i style="width:50%"></i></span><span class="nowrap">20点</span></div>
+          <div class="r"><span>非スパム度</span><span class="t"><i style="width:25%"></i></span><span class="nowrap">10点</span></div>
+        </div>
+        <p style="margin-top:18px;font-size:16px">
+          <span class="badge b-auto">80点以上 自動でOK</span>
+          <span class="badge b-review" style="margin-left:6px">50〜79点 人が確認</span>
+          <span class="badge b-reject" style="margin-left:6px">50点未満 却下候補</span>
+        </p>
+        <p style="color:var(--sub);font-size:15px;margin-top:14px">
+          どの段階でも、送信・確定・却下は人が押すまで進みません。自動で外に出るものはありません。
+        </p>
+        <p style="color:var(--red);font-size:15px;margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+          ※ これは動きを見るためのモックです。ログインの仕組みが入っていないため、この画面を開ける人は誰でも
+          お客様の氏名・メールアドレス・ご相談内容を読めます。実際に運用するときは、必ずサーバー側で
+          ログインを設けてから公開してください。
+        </p>
+      </div>
+      <div class="card">
+        <h2 class="sect-h">保存しているデータ</h2>
+        <div class="keys" id="keyList"></div>
+        <div class="act" style="margin-top:22px">
+          <button class="btn" id="btnExport">データを書き出す</button>
+          <button class="btn" id="btnReseed">サンプルを入れ直す</button>
+          <button class="btn bad" id="btnWipe">全部消す</button>
+        </div>
+        <div style="margin-top:20px">
+          <a class="pill" href="kaorido-system-map.html">システム全体図をひらく →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="mask" id="mask"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ==========================================================
+   保存名はすべて kaorido. で始める
+   ========================================================== */
+var KEY = {
+  inquiries:"kaorido.inquiries", reservations:"kaorido.reservations",
+  inventory:"kaorido.inventory", favorites:"kaorido.favorites",
+  theme:"kaorido.theme", settings:"kaorido.settings", seed:"kaorido.seed"
+};
+var SEED_VERSION = 1;
+
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+// 期待している形（配列か否か）と違うものが入っていたら既定値に戻す
+function load(k, d){
+  try{
+    var v = localStorage.getItem(k);
+    if (!v) return d;
+    var p = JSON.parse(v);
+    if (p == null) return d;
+    if (Array.isArray(d) && !Array.isArray(p)) return d;
+    return p;
+  }catch(e){ return d; }
+}
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ toast("保存できませんでした"); } }
+function num(n){ return Number(n || 0).toLocaleString("ja-JP"); }
+function pad(n){ return ("0" + n).slice(-2); }
+function iso(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+function fmtDate(s){
+  var d = new Date(s); if (isNaN(d)) return String(s || "");
+  return (d.getMonth()+1) + "/" + d.getDate() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+function daysAgo(n){ var d = new Date(); d.setDate(d.getDate() - n); return d; }
+function toast(msg){
+  var t = $("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+}
+
+/* ==========================================================
+   モーダル（ブラウザ標準のconfirmは使わない）
+   ========================================================== */
+var modalOnConfirm = null, lastFocus = null;
+function openModal(o){
+  lastFocus = document.activeElement;
+  modalOnConfirm = o.onConfirm || null;
+  $("modal").innerHTML =
+    '<h3>' + esc(o.title) + '</h3>' +
+    '<div class="m-body">' + (o.bodyHTML || esc(o.body || "")) + '</div>' +
+    (o.editable ? '<textarea id="m-text">' + esc(o.editable) + '</textarea>' : '') +
+    '<div class="m-act">' +
+      '<button class="btn" data-m="cancel">' + esc(o.cancelLabel || "やめる") + '</button>' +
+      '<button class="btn ' + (o.tone === "bad" ? "bad" : "primary") + '" data-m="ok">' + esc(o.okLabel || "実行する") + '</button>' +
+    '</div>';
+  $("mask").classList.add("on");
+  // 文面を直せるモーダルでは本文に、それ以外は実行ボタンにカーソルを置く
+  var first = $("m-text") || $("modal").querySelector('[data-m="ok"]');
+  if (first) first.focus();
+}
+function closeModal(){
+  $("mask").classList.remove("on");
+  modalOnConfirm = null;
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+$("mask").addEventListener("click", function(e){
+  if (e.target === $("mask")) { closeModal(); return; }
+  var b = e.target.closest ? e.target.closest("[data-m]") : null;
+  if (!b) return;
+  if (b.getAttribute("data-m") === "cancel") { closeModal(); return; }
+  var fn = modalOnConfirm;
+  var txt = $("m-text") ? $("m-text").value : null;
+  closeModal();
+  if (fn) fn(txt);
+});
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && $("mask").classList.contains("on")) closeModal();
+});
+
+/* ==========================================================
+   採点（100点満点）と3段階の振り分け
+   ========================================================== */
+var DEFAULT_SETTINGS = { signer:"店主 三条", autoThreshold:80, reviewThreshold:50 };
+var INTENT = { "ご予約":40, "卸・法人のご相談":32, "取材・撮影のご依頼":22, "ご意見・ご感想":12, "その他":16 };
+function own(map, k, fallback){    // 継承したプロパティを拾わないようにする
+  return Object.prototype.hasOwnProperty.call(map, k) ? map[k] : fallback;
+}
+var SPAM_WORDS = ["SEO対策","相互リンク","副業","暗号資産","必ず儲","無料でお試し","バックリンク","集客代行"];
+var HOT_WORDS = ["予約","来店","伺い","購入","注文","取り置き","何時","空いて"];
+
+function scoreInquiry(q){
+  var body = String(q.body || ""), cat = q.category || "その他";
+
+  var intent = Number(own(INTENT, cat, 16)) || 16;
+  HOT_WORDS.forEach(function(w){ if (body.indexOf(w) >= 0) intent += 2; });
+  if (q.wishDate) intent += 4;
+  intent = Math.max(0, Math.min(40, intent));
+
+  var detail = Math.min(22, Math.round(body.length / 6));
+  if (/\d/.test(body)) detail += 4;                       // 日付や人数が入っている
+  if (/[0-9]{1,2}\s*(名|人)/.test(body)) detail += 4;
+  detail = Math.max(0, Math.min(30, detail));
+
+  var contact = 0;
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(q.email || ""))) contact += 14;
+  if (String(q.name || "").trim().length >= 2) contact += 6;
+  contact = Math.min(20, contact);
+
+  var nonspam = 10;
+  SPAM_WORDS.forEach(function(w){ if (body.indexOf(w) >= 0) nonspam -= 5; });
+  var links = (body.match(/https?:\/\//g) || []).length;
+  nonspam -= Math.min(6, links * 3);
+  nonspam = Math.max(0, nonspam);
+
+  var total = Math.max(0, Math.min(100, intent + detail + contact + nonspam));
+  return { intent:intent, detail:detail, contact:contact, nonspam:nonspam, total:total, band:bandOf(total) };
+}
+function bandOf(total){
+  var st = load(KEY.settings, DEFAULT_SETTINGS);
+  var hi = Number(st.autoThreshold) || 80, mid = Number(st.reviewThreshold) || 50;
+  return total >= hi ? "auto" : total >= mid ? "review" : "reject";
+}
+var BAND_LABEL = { auto:"自動でOK", review:"人が確認", reject:"却下候補" };
+var BAND_CLASS = { auto:"b-auto", review:"b-review", reject:"b-reject" };
+var BAND_COLOR = { auto:"var(--take)", review:"var(--amber)", reject:"var(--red)" };
+
+/* 返信の下書き（モックのAI） */
+function makeDraft(q){
+  var head = q.name + " 様\n\nこのたびは果織堂へお問い合わせいただき、ありがとうございます。\n";
+  var tail = "\n\nどうぞよろしくお願いいたします。\n果織堂　" + (load(KEY.settings, {}).signer || "店主 三条");
+  var mid;
+  if (q.category === "ご予約"){
+    mid = "ご希望の" + (q.wishDate ? q.wishDate + " " : "") + "でお席をご用意できます。\n" +
+          "当日の果物は前の晩に決まりますので、決まり次第あらためてご連絡いたします。\n" +
+          "アレルギーや苦手なものがございましたら、お知らせください。";
+  } else if (q.category === "取材・撮影のご依頼"){
+    mid = "取材のご依頼をありがとうございます。\n" +
+          "営業時間外（10時前、または18時以降）でしたらお受けできます。\n" +
+          "他のお客様が写らないこと、仕込み中の厨房には入られないことを条件とさせていただいております。\n" +
+          "ご希望の日時を2〜3案いただけますでしょうか。";
+  } else if (q.category === "卸・法人のご相談"){
+    mid = "お問い合わせをありがとうございます。\n" +
+          "作り置きをしない方針のため、数量と納期によってはお受けできない場合がございます。\n" +
+          "ご希望の数量・納品日・お届け先をお知らせいただけましたら、可否をご返答いたします。";
+  } else {
+    mid = "いただいたご意見は、店の者全員で読ませていただきました。\n" +
+          "いただいた内容をふまえて、明日からの仕込みに生かしてまいります。";
+  }
+  return head + mid + tail;
+}
+
+/* ==========================================================
+   サンプルデータ（開いた瞬間に動きが伝わるように）
+   ========================================================== */
+function seedInquiries(){
+  var d = function(n, h){ var x = daysAgo(n); x.setHours(h, 20, 0, 0); return x.toISOString(); };
+  return [
+    { id:"INQ-0001", receivedAt:d(0,10), source:"サイトフォーム", name:"川瀬 ゆき", email:"kawase.yuki@example.com",
+      category:"ご予約", wishDate:iso(daysAgo(-6)), stage:"新規",
+      body:"来週土曜の14時に2名で伺いたいです。町家パフェは当日でも予約できますか。白桃の日だと嬉しいのですが、難しければお任せします。" },
+    { id:"INQ-0002", receivedAt:d(0,9), source:"Instagram DM", name:"HARU", email:"haru.photo@example.com",
+      category:"取材・撮影のご依頼", wishDate:"", stage:"新規",
+      body:"雑誌の京都特集で、町家の甘味処を4軒紹介する企画です。9月上旬の午前中に1時間ほど撮影させていただけないでしょうか。カメラマンと2名で伺います。" },
+    { id:"INQ-0003", receivedAt:d(1,15), source:"サイトフォーム", name:"田島 誠一", email:"tajima@example.co.jp",
+      category:"卸・法人のご相談", wishDate:"", stage:"新規",
+      body:"社内の贈答用に、進物用六個入を30箱お願いできないかと考えております。納品は10月の第2週を希望です。難しい場合は数量の相談も可能です。" },
+    { id:"INQ-0004", receivedAt:d(1,11), source:"サイトフォーム", name:"の", email:"aaa@aaa",
+      category:"その他", wishDate:"", stage:"新規", body:"SEO対策のご提案です。相互リンクで集客代行いたします。https://example.com https://example.net" },
+    { id:"INQ-0005", receivedAt:d(2,13), source:"電話メモ", name:"森下 千夏", email:"morishita.c@example.com",
+      category:"ご予約", wishDate:iso(daysAgo(-2)), stage:"AI下書き",
+      body:"9月3日の11時から4名でお願いします。うち1名が卵アレルギーです。大丈夫な品があれば教えてください。",
+      draft:"森下 千夏 様\n\nこのたびは果織堂へお問い合わせいただき、ありがとうございます。\nご希望の日時でお席をご用意できます。卵を使わない品もございますので、当日ご案内いたします。\n\nどうぞよろしくお願いいたします。\n果織堂　店主 三条" },
+    { id:"INQ-0006", receivedAt:d(2,17), source:"サイトフォーム", name:"Liu Wei", email:"liuwei@example.com",
+      category:"ご予約", wishDate:iso(daysAgo(-9)), stage:"新規",
+      body:"台湾から旅行で伺います。9月10日の午後、3名で予約したいです。英語のメニューはありますか。" },
+    { id:"INQ-0007", receivedAt:d(3,12), source:"サイトフォーム", name:"匿名", email:"noreply@example.com",
+      category:"ご意見・ご感想", wishDate:"", stage:"送信済",
+      body:"先日いただいた無花果の大福が忘れられません。餡の甘さが果物に負けていなくて驚きました。",
+      draft:"匿名 様\n\nこのたびは果織堂へお問い合わせいただき、ありがとうございます。\nいただいたご意見は、店の者全員で読ませていただきました。\n\nどうぞよろしくお願いいたします。\n果織堂　店主 三条", sentAt:d(3,18) },
+    { id:"INQ-0008", receivedAt:d(4,10), source:"サイトフォーム", name:"a", email:"x@x", category:"その他", wishDate:"", stage:"却下",
+      body:"必ず儲かる副業のご案内。無料でお試しいただけます。" },
+    { id:"INQ-0009", receivedAt:d(5,16), source:"サイトフォーム", name:"井坂 由紀子", email:"isaka@example.jp",
+      category:"ご予約", wishDate:iso(daysAgo(-1)), stage:"送信済",
+      body:"母の誕生日に伺いたいです。9月2日の15時から2名でお願いできますか。個室のような静かな席があれば嬉しいです。",
+      draft:"井坂 由紀子 様\n\nこのたびは果織堂へお問い合わせいただき、ありがとうございます。\nご希望の日時でお席をご用意できます。奥の座敷をご用意いたします。\n\nどうぞよろしくお願いいたします。\n果織堂　店主 三条", sentAt:d(5,19) },
+    { id:"INQ-0010", receivedAt:d(6,14), source:"Instagram DM", name:"nao", email:"nao_sweets@example.com",
+      category:"ご意見・ご感想", wishDate:"", stage:"新規",
+      body:"いつも並んでいて買えません。取り置きはできませんか。" },
+    { id:"INQ-0011", receivedAt:d(6,9), source:"サイトフォーム", name:"中村 建次", email:"nakamura.k@example.com",
+      category:"卸・法人のご相談", wishDate:"", stage:"新規",
+      body:"ホテルのラウンジで扱いたいと考えています。まずは月に一度、20個からでも可能でしょうか。" }
+  ];
+}
+function seedReservations(){
+  return [
+    { id:"RSV-0001", date:iso(daysAgo(-1)), time:"11:00", name:"森下 千夏", people:4, menu:"町家パフェ", status:"仮予約", source:"INQ-0005", note:"卵アレルギーあり" },
+    { id:"RSV-0002", date:iso(daysAgo(-1)), time:"14:00", name:"井坂 由紀子", people:2, menu:"町家パフェ", status:"確定", source:"INQ-0009", note:"奥の座敷" },
+    { id:"RSV-0003", date:iso(daysAgo(-2)), time:"13:00", name:"大石 拓", people:2, menu:"あんみつ", status:"確定", source:"電話", note:"" },
+    { id:"RSV-0004", date:iso(daysAgo(-2)), time:"16:30", name:"Green 一行", people:6, menu:"町家パフェ", status:"仮予約", source:"電話", note:"団体・席の並べ替えが要る" },
+    { id:"RSV-0005", date:iso(daysAgo(-6)), time:"14:00", name:"川瀬 ゆき", people:2, menu:"町家パフェ", status:"仮予約", source:"INQ-0001", note:"白桃の日を希望" },
+    { id:"RSV-0006", date:iso(daysAgo(0)), time:"11:30", name:"藤井 さと", people:3, menu:"大福＋茶", status:"来店済", source:"当日", note:"" },
+    { id:"RSV-0007", date:iso(daysAgo(1)), time:"15:00", name:"山内 まり", people:2, menu:"町家パフェ", status:"来店済", source:"電話", note:"" },
+    { id:"RSV-0008", date:iso(daysAgo(-3)), time:"12:00", name:"高田 亮", people:5, menu:"町家パフェ", status:"キャンセル", source:"電話", note:"前日連絡あり" }
+  ];
+}
+function seedInventory(){
+  return [
+    { fruit:"白桃", in:14, use:11.5, limit:1, from:"岡山・赤磐", price:2400 },
+    { fruit:"無花果", in:9, use:4.2, limit:2, from:"京都・八幡", price:1800 },
+    { fruit:"シャインマスカット", in:6, use:5.4, limit:3, from:"長野・中野", price:3600 },
+    { fruit:"梨（幸水）", in:12, use:2.0, limit:5, from:"鳥取・東郷", price:1200 },
+    { fruit:"和栗", in:8, use:1.0, limit:9, from:"京都・丹波", price:2800 },
+    { fruit:"苺（冷凍）", in:20, use:3.0, limit:60, from:"奈良・広陵", price:900 },
+    { fruit:"すだち", in:3, use:0.4, limit:4, from:"徳島・神山", price:700 }
+  ];
+}
+
+/* データの読み込み。未採点のものはここで採点する（表からは自動で外に出さない） */
+var inquiries, reservations, inventory;
+function refreshData(){
+  inquiries = load(KEY.inquiries, []);
+  reservations = load(KEY.reservations, []);
+  inventory = load(KEY.inventory, []);
+  // 壊れた行を落として、足りない項目を埋める（表示側で例外を出さないため）
+  var before = inquiries.length;
+  inquiries = inquiries.filter(function(q){ return q && typeof q === "object"; });
+  var changed = inquiries.length !== before;
+  inquiries.forEach(function(q){
+    if (typeof q.body !== "string"){ q.body = String(q.body == null ? "" : q.body); changed = true; }
+    if (typeof q.name !== "string"){ q.name = String(q.name == null ? "" : q.name); changed = true; }
+    var s = q.score;
+    if (!s || ["total","intent","detail","contact","nonspam"].some(function(k){ return typeof s[k] !== "number"; })){
+      q.score = scoreInquiry(q); changed = true;
+    }
+    if (!q.stage) { q.stage = "新規"; changed = true; }
+    if (!q.id) { q.id = "INQ-" + Math.random().toString(36).slice(2, 8).toUpperCase(); changed = true; }
+  });
+  reservations = reservations.filter(function(r){ return r && typeof r === "object"; });
+  reservations.forEach(function(r){ r.people = Number(r.people) || 0; r.menu = String(r.menu || ""); });
+  inventory = inventory.filter(function(v){ return v && typeof v === "object"; });
+  inventory.forEach(function(v){ v.in = Number(v.in) || 0; v.use = Number(v.use) || 0; v.limit = Number(v.limit) || 0; });
+  if (changed) save(KEY.inquiries, inquiries);
+}
+function seedIfNeeded(force){
+  if (force){                       // 「サンプルを入れ直す」ボタン：全部置き換える
+    save(KEY.inquiries, seedInquiries());
+    save(KEY.reservations, seedReservations());
+    save(KEY.inventory, seedInventory());
+    save(KEY.settings, DEFAULT_SETTINGS);
+    save(KEY.seed, SEED_VERSION);
+    return;
+  }
+  if (load(KEY.seed, 0) === SEED_VERSION) return;
+  // 初回だけ。ホームページから既に届いている問い合わせは消さずに、サンプルを後ろに足す
+  var seeds = seedInquiries(), have = {};
+  seeds.forEach(function(s){ have[s.id] = 1; });
+  var kept = load(KEY.inquiries, []).filter(function(q){ return q && !(q.id && have[q.id]); });
+  save(KEY.inquiries, kept.concat(seeds));
+  if (!localStorage.getItem(KEY.reservations)) save(KEY.reservations, seedReservations());
+  if (!localStorage.getItem(KEY.inventory))    save(KEY.inventory, seedInventory());
+  if (!localStorage.getItem(KEY.settings))     save(KEY.settings, DEFAULT_SETTINGS);
+  save(KEY.seed, SEED_VERSION);
+}
+
+/* ==========================================================
+   タブ
+   ========================================================== */
+var TABS = [
+  { id:"dash", label:"ダッシュボード" },
+  { id:"inq",  label:"問い合わせ", badge:function(){ return inquiries.filter(needsHuman).length; } },
+  { id:"res",  label:"予約・受注", badge:function(){ return reservations.filter(function(r){ return r.status === "仮予約"; }).length; } },
+  { id:"inv",  label:"仕入れ・仕込み" },
+  { id:"set",  label:"全体像・設定" }
+];
+function needsHuman(q){ return q.stage === "新規" || q.stage === "AI下書き"; }
+var current = "dash";
+function renderTabs(){
+  $("tabs").innerHTML = TABS.map(function(t){
+    var n = t.badge ? t.badge() : 0;
+    return '<button class="tab' + (current === t.id ? " on" : "") + '" data-tab="' + t.id + '">' +
+           esc(t.label) + (n ? '<span class="dot">' + n + '</span>' : '') + '</button>';
+  }).join("");
+}
+$("tabs").addEventListener("click", function(e){
+  var b = e.target.closest ? e.target.closest("[data-tab]") : null;
+  if (!b) return;
+  current = b.getAttribute("data-tab");
+  renderAll();
+  window.scrollTo({ top:0, behavior:"smooth" });
+});
+function showPage(){
+  TABS.forEach(function(t){ $("p-" + t.id).classList.toggle("on", t.id === current); });
+}
+
+/* ==========================================================
+   1. ダッシュボード
+   ========================================================== */
+function renderDash(){
+  var waiting = inquiries.filter(needsHuman).length;
+  var sent = inquiries.filter(function(q){ return q.stage === "送信済"; }).length;
+  var autoRate = inquiries.length ? Math.round(inquiries.filter(function(q){ return q.score.band === "auto"; }).length / inquiries.length * 100) : 0;
+  var todayRes = reservations.filter(function(r){ return r.date === iso(new Date()) && r.status !== "キャンセル"; }).length;
+  var tight = inventory.filter(function(v){ return v.limit <= 2; }).length;
+  var saved = Math.round(inquiries.length * 6 + reservations.length * 4);
+
+  $("kpis").innerHTML = [
+    { k:"人の手が要る件数", v:waiting, u:"件", d:"承認ゲートで止まっています", c:waiting > 3 ? "warn" : "" },
+    { k:"返信済み", v:sent, u:"件", d:"これまでに送信したぶん", c:"good" },
+    { k:"自動でOKの割合", v:autoRate, u:"%", d:"80点以上に振り分けられた比率", c:"" },
+    { k:"今日の予約", v:todayRes, u:"件", d:"キャンセルを除く", c:"" }
+  ].map(function(x){
+    return '<div class="card kpi ' + x.c + '"><div class="k">' + esc(x.k) + '</div>' +
+           '<div class="v">' + num(x.v) + '<small>' + esc(x.u) + '</small></div>' +
+           '<div class="d">' + esc(x.d) + '</div></div>';
+  }).join("");
+
+  var todo = inquiries.filter(needsHuman).sort(function(a, b){ return b.score.total - a.score.total; }).slice(0, 5);
+  $("todo").innerHTML = todo.length ? todo.map(function(q){
+    return '<div style="display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap">' +
+      '<span class="badge ' + BAND_CLASS[q.score.band] + '">' + esc(BAND_LABEL[q.score.band]) + ' ' + q.score.total + '点</span>' +
+      '<div style="flex:1;min-width:200px"><b>' + esc(q.name) + '</b>' +
+        '<span class="snip">' + esc(q.body.slice(0, 44)) + '…</span></div>' +
+      '<span class="badge b-plain">' + esc(q.stage) + '</span>' +
+      '<button class="btn" data-open="' + esc(q.id) + '">開く</button></div>';
+  }).join("") + (tight ? '<p style="margin-top:16px;color:var(--amber);font-size:16px">⚠ 消費期限が2日以内の果物が ' + tight + ' 種あります。仕入れ・仕込みを確認してください。</p>' : "")
+    : '<p class="empty">いま人の手が要るものはありません。</p>';
+
+  var days = [], max = 1;
+  for (var i = 6; i >= 0; i--){
+    var d = iso(daysAgo(i));
+    // 保存はUTC、表示は現地時間。日付は現地時間に直してから数える
+    var n = inquiries.filter(function(q){
+      var t = new Date(q.receivedAt); return !isNaN(t) && iso(t) === d;
+    }).length;
+    if (n > max) max = n;
+    days.push({ d:d, n:n });
+  }
+  $("chart").innerHTML = days.map(function(x){
+    return '<div class="col"><div class="bar" style="height:' + Math.round(x.n / max * 100) + '%"></div>' +
+           '<div class="cap">' + (+x.d.slice(8, 10)) + '日</div>' +
+           '<div class="cap" style="color:var(--ink)">' + x.n + '</div></div>';
+  }).join("");
+  $("todo").insertAdjacentHTML("beforeend",
+    '<p style="margin-top:18px;font-size:15px;color:var(--sub)">参考：問い合わせ1件6分・予約1件4分の転記が要ると仮定すると、' +
+    'いまの件数で約 ' + saved + ' 分ぶんにあたります。実測値ではなく、この仮定で計算した目安です。</p>');
+}
+
+/* ==========================================================
+   2. 問い合わせ（採点・3段階・承認ゲート）
+   ========================================================== */
+var inqFilter = "all", inqQuery = "", openRow = null;
+var STAGES = ["新規", "AI下書き", "送信済"];   // 「送信済」の手前に人の承認ゲートがある
+
+function stageHTML(q){
+  if (q.stage === "却下"){
+    return '<span class="steps"><i style="background:var(--red)"></i><b style="color:var(--red)">却下</b></span>';
+  }
+  var at = STAGES.indexOf(q.stage);
+  var dots = STAGES.map(function(s, i){
+    var cls = i < at ? "done" : i === at ? "now" : "";
+    // 送信済の手前に人の承認ゲートを置く
+    return (i === STAGES.length - 1 ? '<span class="gate">🙋</span>' : "") + '<i class="' + cls + '"></i>';
+  }).join("");
+  return '<span class="steps" title="新規 → AI下書き →（人が承認）→ 送信済">' +
+         dots + '<b>' + esc(q.stage) + '</b></span>';
+}
+function renderInq(){
+  var list = inquiries.filter(function(q){
+    if (inqFilter === "waiting" && q.stage !== "AI下書き") return false;
+    if (inqFilter !== "all" && inqFilter !== "waiting" && q.score.band !== inqFilter) return false;
+    if (inqQuery){
+      var hay = (q.name + q.body + q.email + q.category).toLowerCase();
+      if (hay.indexOf(inqQuery.toLowerCase()) < 0) return false;
+    }
+    return true;
+  });
+
+  var head = '<thead><tr><th>受付</th><th>お客様</th><th>ご用件</th><th>スコア</th><th>振り分け</th><th>進み方</th><th class="actcell">操作</th></tr></thead>';
+  if (!list.length){ $("inqTable").innerHTML = head + '<tbody><tr><td colspan="7"><p class="empty">該当する問い合わせはありません。</p></td></tr></tbody>'; return; }
+
+  $("inqTable").innerHTML = head + '<tbody>' + list.map(function(q){
+    var s = q.score;
+    var row =
+      '<tr data-id="' + esc(q.id) + '">' +
+        '<td class="nowrap">' + esc(fmtDate(q.receivedAt)) + '<span class="who">' + esc(q.source) + '</span></td>' +
+        '<td>' + esc(q.name) + '<span class="who">' + esc(q.email) + '</span></td>' +
+        '<td>' + esc(q.category) + '<span class="snip">' + esc(q.body.slice(0, 30)) + '…</span></td>' +
+        '<td><div class="score"><span class="n">' + s.total + '</span>' +
+          '<span class="bar"><i style="width:' + s.total + '%;background:' + BAND_COLOR[s.band] + '"></i></span></div></td>' +
+        '<td><span class="badge ' + BAND_CLASS[s.band] + '">' + esc(BAND_LABEL[s.band]) + '</span></td>' +
+        '<td>' + stageHTML(q) + '</td>' +
+        '<td class="actcell"><div class="act">' + actionsFor(q) + '</div></td>' +
+      '</tr>';
+    if (openRow === q.id){
+      row += '<tr class="detail"><td colspan="7"><div class="in">' +
+        '<div><h4>本文</h4><div class="body-text">' + esc(q.body) + '</div>' +
+          (q.wishDate ? '<p style="margin-top:12px;color:var(--sub);font-size:15px">ご希望日：' + esc(q.wishDate) + '</p>' : '') +
+          (q.draft ? '<h4 style="margin-top:22px">返信の下書き</h4><div class="body-text">' + esc(q.draft) + '</div>' : '') +
+        '</div>' +
+        '<div><h4>採点の内訳（100点満点）</h4><div class="breakdown">' +
+          bd("購入意欲", s.intent, 40) + bd("内容の具体性", s.detail, 30) +
+          bd("連絡先の確からしさ", s.contact, 20) + bd("非スパム度", s.nonspam, 10) +
+        '</div>' +
+        '<p style="margin-top:16px;font-size:15px;color:var(--sub)">' +
+          '合計 ' + s.total + ' 点 → ' + esc(BAND_LABEL[s.band]) + '。送信・却下はどちらも人が押すまで進みません。</p>' +
+        '</div></div></td></tr>';
+    }
+    return row;
+  }).join("") + '</tbody>';
+}
+function bd(label, v, max){
+  var n = Number(v) || 0;
+  return '<div class="r"><span>' + esc(label) + '</span><span class="t"><i style="width:' +
+         Math.round(n / max * 100) + '%"></i></span><span class="nowrap">' + n + ' / ' + max + '</span></div>';
+}
+function actionsFor(q){
+  var open = '<button class="btn" data-open="' + esc(q.id) + '">' + (openRow === q.id ? "閉じる" : "中身") + '</button>';
+  if (q.stage === "送信済") return open + '<button class="btn" disabled>返信済み</button>';
+  if (q.stage === "却下")   return open + '<button class="btn" data-revive="' + esc(q.id) + '">戻す</button>';
+  if (q.stage === "新規")   return open +
+    '<button class="btn primary" data-draft="' + esc(q.id) + '">AI下書き</button>' +
+    '<button class="btn bad" data-reject="' + esc(q.id) + '">却下</button>';
+  // AI下書きができた状態。ここが人の承認ゲート
+  return open +
+    '<button class="btn ok" data-approve="' + esc(q.id) + '">承認・送信</button>' +
+    '<button class="btn" data-back="' + esc(q.id) + '" title="下書きを作り直す">戻す</button>' +
+    '<button class="btn bad" data-reject="' + esc(q.id) + '">却下</button>';
+}
+function findInq(id){ for (var i = 0; i < inquiries.length; i++) if (inquiries[i].id === id) return inquiries[i]; return null; }
+// 同じミリ秒でも重ならない予約番号
+function newResId(){
+  var id;
+  do { id = "RSV-" + String(Date.now()).slice(-6) + "-" + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+  while (findRes(id));
+  return id;
+}
+
+document.addEventListener("click", function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  var b;
+
+  if ((b = t.closest("[data-open]"))){
+    var id = b.getAttribute("data-open");
+    if (current !== "inq"){                    // ダッシュボードから飛んできたときは必ず開く
+      current = "inq"; openRow = id;
+      renderAll();
+      window.scrollTo({ top:0, behavior:"smooth" });
+    } else {
+      openRow = (openRow === id) ? null : id;
+      renderAll();
+    }
+    return;
+  }
+  if ((b = t.closest("[data-draft]"))){
+    var q = findInq(b.getAttribute("data-draft")); if (!q) return;
+    q.draft = makeDraft(q);
+    q.stage = "AI下書き";
+    save(KEY.inquiries, inquiries);
+    openRow = q.id;
+    renderAll();
+    toast("下書きを作りました。内容を確かめて承認してください。");
+    return;
+  }
+  if ((b = t.closest("[data-approve]"))){
+    var aid = b.getAttribute("data-approve");
+    var q2 = findInq(aid); if (!q2) return;
+    if (!q2.draft) q2.draft = makeDraft(q2);
+    openModal({
+      title:"この内容で送信しますか",
+      bodyHTML: '<p>' + esc(q2.name) + ' 様（' + esc(q2.email) + '）へ返信します。' +
+                '文面はここで直せます。送信すると段階が「送信済」に進みます。</p>',
+      editable: q2.draft,
+      okLabel:"承認して送信する",
+      onConfirm: function(text){
+        // モーダルを開いている間にデータが読み直されている場合があるので、必ず引き直す
+        var q = findInq(aid);
+        if (!q){ toast("この問い合わせは見つかりませんでした。"); renderAll(); return; }
+        q.draft = text != null ? text : q.draft;
+        q.stage = "送信済";
+        q.sentAt = new Date().toISOString();
+        // 予約の問い合わせは、承認と同時に仮予約として引き継ぐ
+        if (q.category === "ご予約" && !reservations.some(function(r){ return r.source === q.id; })){
+          reservations.unshift({
+            id:newResId(), date:q.wishDate || iso(daysAgo(-3)), time:"14:00",
+            name:q.name, people:2, menu:"町家パフェ", status:"仮予約", source:q.id, note:"問い合わせから自動で起票"
+          });
+          save(KEY.reservations, reservations);
+          toast("送信しました。予約・受注に仮予約を1件起こしました。");
+        } else {
+          toast("送信しました。");
+        }
+        save(KEY.inquiries, inquiries);
+        renderAll();
+      }
+    });
+    return;
+  }
+  if ((b = t.closest("[data-reject]"))){
+    var rid = b.getAttribute("data-reject");
+    var q3 = findInq(rid); if (!q3) return;
+    openModal({
+      title:"この問い合わせを却下しますか",
+      bodyHTML:'<p>返信はしません。あとから「戻す」で元に戻せます。</p>' +
+               '<div class="quote">' + esc(q3.name) + '（' + (Number(q3.score.total) || 0) + '点）\n' + esc(q3.body.slice(0, 90)) + '</div>',
+      okLabel:"却下する", tone:"bad",
+      onConfirm:function(){
+        var q = findInq(rid); if (!q) return;
+        q.stage = "却下"; save(KEY.inquiries, inquiries); renderAll(); toast("却下しました。");
+      }
+    });
+    return;
+  }
+  if ((b = t.closest("[data-back]"))){          // 下書きを人が見て、書き直しに差し戻す
+    var q5 = findInq(b.getAttribute("data-back")); if (!q5) return;
+    q5.stage = "新規"; save(KEY.inquiries, inquiries); renderAll(); toast("差し戻しました。もう一度下書きから作れます。");
+    return;
+  }
+  if ((b = t.closest("[data-revive]"))){
+    var q4 = findInq(b.getAttribute("data-revive")); if (!q4) return;
+    q4.stage = "新規"; save(KEY.inquiries, inquiries); renderAll(); toast("新規に戻しました。");
+    return;
+  }
+
+  // 予約
+  if ((b = t.closest("[data-fix]"))){
+    var fid = b.getAttribute("data-fix");
+    var r = findRes(fid); if (!r) return;
+    openModal({
+      title:"この予約を確定しますか",
+      bodyHTML:'<p>席と仕込みの両方が足りることを確かめてから確定してください。確定すると仕込み計画に反映されます。</p>' +
+               '<div class="quote">' + esc(r.date) + " " + esc(r.time) + "／" + esc(r.name) + " 様 " + (Number(r.people) || 0) + "名\n" + esc(r.menu) + (r.note ? "\n備考：" + esc(r.note) : "") + '</div>',
+      okLabel:"確定する",
+      onConfirm:function(){
+        var x = findRes(fid); if (!x) return;
+        x.status = "確定"; save(KEY.reservations, reservations); renderAll(); toast("確定しました。仕込み計画に反映しました。");
+      }
+    });
+    return;
+  }
+  if ((b = t.closest("[data-cancel]"))){
+    var cid = b.getAttribute("data-cancel");
+    var r2 = findRes(cid); if (!r2) return;
+    openModal({
+      title:"この予約をキャンセルにしますか", tone:"bad", okLabel:"キャンセルにする",
+      bodyHTML:'<p>仕込み計画からも外れます。</p><div class="quote">' + esc(r2.date) + " " + esc(r2.time) + "／" + esc(r2.name) + " 様 " + (Number(r2.people) || 0) + '名</div>',
+      onConfirm:function(){
+        var x = findRes(cid); if (!x) return;
+        x.status = "キャンセル"; save(KEY.reservations, reservations); renderAll(); toast("キャンセルにしました。");
+      }
+    });
+    return;
+  }
+  if ((b = t.closest("[data-came]"))){
+    var r3 = findRes(b.getAttribute("data-came")); if (!r3) return;
+    r3.status = "来店済"; save(KEY.reservations, reservations); renderAll(); toast("来店済にしました。");
+    return;
+  }
+});
+
+$("inqSearch").addEventListener("input", function(e){ inqQuery = e.target.value.trim(); renderInq(); });
+document.addEventListener("click", function(e){
+  var c = e.target.closest ? e.target.closest("[data-band]") : null;
+  if (!c) return;
+  inqFilter = c.getAttribute("data-band");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-band]"), function(x){ x.classList.toggle("on", x === c); });
+  renderInq();
+});
+$("draftAll").addEventListener("click", function(){
+  var targets = inquiries.filter(function(q){ return q.stage === "新規" && q.score.band === "auto"; });
+  if (!targets.length){ toast("まとめて下書きを作れるものはありません。"); return; }
+  openModal({
+    title:"下書きをまとめて作りますか",
+    bodyHTML:'<p>「自動でOK」に振り分けられた <b>' + targets.length + '</b> 件について、返信の下書きを作ります。' +
+             '作るだけで、送信はしません。1件ずつ承認する画面に進みます。</p>',
+    okLabel:"下書きを作る",
+    onConfirm:function(){
+      var ids = targets.map(function(q){ return q.id; }), n = 0;
+      ids.forEach(function(id){                       // 開いている間に読み直されていても大丈夫なように
+        var q = findInq(id); if (!q || q.stage !== "新規") return;
+        q.draft = makeDraft(q); q.stage = "AI下書き"; n++;
+      });
+      save(KEY.inquiries, inquiries); renderAll();
+      toast(n + " 件の下書きを作りました。承認はこれからです。");
+    }
+  });
+});
+
+/* ==========================================================
+   3. 予約・受注
+   ========================================================== */
+var resFilter = "all";
+function findRes(id){ for (var i = 0; i < reservations.length; i++) if (reservations[i].id === id) return reservations[i]; return null; }
+function renderRes(){
+  var list = reservations.filter(function(r){ return resFilter === "all" || r.status === resFilter; })
+    .sort(function(a, b){ var x = a.date + a.time, y = b.date + b.time; return x < y ? -1 : x > y ? 1 : 0; });
+  var head = '<thead><tr><th>日付</th><th>時刻</th><th>お客様</th><th>人数</th><th>ご注文</th><th>状態</th><th>備考</th><th class="actcell">操作</th></tr></thead>';
+  if (!list.length){ $("resTable").innerHTML = head + '<tbody><tr><td colspan="8"><p class="empty">該当する予約はありません。</p></td></tr></tbody>'; return; }
+  var cls = { "仮予約":"b-review", "確定":"b-auto", "来店済":"b-plain", "キャンセル":"b-reject" };
+  $("resTable").innerHTML = head + '<tbody>' + list.map(function(r){
+    var act = "";
+    if (r.status === "仮予約") act = '<button class="btn ok" data-fix="' + esc(r.id) + '">🙋 人が確認して確定</button><button class="btn bad" data-cancel="' + esc(r.id) + '">取消</button>';
+    else if (r.status === "確定") act = '<button class="btn" data-came="' + esc(r.id) + '">来店済にする</button><button class="btn bad" data-cancel="' + esc(r.id) + '">取消</button>';
+    else act = '<button class="btn" disabled>—</button>';
+    return '<tr><td class="nowrap">' + esc(r.date) + '</td><td class="nowrap">' + esc(r.time) + '</td>' +
+      '<td>' + esc(r.name) + '<span class="who">' + esc(r.source) + '</span></td>' +
+      '<td class="nowrap">' + r.people + '名</td><td>' + esc(r.menu) + '</td>' +
+      '<td><span class="badge ' + (cls[r.status] || "b-plain") + '">' + esc(r.status) + '</span></td>' +
+      '<td><span class="snip">' + esc(r.note || "—") + '</span></td>' +
+      '<td class="actcell"><div class="act">' + act + '</div></td></tr>';
+  }).join("") + '</tbody>';
+}
+document.addEventListener("click", function(e){
+  var c = e.target.closest ? e.target.closest("[data-res]") : null;
+  if (!c) return;
+  resFilter = c.getAttribute("data-res");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-res]"), function(x){ x.classList.toggle("on", x === c); });
+  renderRes();
+});
+
+/* ==========================================================
+   4. 仕入れ・仕込み
+   ========================================================== */
+function renderInv(){
+  var tight = inventory.filter(function(v){ return v.limit <= 2; });
+  $("invAlerts").innerHTML = tight.length
+    ? '<div class="alert"><b>⚠ 使い切りたい果物があります。</b>　' +
+      tight.map(function(v){ return esc(v.fruit) + "（残り" + v.limit + "日）"; }).join("、") +
+      '。明日の品書きはこの中から選ぶのが良さそうです。</div>' : "";
+
+  $("invTable").innerHTML =
+    '<thead><tr><th>果物</th><th>仕入先</th><th>入荷</th><th>使用予定</th><th>残り</th><th>消費期限</th></tr></thead><tbody>' +
+    inventory.map(function(v){
+      var left = Math.max(0, v.in - v.use), pct = v.in ? Math.round(left / v.in * 100) : 0;
+      var color = v.limit <= 2 ? "var(--red)" : v.limit <= 4 ? "var(--amber)" : "var(--take)";
+      return '<tr><td>' + esc(v.fruit) + '<span class="who">' + num(v.price) + '円/kg</span></td>' +
+        '<td class="nowrap">' + esc(v.from) + '</td>' +
+        '<td class="nowrap">' + v.in + ' kg</td><td class="nowrap">' + v.use + ' kg</td>' +
+        '<td class="nowrap">' + left.toFixed(1) + ' kg<div class="stock"><i style="width:' + pct + '%;background:' + color + '"></i></div></td>' +
+        '<td class="nowrap" style="color:' + color + '">あと ' + v.limit + ' 日</td></tr>';
+    }).join("") + '</tbody>';
+
+  var fixed = reservations.filter(function(r){ return r.status === "確定"; });
+  var people = fixed.reduce(function(a, r){ return a + r.people; }, 0);
+  var parfait = fixed.filter(function(r){ return r.menu.indexOf("パフェ") >= 0; }).reduce(function(a, r){ return a + r.people; }, 0);
+  var daifuku = Math.max(40, people * 3 + 40);
+  var pick = inventory.slice().sort(function(a, b){ return a.limit - b.limit; })[0];
+
+  $("plan").innerHTML =
+    '<p style="color:var(--sub);font-size:16px">確定した予約 ' + fixed.length + ' 件・' + people + ' 名から逆算しています。</p>' +
+    '<div style="margin-top:18px;display:grid;gap:14px">' +
+      planRow("明日の果物", pick ? pick.fruit + "（残り" + pick.limit + "日なので優先）" : "未定") +
+      planRow("フルーツ大福", daifuku + " 個") +
+      planRow("町家パフェ", parfait + " 食（予約ぶん）") +
+      planRow("仕込み開始", "朝 5:00") +
+      planRow("必要な果物", (daifuku * 0.06 + parfait * 0.12).toFixed(1) + " kg") +
+    '</div>' +
+    '<p style="margin-top:20px;font-size:15px;color:var(--sub)">確定していない仮予約は、この計算に入れていません。人が確定させると自動で増えます。</p>';
+}
+function planRow(k, v){
+  return '<div style="display:flex;justify-content:space-between;gap:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">' +
+         '<span style="color:var(--sub);font-size:16px">' + esc(k) + '</span>' +
+         '<span style="font-family:var(--mincho);font-size:19px">' + esc(v) + '</span></div>';
+}
+
+/* ==========================================================
+   5. 全体像・設定
+   ========================================================== */
+var KEY_DESC = [
+  [KEY.inquiries, "ホームページのフォームや電話メモから入った問い合わせ。採点と段階もここに入ります。"],
+  [KEY.reservations, "予約と受注。仮予約・確定・来店済・キャンセルの4状態。"],
+  [KEY.inventory, "果物の入荷と使用予定、消費期限。仕込み計画のもとになります。"],
+  [KEY.favorites, "ホームページでお客様が押した♡。品書きの人気を見るのに使えます。"],
+  [KEY.theme, "表と裏で共通の表示テーマ（明るい／暗い）。"],
+  [KEY.settings, "返信の署名や、採点のしきい値。"],
+  [KEY.seed, "サンプルデータを入れた版数。入れ直すときの目印です。"]
+];
+function renderSet(){
+  $("keyList").innerHTML = KEY_DESC.map(function(p){
+    var raw = localStorage.getItem(p[0]);
+    var v = safeParse(raw);
+    return '<div style="padding:12px 0;border-bottom:1px solid var(--line)">' +
+      '<code>' + esc(p[0]) + '</code> <span style="color:var(--sub);font-size:15px">' +
+      (Array.isArray(v) ? v.length + " 件" : (raw ? "設定あり" : "なし")) + '</span>' +
+      '<div style="color:var(--sub);font-size:15px">' + esc(p[1]) + '</div></div>';
+  }).join("");
+}
+function safeParse(s){ try { return s ? JSON.parse(s) : null; } catch(e){ return null; } }
+
+$("btnExport").addEventListener("click", function(){
+  var dump = {};
+  KEY_DESC.forEach(function(p){ dump[p[0]] = safeParse(localStorage.getItem(p[0])); });
+  openModal({
+    title:"データの書き出し",
+    bodyHTML:"<p>下の内容をコピーして、AIに貼って分析させることができます。外部には送信していません。</p>",
+    editable: JSON.stringify(dump, null, 2),
+    okLabel:"閉じる", cancelLabel:"閉じる",
+    onConfirm:function(){}
+  });
+});
+$("btnReseed").addEventListener("click", function(){
+  openModal({
+    title:"サンプルデータを入れ直しますか",
+    bodyHTML:"<p>いま入っている問い合わせ・予約・在庫は、すべてサンプルの内容に置き換わります。ホームページから送ったぶんも消えます。</p>",
+    okLabel:"入れ直す", tone:"bad",
+    onConfirm:function(){ seedIfNeeded(true); refreshData(); renderAll(); toast("サンプルを入れ直しました。"); }
+  });
+});
+$("btnWipe").addEventListener("click", function(){
+  openModal({
+    title:"保存データを全部消しますか",
+    bodyHTML:"<p>kaorido. で始まる保存データをすべて削除します。この操作は取り消せません。<br>" +
+             "消したあとは、サンプルデータが入った状態で開き直します。</p>",
+    okLabel:"全部消す", tone:"bad",
+    onConfirm:function(){
+      Object.keys(KEY).forEach(function(k){ try{ localStorage.removeItem(KEY[k]); }catch(e){} });
+      seedIfNeeded(true); refreshData(); openRow = null; renderAll();
+      toast("削除して、サンプルを入れ直しました。");
+    }
+  });
+});
+
+/* ==========================================================
+   表示テーマ（ホームページと共通）
+   ========================================================== */
+var theme = document.documentElement.getAttribute("data-theme") || "light";
+$("themeBtn").addEventListener("click", function(){
+  theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", theme);
+  save(KEY.theme, theme);
+});
+
+/* ==========================================================
+   起動
+   ========================================================== */
+function renderAll(){
+  renderTabs(); showPage();
+  renderDash(); renderInq(); renderRes(); renderInv(); renderSet();
+}
+seedIfNeeded(false);
+refreshData();
+renderAll();
+
+// ホームページから新しい問い合わせが届いたら気づけるようにする。
+// なお表と裏が同時に書き込むと後勝ちになる（この保存方式の限界。本番はサーバー側で受ける）
+window.addEventListener("storage", function(e){
+  if (e.key === KEY.inquiries){ refreshData(); renderAll(); toast("新しい問い合わせが届きました。"); }
+});
+window.addEventListener("focus", function(){
+  var before = inquiries.length;
+  refreshData();
+  if (inquiries.length !== before){ renderAll(); toast("新しい問い合わせが届きました。"); }
+});
+</script>
+</body>
+</html>

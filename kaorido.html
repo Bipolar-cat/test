@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>果織堂（かおりどう）｜京都・二条城東の町家、一日ひと種類のフルーツ大福</title>
+<meta name="description" content="京都市中京区、築112年の町家。その日いちばん良い果物を一日ひと種類だけ使うフルーツ大福とパフェの店、果織堂。">
+<link rel="icon" href="data:,">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<script>
+/* 暗い表示を選んでいる人に白い画面が一瞬光らないよう、先に色を決める */
+try{
+  var t = JSON.parse(localStorage.getItem("kaorido.theme") || "null");
+  if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+}catch(e){}
+</script>
+<style>
+/* ==========================================================
+   DESIGN-kaorido.md 準拠：白ベース／文字大きめ／和モダン
+   アクセントは柿(#d1603d)と若竹(#5f8a6a)の2色まで
+   ========================================================== */
+:root{
+  --paper:#fff; --tint:#faf8f5; --ink:#1b1b19; --sub:#6f6b63;
+  --line:#e8e3da; --kaki:#d1603d; --take:#5f8a6a;
+  --shadow:0 1px 2px rgba(27,27,25,.04),0 16px 36px -18px rgba(27,27,25,.16);
+  --shadow-lg:0 2px 4px rgba(27,27,25,.05),0 30px 60px -24px rgba(27,27,25,.24);
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  --gothic:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Segoe UI",Roboto,sans-serif;
+  --r:20px;
+}
+html[data-theme="dark"]{
+  --paper:#15140f; --tint:#1d1c16; --ink:#f2efe8; --sub:#a8a298;
+  --line:rgba(255,255,255,.12); --kaki:#e87b56; --take:#84b28e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 36px -18px rgba(0,0,0,.7);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.5),0 30px 60px -24px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+/* overflow-x は html にだけ。body に付けると sticky ヘッダーが効かなくなる */
+html{overflow-x:hidden;scroll-behavior:smooth;scroll-padding-top:96px}
+html,body{margin:0;padding:0;max-width:100%}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--gothic);
+  font-size:19px;line-height:1.9;-webkit-font-smoothing:antialiased;
+  transition:background .4s var(--ease),color .4s var(--ease);
+}
+h1,h2,h3{font-family:var(--mincho);font-weight:600;line-height:1.45;margin:0}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.wrap{width:min(1080px,100% - 48px);margin-inline:auto}
+.narrow{width:min(760px,100% - 48px);margin-inline:auto}
+@media(max-width:640px){.wrap,.narrow{width:calc(100% - 32px)}}
+.sec{padding-block:clamp(64px,9vw,128px)}
+.label{font-size:13px;letter-spacing:.18em;color:var(--kaki);font-weight:700;font-family:var(--gothic)}
+.h2{font-size:clamp(28px,3.6vw,40px);margin:14px 0 18px}
+.lead{color:var(--sub);max-width:62ch}
+.hr{height:1px;background:var(--line);border:0;margin:0}
+
+/* ---- ヘッダー ---- */
+header{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+}
+@supports not (background:color-mix(in srgb,red 50%,transparent)){header{background:var(--paper)}}
+.hbar{display:flex;align-items:center;gap:18px;padding:14px 0;flex-wrap:wrap}
+.brand{font-family:var(--mincho);font-size:24px;letter-spacing:.14em;white-space:nowrap;text-decoration:none}
+.brand small{display:block;font-family:var(--gothic);font-size:10px;letter-spacing:.3em;color:var(--sub)}
+nav{display:flex;gap:20px;font-size:16px;margin-left:auto;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--sub);transition:color .2s var(--ease)}
+nav a:hover{color:var(--kaki)}
+@media(max-width:900px){nav{display:none}}
+.tools{display:flex;align-items:center;gap:10px;margin-left:auto}
+.search-box{position:relative;display:flex;align-items:center}
+.search-box input{
+  font:inherit;font-size:16px;width:clamp(150px,26vw,240px);padding:11px 16px 11px 40px;
+  border:1px solid var(--line);border-radius:999px;background:var(--tint);color:var(--ink);
+  transition:border-color .25s var(--ease),width .3s var(--ease);
+}
+.search-box input:focus{outline:none;border-color:var(--kaki);width:clamp(190px,32vw,300px)}
+.search-box .mag{position:absolute;left:15px;font-size:15px;color:var(--sub);pointer-events:none}
+.icon-btn{
+  width:46px;height:46px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+  cursor:pointer;display:grid;place-items:center;font-size:18px;position:relative;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease);
+}
+.icon-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--kaki)}
+.fav-count{
+  position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:999px;
+  background:var(--kaki);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px;
+}
+.fav-count[hidden]{display:none}
+
+/* 検索結果バー */
+.searchbar{
+  display:none;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line);
+  font-size:16px;flex-wrap:wrap;
+}
+.searchbar.on{display:flex}
+.searchbar b{color:var(--kaki)}
+.mini{
+  border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 16px;
+  cursor:pointer;font-size:15px;min-height:40px;transition:.22s var(--ease);
+}
+.mini:hover{border-color:var(--kaki);transform:translateY(-2px)}
+mark[data-hl]{background:#ffe9a8;color:#1b1b19;border-radius:3px;padding:0 2px;animation:pop .4s var(--ease)}
+html[data-theme="dark"] mark[data-hl]{background:#7a6320;color:#fff}
+mark[data-hl].cur{background:var(--kaki);color:#fff}
+@keyframes pop{from{background:transparent}}
+section[data-search].hidden-by-search{display:none}
+section[data-search].hidden-by-search + .hr{display:none}   /* 区切り線だけ残さない */
+.item[hidden]{display:none}                                  /* お気に入り絞り込みを効かせる */
+.nohit{display:none;text-align:center;color:var(--sub);padding:70px 0}
+.nohit.on{display:block}
+
+/* ---- ヒーロー ---- */
+.hero{padding-block:clamp(56px,8vw,110px)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,5vw,72px);align-items:center}
+@media(max-width:880px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(34px,5.2vw,62px);letter-spacing:.02em;margin:20px 0 22px}
+.hero .lead{font-size:clamp(16px,2.2vw,19px)}
+.hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;
+  border:none;border-radius:999px;padding:17px 34px;font-size:17px;font-weight:700;cursor:pointer;min-height:52px;
+  transition:transform .26s var(--ease),box-shadow .26s var(--ease),opacity .2s var(--ease);
+}
+.btn-main{background:var(--kaki);color:#fff;box-shadow:0 12px 26px -12px rgba(209,96,61,.8)}
+.btn-main:hover{transform:translateY(-3px);box-shadow:0 20px 36px -14px rgba(209,96,61,.9)}
+.btn-line{background:var(--paper);border:1px solid var(--line)}
+.btn-line:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--kaki)}
+.hero-art{position:relative;aspect-ratio:1/1;border-radius:50%;background:var(--tint);display:grid;place-items:center;box-shadow:var(--shadow-lg)}
+.hero-art .fruit{width:64%;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffd9c2,#e8845c 42%,#c14a2e);box-shadow:0 24px 50px -20px rgba(193,74,46,.6);animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.stamp{position:absolute;right:2%;bottom:6%;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:12px 22px;font-size:15px;box-shadow:var(--shadow);font-family:var(--mincho)}
+
+/* ---- こだわり ---- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+@media(max-width:860px){.cards{grid-template-columns:1fr}}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:32px 28px;
+  box-shadow:var(--shadow);transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.card .no{font-family:var(--mincho);font-size:32px;color:var(--kaki);line-height:1}
+.card h3{font-size:21px;margin:12px 0 10px}
+.card p{color:var(--sub);font-size:17px}
+
+/* ---- 品書き ---- */
+.menu{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
+@media(max-width:760px){.menu{grid-template-columns:1fr}}
+.item{
+  display:flex;gap:22px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--r);padding:26px;box-shadow:var(--shadow);position:relative;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.item:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.item .thumb{flex:0 0 84px;height:84px;border-radius:50%;box-shadow:inset 0 -6px 14px rgba(0,0,0,.12)}
+.item h3{font-size:20px;margin-bottom:6px;padding-right:44px}
+.item .price{font-family:var(--mincho);font-size:22px;color:var(--kaki);margin-top:10px}
+.item p{color:var(--sub);font-size:16px;line-height:1.75}
+.fav{
+  position:absolute;top:20px;right:20px;width:42px;height:42px;border-radius:999px;
+  border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:17px;
+  display:grid;place-items:center;transition:.25s var(--ease);
+}
+.fav:hover{transform:scale(1.12);border-color:var(--kaki)}
+.fav.on{background:var(--kaki);border-color:var(--kaki);color:#fff;animation:beat .45s var(--ease)}
+@keyframes beat{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* ---- 店舗情報 ---- */
+.info{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:40px}
+@media(max-width:700px){.info{grid-template-columns:1fr}}
+.info div{padding:26px 30px;border-bottom:1px solid var(--line)}
+.info div:nth-child(odd){border-right:1px solid var(--line)}
+@media(max-width:700px){.info div:nth-child(odd){border-right:none}}
+.info dt{font-size:14px;letter-spacing:.14em;color:var(--sub);margin-bottom:6px}
+.info dd{margin:0;font-size:18px}
+
+/* ---- FAQ ---- */
+.faq{margin-top:36px;border-top:1px solid var(--line)}
+.faq-q{
+  width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);
+  padding:24px 46px 24px 0;cursor:pointer;font-size:19px;position:relative;font-family:var(--mincho);
+  transition:color .22s var(--ease);
+}
+.faq-q:hover{color:var(--kaki)}
+.faq-q::after{content:"＋";position:absolute;right:6px;top:50%;transform:translateY(-50%);color:var(--kaki);font-family:var(--gothic);transition:transform .3s var(--ease)}
+.faq-q.open::after{content:"−"}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .42s var(--ease);border-bottom:1px solid var(--line)}
+.faq-a .inner{padding:4px 0 26px;color:var(--sub);font-size:17px}
+
+/* ---- お問い合わせ ---- */
+.form{margin-top:36px;display:grid;gap:20px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.row{grid-template-columns:1fr}}
+.field label{display:block;font-size:15px;color:var(--sub);margin-bottom:8px}
+.field input,.field select,.field textarea{
+  width:100%;font:inherit;font-size:17px;padding:15px 18px;border:1px solid var(--line);
+  border-radius:12px;background:var(--tint);color:var(--ink);min-height:52px;
+  transition:border-color .22s var(--ease),background .22s var(--ease);
+}
+.field textarea{min-height:150px;resize:vertical;line-height:1.8}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--kaki);background:var(--paper)}
+.form-note{font-size:15px;color:var(--sub)}
+.sent{
+  display:none;border:1px solid var(--take);border-radius:var(--r);padding:32px;background:var(--tint);
+  margin-top:36px;animation:rise .5s var(--ease) both;
+}
+.sent.on{display:block}
+.sent h3{font-size:22px;color:var(--take);margin-bottom:10px}
+.sent p{color:var(--sub);font-size:17px}
+.sent .ticket{margin-top:18px;font-family:var(--mincho);font-size:20px}
+
+/* ---- フッター ---- */
+footer{border-top:1px solid var(--line);padding:52px 0;color:var(--sub);font-size:16px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+.admin-link{
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;border:1px solid var(--line);
+  border-radius:999px;padding:12px 22px;font-size:15px;transition:.25s var(--ease);
+}
+.admin-link:hover{border-color:var(--kaki);color:var(--kaki);transform:translateY(-2px)}
+
+/* ---- スクロール出現 ---- */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="hbar">
+      <a class="brand" href="#top">果織堂<small>KAORIDO</small></a>
+      <nav data-nosearch>
+        <a href="#kodawari">こだわり</a>
+        <a href="#shinagaki">品書き</a>
+        <a href="#info">店舗情報</a>
+        <a href="#faq">よくある質問</a>
+        <a href="#contact">お問い合わせ</a>
+      </nav>
+      <div class="tools" data-nosearch>
+        <div class="search-box">
+          <span class="mag">🔍</span>
+          <input id="q" type="search" placeholder="サイト内を検索" aria-label="サイト内検索" autocomplete="off">
+        </div>
+        <button class="icon-btn" id="favBtn" title="お気に入りを見る" aria-label="お気に入りを見る">
+          ♡<span class="fav-count" id="favCount" hidden>0</span>
+        </button>
+        <button class="icon-btn" id="themeBtn" title="表示を切り替える" aria-label="ダークモード切り替え">◐</button>
+      </div>
+    </div>
+    <div class="searchbar" id="sbar" data-nosearch>
+      <span><b id="hitCount">0</b> 件見つかりました</span>
+      <button class="mini" id="prevHit">← 前</button>
+      <button class="mini" id="nextHit">次 →</button>
+      <button class="mini" id="clearHit">検索をやめる</button>
+      <span class="form-note" id="favFilterNote" hidden>お気に入りだけを表示中</span>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ヒーロー -->
+  <section class="sec hero wrap" data-search>
+    <div class="hero-grid">
+      <div>
+        <span class="label">京都・二条城の東／築112年の町家</span>
+        <h1>その日いちばんの果物を、<br>一日ひと種類だけ。</h1>
+        <p class="lead">
+          朝5時、市場から届いたその日の果物を見て、今日つくるものを決めます。
+          だから果織堂の品書きは毎日変わり、夕方には売り切れます。
+          白い餅と餡で果物の断面をそのまま見せる、フルーツ大福とパフェの店です。
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-main" href="#contact">パフェを予約する</a>
+          <a class="btn btn-line" href="#shinagaki">今日の品書きを見る</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="fruit"></div>
+        <div class="stamp">本日は 白桃</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <!-- こだわり -->
+  <section class="sec wrap" id="kodawari" data-search>
+    <div class="reveal">
+      <span class="label">KODAWARI ／ こだわり</span>
+      <h2 class="h2">三つだけ、守っていること。</h2>
+      <p class="lead">たくさんの種類は置きません。そのかわり、その一種類をいちばん良い状態で出します。</p>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <div class="no">一</div>
+        <h3>一日ひと種類</h3>
+        <p>その朝いちばん良かった果物だけを使います。白桃の日、無花果の日、苺の日。品書きは前の晩まで決まりません。</p>
+      </div>
+      <div class="card reveal">
+        <div class="no">二</div>
+        <h3>餡は果物に合わせて炊く</h3>
+        <p>白餡の甘さを果物の糖度に合わせて毎日変えます。酸味の強い日は甘さを少し上げ、完熟の日は控えます。</p>
+      </div>
+      <div class="card reveal">
+        <div class="no">三</div>
+        <h3>売り切れたら終わり</h3>
+        <p>作り置きをしません。朝5時に仕込んだぶんが無くなった時点で暖簾を下げます。だいたい夕方には終わります。</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <!-- 品書き -->
+  <section class="sec wrap" id="shinagaki" data-search>
+    <div class="reveal">
+      <span class="label">SHINAGAKI ／ 品書き</span>
+      <h2 class="h2">本日お出しできるもの</h2>
+      <p class="lead">♡を押すとお気に入りに保存されます。次に来たときも覚えています。</p>
+    </div>
+    <div class="menu" id="menu"></div>
+  </section>
+
+  <hr class="hr">
+
+  <!-- 店舗情報 -->
+  <section class="sec wrap" id="info" data-search>
+    <div class="reveal">
+      <span class="label">INFORMATION ／ 店舗情報</span>
+      <h2 class="h2">町家の奥、三和土（たたき）を抜けた先です。</h2>
+      <p class="lead">看板は小さな木札だけです。二条城の東、堀川通から一本入った路地の奥にあります。</p>
+    </div>
+    <dl class="info reveal">
+      <div><dt>住所</dt><dd>京都市中京区二条通油小路東入ル 果織堂</dd></div>
+      <div><dt>電話</dt><dd>075-000-0000</dd></div>
+      <div><dt>営業時間</dt><dd>11:00 〜 18:00（売り切れ次第終了）</dd></div>
+      <div><dt>定休日</dt><dd>毎週水曜、第3木曜</dd></div>
+      <div><dt>席数</dt><dd>喫茶 12席（全席予約制）</dd></div>
+      <div><dt>最寄り</dt><dd>地下鉄東西線 二条城前駅 徒歩6分</dd></div>
+    </dl>
+  </section>
+
+  <hr class="hr">
+
+  <!-- FAQ -->
+  <section class="sec narrow" id="faq" data-search>
+    <div class="reveal">
+      <span class="label">FAQ ／ よくある質問</span>
+      <h2 class="h2">お問い合わせの多いこと</h2>
+    </div>
+    <div class="faq reveal" id="faqList"></div>
+  </section>
+
+  <hr class="hr">
+
+  <!-- お問い合わせ -->
+  <section class="sec narrow" id="contact" data-search>
+    <div class="reveal">
+      <span class="label">CONTACT ／ お問い合わせ</span>
+      <h2 class="h2">ご予約・お問い合わせ</h2>
+      <p class="lead">
+        パフェは全席予約制です。以下からお送りいただくと、店の管理画面に届きます。
+        お返事は営業日の翌日までにいたします。
+      </p>
+    </div>
+
+    <form class="form reveal" id="form" data-nosearch novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="f-name">お名前</label>
+          <input id="f-name" name="name" type="text" required placeholder="例：山田 花子">
+        </div>
+        <div class="field">
+          <label for="f-mail">メールアドレス</label>
+          <input id="f-mail" name="email" type="email" required placeholder="例：hanako@example.com">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="f-cat">ご用件</label>
+          <select id="f-cat" name="category">
+            <option>ご予約</option>
+            <option>取材・撮影のご依頼</option>
+            <option>卸・法人のご相談</option>
+            <option>ご意見・ご感想</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-date">ご希望日（任意）</label>
+          <input id="f-date" name="wishDate" type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-body">ご用件の詳細</label>
+        <textarea id="f-body" name="body" required placeholder="例：9月3日の14時に2名で伺いたいです。白桃のパフェはありますか。"></textarea>
+      </div>
+      <p class="form-note">送信内容はこのブラウザの中だけに保存されるデモです。外部には一切送信されません。</p>
+      <div><button class="btn btn-main" type="button" id="sendBtn">この内容で送信する</button></div>
+    </form>
+
+    <div class="sent" id="sent" data-nosearch>
+      <h3>お送りしました。ありがとうございます。</h3>
+      <p>店の管理画面「受信箱」に届いています。担当が内容を確認し、営業日の翌日までにお返事いたします。</p>
+      <p class="ticket">受付番号：<span id="ticket"></span></p>
+    </div>
+  </section>
+
+  <div class="nohit" id="nohit">
+    <p>「<span id="nohitWord"></span>」に一致する箇所は見つかりませんでした。</p>
+    <p style="margin-top:14px"><button class="mini" id="clearHit2">検索をやめる</button></p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <p style="font-family:var(--mincho);font-size:20px;color:var(--ink)">果織堂</p>
+      <p>京都市中京区二条通油小路東入ル／075-000-0000</p>
+    </div>
+    <a class="admin-link" href="kaorido-admin.html">スタッフの方はこちら（管理画面）→</a>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ==========================================================
+   保存名はすべて kaorido. で始める（DESIGN-kaorido.md 参照）
+   ========================================================== */
+var KEY = { inquiries:"kaorido.inquiries", favorites:"kaorido.favorites", theme:"kaorido.theme" };
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+// 期待している形（配列か否か）と違うものが入っていたら既定値に戻す
+function load(k, d){
+  try{
+    var v = localStorage.getItem(k);
+    if (!v) return d;
+    var p = JSON.parse(v);
+    if (p == null) return d;
+    if (Array.isArray(d) && !Array.isArray(p)) return d;
+    return p;
+  }catch(e){ return d; }
+}
+function save(k, v){
+  try{ localStorage.setItem(k, JSON.stringify(v)); return true; }
+  catch(e){ return false; }   // 容量オーバーやプライベートモードでは false
+}
+
+/* ---------- 品書き ---------- */
+var ITEMS = [
+  { id:"daifuku-hakuto", name:"白桃大福「一日果」", price:"580円", color:"radial-gradient(circle at 34% 30%,#ffe3d2,#f0a184 45%,#d1603d)",
+    text:"本日の果物。皮を剥いたそのままを、薄い羽二重餅と白餡で包みます。切ると断面から果汁が上がってきます。" },
+  { id:"parfait-machiya", name:"町家パフェ（要予約）", price:"1,680円",
+    color:"radial-gradient(circle at 34% 30%,#fff2dd,#e8c58a 45%,#b98b4a)",
+    text:"下から順に、焙じ茶のゼリー、白餡のクリーム、その日の果物。座敷でお出しします。1日12食まで。" },
+  { id:"mitsu", name:"季節の果実蜜", price:"1,240円",
+    color:"radial-gradient(circle at 34% 30%,#f6e9c8,#dcae5e 45%,#a9762c)",
+    text:"仕込みで出た果肉を炊いた蜜。炭酸で割ったり、かき氷にかけたり。持ち帰り用の小瓶のみ。" },
+  { id:"anmitsu", name:"果織堂のあんみつ", price:"1,080円",
+    color:"radial-gradient(circle at 34% 30%,#e7f0e2,#a8c39a 45%,#5f8a6a)",
+    text:"寒天は井戸水で炊いています。餡は大福と同じ、その日の果物に合わせた甘さです。" },
+  { id:"hojicha", name:"炭火焙じ茶", price:"620円",
+    color:"radial-gradient(circle at 34% 30%,#efe4d4,#c2a179 45%,#8b6a45)",
+    text:"注文をいただいてから炭で焙じます。甘いものの合間に、香りだけで口が変わります。" },
+  { id:"gift", name:"進物用 六個入", price:"3,780円",
+    color:"radial-gradient(circle at 34% 30%,#f3ecff,#c3b0e0 45%,#8672b5)",
+    text:"その日の果物を六種。桐箱に納めてお渡しします。前日までのご予約をお願いしています。" }
+];
+
+var favorites = load(KEY.favorites, []);
+var favOnly = false;
+
+function renderMenu(){
+  $("menu").innerHTML = ITEMS.map(function(it){
+    var on = favorites.indexOf(it.id) >= 0;
+    return '<article class="item reveal" data-item="' + esc(it.id) + '"' + (favOnly && !on ? ' hidden' : '') + '>' +
+      '<div class="thumb" style="background:' + esc(it.color) + '"></div>' +
+      '<div><h3>' + esc(it.name) + '</h3><p>' + esc(it.text) + '</p>' +
+      '<div class="price">' + esc(it.price) + '</div></div>' +
+      '<button class="fav' + (on ? " on" : "") + '" data-fav="' + esc(it.id) + '" aria-pressed="' + on + '" ' +
+      'aria-label="お気に入り">' + (on ? "♥" : "♡") + '</button></article>';
+  }).join("");
+  observeReveal();
+  updateFavCount();
+}
+function updateFavCount(){
+  var c = $("favCount");
+  c.textContent = String(favorites.length);
+  c.hidden = favorites.length === 0;
+}
+// お気に入りは委譲で受ける（再描画しても動き続ける）
+document.addEventListener("click", function(e){
+  var b = e.target.closest ? e.target.closest("[data-fav]") : null;
+  if (!b) return;
+  var id = b.getAttribute("data-fav"), i = favorites.indexOf(id);
+  if (i >= 0) favorites.splice(i, 1); else favorites.push(id);
+  save(KEY.favorites, favorites);
+  renderMenu();
+  if ($("q").value.trim()) runSearch();   // 再描画でハイライトが消えるので引き直す
+});
+$("favBtn").addEventListener("click", function(){
+  if (!favorites.length && !favOnly) { alertModal(); return; }
+  favOnly = !favOnly;
+  $("favFilterNote").hidden = !favOnly;
+  $("sbar").classList.toggle("on", favOnly || !!$("q").value.trim());
+  renderMenu();
+  if (favOnly) document.getElementById("shinagaki").scrollIntoView({behavior:"smooth"});
+});
+function alertModal(){
+  $("favFilterNote").hidden = false;
+  $("favFilterNote").textContent = "まだお気に入りがありません。品書きの♡を押してみてください。";
+  $("sbar").classList.add("on");
+  clearTimeout(alertModal._t);
+  alertModal._t = setTimeout(function(){
+    $("favFilterNote").textContent = "お気に入りだけを表示中";
+    if (favOnly) return;                     // その間に絞り込みが始まっていたら消さない
+    $("favFilterNote").hidden = true;
+    if (!$("q").value.trim()) $("sbar").classList.remove("on");
+  }, 3200);
+}
+
+/* ---------- よくある質問（開閉） ---------- */
+var FAQ = [
+  { q:"予約なしでも入れますか？", a:"物販（大福・蜜・進物）は予約なしでお求めいただけます。喫茶の席とパフェのみ、全席予約制とさせていただいています。当日の空きがある場合もありますので、お電話でご確認ください。" },
+  { q:"今日は何の果物ですか？", a:"前の晩までは決まっていません。当日の朝8時に、このページの「本日は◯◯」の表示とお店のSNSでお知らせしています。特定の果物をご希望の場合は、お問い合わせフォームからご相談ください。" },
+  { q:"日持ちはどのくらいですか？", a:"大福は当日中、果実蜜は開封前で約3ヶ月です。保存料を使っていないため、大福はお渡しした日のうちにお召し上がりください。" },
+  { q:"アレルギーの表示はありますか？", a:"店頭に全品の原材料表を置いています。乳・卵を使わない品もありますので、ご予約の際にお知らせいただければ、その日お出しできるものをご案内します。" },
+  { q:"取材や撮影はできますか？", a:"営業時間外であればお受けしています。他のお客様が写らないこと、仕込み中の厨房には入られないことを条件とさせていただいています。お問い合わせフォームの「取材・撮影のご依頼」からご連絡ください。" },
+  { q:"卸や法人向けの相談もできますか？", a:"少量であればお受けできる場合があります。ただし作り置きをしない方針のため、数量と納期によってはお断りすることがあります。まずはご相談ください。" }
+];
+$("faqList").innerHTML = FAQ.map(function(f, i){
+  return '<button class="faq-q" data-faq="' + i + '" aria-expanded="false">' + esc(f.q) + '</button>' +
+         '<div class="faq-a" id="faq-a-' + i + '"><div class="inner">' + esc(f.a) + '</div></div>';
+}).join("");
+document.addEventListener("click", function(e){
+  var b = e.target.closest ? e.target.closest("[data-faq]") : null;
+  if (!b) return;
+  var panel = b.nextElementSibling, open = b.classList.toggle("open");
+  b.setAttribute("aria-expanded", String(open));
+  panel.style.maxHeight = open ? (panel.scrollHeight + 40) + "px" : "0px";
+});
+
+/* ---------- サイト内検索 ---------- */
+var SEARCH_ROOT = document.querySelector("main");
+var hits = [], hitIdx = -1;
+
+function clearHighlights(){
+  var marks = SEARCH_ROOT.querySelectorAll("mark[data-hl]");
+  Array.prototype.forEach.call(marks, function(m){
+    m.parentNode.replaceChild(document.createTextNode(m.textContent), m);
+  });
+  SEARCH_ROOT.normalize();
+}
+function collectTextNodes(root){
+  var out = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  while (w.nextNode()){
+    var n = w.currentNode, p = n.parentNode;
+    if (!n.nodeValue || !n.nodeValue.trim()) continue;
+    if (!p || /^(SCRIPT|STYLE|MARK|NOSCRIPT)$/.test(p.nodeName)) continue;
+    if (p.closest("[data-nosearch]")) continue;
+    if (p.closest("[hidden]")) continue;      // 絞り込みで隠れているものは数えない
+    out.push(n);
+  }
+  return out;
+}
+function runSearch(){
+  var q = $("q").value.trim();
+  clearHighlights();
+  hits = []; hitIdx = -1;
+  var sections = SEARCH_ROOT.querySelectorAll("section[data-search]");
+
+  if (!q){
+    Array.prototype.forEach.call(sections, function(s){ s.classList.remove("hidden-by-search"); });
+    $("nohit").classList.remove("on");
+    $("sbar").classList.toggle("on", favOnly);
+    return;
+  }
+
+  var lower = q.toLowerCase(), total = 0;
+  Array.prototype.forEach.call(sections, function(sec){
+    var found = 0;
+    collectTextNodes(sec).forEach(function(node){
+      var text = node.nodeValue, low = text.toLowerCase(), pos = low.indexOf(lower);
+      if (pos < 0) return;
+      var frag = document.createDocumentFragment(), last = 0;
+      while (pos >= 0){
+        if (pos > last) frag.appendChild(document.createTextNode(text.slice(last, pos)));
+        var m = document.createElement("mark");
+        m.setAttribute("data-hl", "1");
+        m.textContent = text.slice(pos, pos + q.length);
+        frag.appendChild(m);
+        found++; total++;
+        last = pos + q.length;
+        pos = low.indexOf(lower, last);
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    sec.classList.toggle("hidden-by-search", found === 0);   // ヒットの無いセクションは畳む
+  });
+
+  // 閉じているよくある質問の中にヒットがあれば、その場で開く
+  Array.prototype.forEach.call(document.querySelectorAll(".faq-a"), function(panel){
+    if (!panel.querySelector("mark[data-hl]")) return;
+    var btn = panel.previousElementSibling;
+    if (btn && !btn.classList.contains("open")){
+      btn.classList.add("open");
+      btn.setAttribute("aria-expanded", "true");
+      panel.style.maxHeight = (panel.scrollHeight + 40) + "px";
+    }
+  });
+
+  hits = Array.prototype.slice.call(SEARCH_ROOT.querySelectorAll("mark[data-hl]"));
+  $("hitCount").textContent = String(total);
+  $("sbar").classList.add("on");
+  $("nohitWord").textContent = q;
+  $("nohit").classList.toggle("on", total === 0);
+  if (total) jumpTo(0);
+}
+function jumpTo(i){
+  if (!hits.length) return;
+  if (hitIdx >= 0 && hits[hitIdx]) hits[hitIdx].classList.remove("cur");
+  hitIdx = (i + hits.length) % hits.length;
+  var m = hits[hitIdx];
+  m.classList.add("cur");
+  m.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+var timer = null;
+$("q").addEventListener("input", function(){
+  clearTimeout(timer);
+  timer = setTimeout(runSearch, 160);
+});
+$("nextHit").addEventListener("click", function(){ jumpTo(hitIdx + 1); });
+$("prevHit").addEventListener("click", function(){ jumpTo(hitIdx - 1); });
+function clearAllFilters(){
+  $("q").value = "";
+  favOnly = false; $("favFilterNote").hidden = true;
+  renderMenu(); runSearch();
+}
+$("clearHit").addEventListener("click", clearAllFilters);
+$("clearHit2").addEventListener("click", clearAllFilters);
+
+/* ---------- ダークモード（初期値は <head> の小さな script で決めている） ---------- */
+var theme = document.documentElement.getAttribute("data-theme") || "light";
+$("themeBtn").addEventListener("click", function(){
+  theme = (document.documentElement.getAttribute("data-theme") === "dark") ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", theme);
+  save(KEY.theme, theme);
+});
+
+/* ---------- スクロールで出現 ---------- */
+var io = null;
+function observeReveal(){
+  if (!("IntersectionObserver" in window)){
+    Array.prototype.forEach.call(document.querySelectorAll(".reveal"), function(el){ el.classList.add("in"); });
+    return;
+  }
+  if (!io){
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { rootMargin:"0px 0px -8% 0px", threshold:.08 });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".reveal:not(.in)"), function(el){ io.observe(el); });
+}
+
+/* ---------- お問い合わせ → 管理画面の受信箱へ ---------- */
+function sendInquiry(e){
+  if (e) e.preventDefault();
+  var form = $("form");
+  var f = form.elements;       // form.name はフォーム自身の name を指すので elements 経由で取る
+  var name = f.name.value.trim(), email = f.email.value.trim(), body = f.body.value.trim();
+  if (!name || !email || !body){
+    alert("お名前・メールアドレス・ご用件の詳細をご入力ください。");
+    return;
+  }
+  var now = new Date();
+  var pad = function(n){ return ("0" + n).slice(-2); };
+  var id = "INQ-" + now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + "-" +
+           String(now.getTime()).slice(-5) + Math.random().toString(36).slice(2, 5).toUpperCase();
+  var list = load(KEY.inquiries, []);
+  list.unshift({
+    id: id,
+    receivedAt: now.toISOString(),
+    source: "サイトフォーム",
+    name: name,
+    email: email,
+    category: f.category.value,
+    wishDate: f.wishDate.value || "",
+    body: body,
+    stage: "新規"          // 採点と仕分けは管理画面側で行う
+  });
+  // 保存できなかったときに「送れました」と言わない
+  if (!save(KEY.inquiries, list)){
+    alert("このブラウザの保存領域がいっぱいで、送信できませんでした。\nプライベートモードを解除するか、空き容量を作ってからもう一度お試しください。");
+    return;
+  }
+  $("ticket").textContent = id;
+  form.reset();
+  $("sent").classList.add("on");
+  $("sent").scrollIntoView({ behavior:"smooth", block:"center" });
+}
+$("sendBtn").addEventListener("click", sendInquiry);
+$("form").addEventListener("submit", sendInquiry);   // Enterキーでも送れるように
+
+/* ---------- 起動 ---------- */
+renderMenu();   // この中で observeReveal() も呼ばれる
+</script>
+</body>
+</html>
