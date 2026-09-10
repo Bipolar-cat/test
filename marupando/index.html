@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まるぱん堂｜京都・三条河原町 創業170年のあんぱん</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-soft:#faf7f2;
+    --ink:#1b1917;
+    --ink-soft:#5c554c;
+    --azuki:#7a2733;
+    --kitsune:#c99441;
+    --line:#e7e1d9;
+    --card:#ffffff;
+    --shadow:0 6px 24px rgba(27,25,23,.06);
+    --radius:14px;
+  }
+  html[data-theme="dark"]{
+    --bg:#15120f;
+    --bg-soft:#1d1915;
+    --ink:#f4efe7;
+    --ink-soft:#b8afa2;
+    --azuki:#e08a99;
+    --kitsune:#e8c07a;
+    --line:#332b23;
+    --card:#1d1915;
+    --shadow:0 6px 24px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"Noto Serif JP",serif;
+    font-size:18px;
+    line-height:2;
+    letter-spacing:.04em;
+    transition:background .3s, color .3s;
+  }
+  .wrap{width:min(1080px,92vw);margin-inline:auto}
+  a{color:inherit}
+  .gothic{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif}
+
+  /* ---------- ヘッダー ---------- */
+  header.site{
+    position:sticky;top:0;z-index:60;
+    background:color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .bar{display:flex;align-items:center;gap:18px;padding:12px 0;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:11px;text-decoration:none;flex:none}
+  .logo .mark{
+    width:42px;height:42px;border-radius:50%;flex:none;
+    border:2px solid var(--azuki);display:grid;place-items:center;
+    color:var(--azuki);font-size:20px;font-weight:700;
+  }
+  .logo .nm{font-size:25px;font-weight:700;letter-spacing:.12em;line-height:1.2}
+  .logo .sub{display:block;font-size:11px;letter-spacing:.3em;color:var(--ink-soft)}
+  nav.main{display:flex;gap:20px;font-size:16px;margin-left:auto;flex-wrap:wrap}
+  nav.main a{text-decoration:none;padding:6px 2px;border-bottom:2px solid transparent}
+  nav.main a:hover{border-bottom-color:var(--azuki)}
+  .tools{display:flex;gap:10px;align-items:center}
+  .search-box{position:relative}
+  .search-box input{
+    width:230px;max-width:46vw;padding:11px 38px 11px 16px;font-size:16px;
+    border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);
+    font-family:inherit;
+  }
+  .search-box input:focus{outline:2px solid var(--azuki);outline-offset:1px;border-color:transparent}
+  .search-box .ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);opacity:.5;pointer-events:none}
+  .btn-icon{
+    width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);
+    background:var(--card);color:var(--ink);font-size:18px;cursor:pointer;flex:none;
+  }
+  .btn-icon:hover{border-color:var(--azuki)}
+  .btn-admin{
+    text-decoration:none;font-size:15px;padding:10px 16px;border-radius:999px;
+    background:var(--azuki);color:#fff;white-space:nowrap;font-weight:700;
+  }
+  html[data-theme="dark"] .btn-admin{color:#15120f}
+  .searchinfo{display:none;padding:10px 0 14px;font-size:16px;color:var(--azuki);font-weight:700}
+  .searchinfo.on{display:block}
+  .searchinfo button{
+    margin-left:12px;font-size:14px;border:1.5px solid var(--line);background:var(--card);
+    color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit;
+  }
+  mark.hit{background:#ffe680;color:#1b1917;border-radius:4px;padding:0 2px}
+  .hidden-by-search{display:none !important}
+
+  /* ---------- 共通 ---------- */
+  section{padding:100px 0}
+  h2.sec{font-size:clamp(30px,4.4vw,46px);line-height:1.4;margin:0 0 14px;letter-spacing:.08em}
+  .sec-lead{color:var(--ink-soft);margin:0 0 48px;font-size:18px}
+  .eyebrow{
+    display:inline-block;font-size:13px;letter-spacing:.32em;color:var(--azuki);
+    font-weight:700;margin-bottom:14px;
+  }
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.shown{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  /* ---------- ヒーロー ---------- */
+  .hero{padding:92px 0 84px;background:var(--bg-soft);border-bottom:1px solid var(--line)}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center}
+  .hero h1{font-size:clamp(38px,6.2vw,64px);line-height:1.4;margin:0 0 22px;letter-spacing:.08em}
+  .hero h1 em{font-style:normal;color:var(--azuki)}
+  .est{
+    display:inline-block;border:1px solid var(--azuki);color:var(--azuki);
+    padding:5px 16px;border-radius:999px;font-size:14px;letter-spacing:.2em;margin-bottom:20px;
+  }
+  .hero p.lead{font-size:19px;color:var(--ink-soft);margin:0 0 32px}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{
+    display:inline-block;text-decoration:none;font-weight:700;font-size:17px;
+    padding:16px 30px;border-radius:999px;border:2px solid var(--azuki);cursor:pointer;font-family:inherit;
+  }
+  .btn.fill{background:var(--azuki);color:#fff}
+  html[data-theme="dark"] .btn.fill{color:#15120f}
+  .btn.ghost{background:transparent;color:var(--azuki)}
+  .bake-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px;box-shadow:var(--shadow);
+  }
+  .bake-card h3{margin:0 0 6px;font-size:19px;letter-spacing:.1em}
+  .bake-card .today{font-size:14px;color:var(--ink-soft);margin:0 0 18px;line-height:1.7}
+  .bake-list{list-style:none;margin:0;padding:0}
+  .bake-list li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);font-size:17px}
+  .bake-list li:last-child{border-bottom:0}
+  .bake-list .t{font-variant-numeric:tabular-nums;font-weight:700;color:var(--azuki)}
+  .anpan-art{width:100%;height:auto;display:block;margin-bottom:18px}
+
+  /* ---------- こだわり ---------- */
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line)}
+  .card{padding:38px 30px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+  .three .card:first-child{border-left:1px solid var(--line)}
+  .card h3{margin:16px 0 12px;font-size:23px;letter-spacing:.06em}
+  .card p{margin:0;color:var(--ink-soft);font-size:17px}
+  .num{font-size:26px;color:var(--kitsune);font-weight:700;letter-spacing:.1em}
+
+  /* ---------- 品書き ---------- */
+  .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .item{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;
+  }
+  .item .thumb{height:150px;display:grid;place-items:center;background:var(--bg-soft)}
+  .item .body{padding:24px;flex:1;display:flex;flex-direction:column}
+  .item h3{margin:0 0 8px;font-size:22px;letter-spacing:.06em}
+  .item p{margin:0 0 16px;color:var(--ink-soft);font-size:16px;flex:1;line-height:1.85}
+  .item .foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .price{font-size:20px;font-weight:700;color:var(--azuki);font-variant-numeric:tabular-nums}
+  .fav{
+    border:1.5px solid var(--line);background:transparent;color:var(--ink-soft);
+    border-radius:999px;padding:8px 14px;font-size:15px;cursor:pointer;font-family:inherit;white-space:nowrap;
+  }
+  .fav[aria-pressed="true"]{background:var(--kitsune);border-color:var(--kitsune);color:#3a2a10;font-weight:700}
+  .tag{display:inline-block;font-size:13px;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:3px 11px;margin:0 6px 6px 0;color:var(--ink-soft)}
+  .fav-note{margin-top:24px;font-size:16px;color:var(--ink-soft)}
+
+  /* ---------- 年表 ---------- */
+  .chrono{border-left:2px solid var(--line);margin-left:8px;padding-left:0}
+  .ch{position:relative;padding:0 0 34px 34px;list-style:none}
+  .ch::before{
+    content:"";position:absolute;left:-9px;top:12px;width:16px;height:16px;border-radius:50%;
+    background:var(--bg);border:3px solid var(--azuki);
+  }
+  .ch .yr{font-size:15px;letter-spacing:.16em;color:var(--azuki);font-weight:700}
+  .ch h3{margin:2px 0 6px;font-size:21px}
+  .ch p{margin:0;color:var(--ink-soft);font-size:17px}
+
+  /* ---------- 声 ---------- */
+  .voices{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .voice{background:var(--bg-soft);border-radius:var(--radius);padding:28px;border:1px solid var(--line)}
+  .voice p{margin:0 0 14px;font-size:17px}
+  .voice .who{font-size:15px;color:var(--ink-soft)}
+  .stars{color:var(--kitsune);letter-spacing:.14em}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--line)}
+  .faq-q{
+    width:100%;text-align:left;background:none;border:0;padding:26px 46px 26px 0;
+    font-size:20px;font-weight:700;color:var(--ink);cursor:pointer;position:relative;font-family:inherit;line-height:1.7;
+  }
+  .faq-q::after{
+    content:"＋";position:absolute;right:6px;top:50%;transform:translateY(-50%);
+    color:var(--azuki);font-size:24px;
+  }
+  .faq-item.open .faq-q::after{content:"−"}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .faq-a p{margin:0 0 26px;color:var(--ink-soft);font-size:17px}
+
+  /* ---------- フォーム ---------- */
+  .contact{background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  label{font-size:16px;font-weight:700}
+  .req{color:var(--azuki);font-size:14px;margin-left:6px}
+  input[type=text],input[type=email],input[type=tel],select,textarea{
+    font-family:inherit;font-size:17px;padding:14px 16px;border:1.5px solid var(--line);
+    border-radius:10px;background:var(--card);color:var(--ink);width:100%;
+  }
+  textarea{min-height:150px;resize:vertical;line-height:1.9}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--azuki);outline-offset:1px;border-color:transparent}
+  .form-note{font-size:15px;color:var(--ink-soft);margin:20px 0 0;line-height:1.8}
+  .sent{
+    display:none;background:var(--card);border:2px solid var(--azuki);border-radius:var(--radius);
+    padding:34px;text-align:center;
+  }
+  .sent.on{display:block}
+  .sent h3{margin:0 0 10px;font-size:24px;color:var(--azuki)}
+
+  /* ---------- フッター ---------- */
+  footer.site{padding:60px 0 48px;font-size:16px;color:var(--ink-soft)}
+  .foot-grid{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-bottom:30px}
+  footer.site h4{color:var(--ink);margin:0 0 10px;font-size:17px;letter-spacing:.08em}
+  .totop{position:fixed;right:22px;bottom:22px;z-index:50;opacity:0;pointer-events:none;transition:opacity .3s}
+  .totop.on{opacity:1;pointer-events:auto}
+
+  @media(max-width:860px){
+    .hero-grid,.three,.menu-grid,.voices,.form-grid{grid-template-columns:1fr}
+    .three .card{border-left:1px solid var(--line)}
+    nav.main{display:none}
+    section{padding:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="bar">
+      <a class="logo" href="#top">
+        <span class="mark">丸</span>
+        <span><span class="nm">まるぱん堂</span><span class="sub gothic">SINCE 1854 KYOTO</span></span>
+      </a>
+      <nav class="main gothic">
+        <a href="#kodawari">こだわり</a>
+        <a href="#menu">品書き</a>
+        <a href="#history">あゆみ</a>
+        <a href="#voice">お客様の声</a>
+        <a href="#faq">よくある質問</a>
+        <a href="#contact">ご注文</a>
+      </nav>
+      <div class="tools">
+        <div class="search-box">
+          <input id="siteSearch" class="gothic" type="text" placeholder="サイト内を検索（例：丹波）" aria-label="サイト内検索">
+          <span class="ico">🔍</span>
+        </div>
+        <button class="btn-icon" id="themeBtn" title="配色を切り替え" aria-label="配色を切り替え">🌙</button>
+        <a class="btn-admin gothic" href="admin.html">管理画面へ</a>
+      </div>
+    </div>
+    <div class="searchinfo gothic" id="searchInfo"></div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ヒーロー -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="reveal">
+        <span class="est gothic">安政元年創業・170年</span>
+        <h1>三条河原町、<br><em>丹波大納言</em>を<br>炊き続けて170年。</h1>
+        <p class="lead">初代から受け継いだ蔵付きの酒種と、丹波大納言小豆の自家炊きあん。まるぱん堂は、あんぱんひとつだけを守り続けてまいりました。京の朝は、この一個から。</p>
+        <div class="cta-row">
+          <a class="btn fill gothic" href="#menu">品書きを見る</a>
+          <a class="btn ghost gothic" href="#contact">ご注文・お取り置き</a>
+        </div>
+      </div>
+      <div class="bake-card reveal">
+        <svg class="anpan-art" viewBox="0 0 320 130" role="img" aria-label="あんぱんのイラスト">
+          <ellipse cx="160" cy="112" rx="120" ry="10" fill="rgba(0,0,0,.06)"/>
+          <path d="M40 100 Q40 34 160 34 Q280 34 280 100 Z" fill="#c99441"/>
+          <path d="M40 100 Q40 34 160 34 Q280 34 280 100 Z" fill="none" stroke="#a3762f" stroke-width="3"/>
+          <ellipse cx="160" cy="100" rx="120" ry="12" fill="#dcae66"/>
+          <circle cx="160" cy="60" r="9" fill="#7a2733"/>
+          <circle cx="122" cy="70" r="4" fill="#b9852f"/>
+          <circle cx="199" cy="72" r="4" fill="#b9852f"/>
+          <path d="M96 78 Q116 66 138 76" stroke="#eac88c" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h3>本日の窯出し</h3>
+        <p class="today gothic" id="todayLabel">銅型で一日四度、焼き上げております</p>
+        <ul class="bake-list">
+          <li><span>丹波大納言（粒あん）</span><span class="t">7:00</span></li>
+          <li><span>こしあん・白小豆</span><span class="t">10:30</span></li>
+          <li><span>季節のあんぱん</span><span class="t">13:00</span></li>
+          <li><span>夕の追い窯</span><span class="t">16:30</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- こだわり -->
+  <section id="kodawari">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow gothic">KODAWARI</span>
+        <h2 class="sec">あんぱん一品、百七十年。</h2>
+        <p class="sec-lead">品数を増やすより、ひとつを深く。代々の当主が守ってきた三つのこと。</p>
+      </div>
+      <div class="three">
+        <div class="card reveal searchable">
+          <span class="num">壱</span>
+          <h3>丹波大納言の自家炊き</h3>
+          <p>丹波産大納言小豆を、前夜から井戸水に浸し、翌朝四時から銅釜でゆっくり炊き上げます。砂糖は控えめ。小豆の皮が破れる直前で火を止めるのが、代々の見極めです。</p>
+        </div>
+        <div class="card reveal searchable">
+          <span class="num">弐</span>
+          <h3>蔵付きの酒種生地</h3>
+          <p>創業時から蔵に棲みついた酵母で起こす酒種を、十二時間かけて発酵させます。ほのかな酒の香りと、翌日でも固くならないしっとりした生地は、この蔵でしか出せません。</p>
+        </div>
+        <div class="card reveal searchable">
+          <span class="num">参</span>
+          <h3>初代からの銅型で焼く</h3>
+          <p>百七十年使い続けている銅の焼き型。角が丸くなるほど使い込まれた型は熱の回りがやわらかく、皮が薄く均一に色づきます。修理しながら今も現役です。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 品書き -->
+  <section id="menu" style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow gothic">SHINAGAKI</span>
+        <h2 class="sec">品書き</h2>
+        <p class="sec-lead">★を押すと、この端末にお気に入りとして残ります。次にお越しのときも覚えております。</p>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+      <p class="fav-note gothic" id="favNote"></p>
+    </div>
+  </section>
+
+  <!-- あゆみ -->
+  <section id="history">
+    <div class="wrap" style="max-width:820px">
+      <div class="reveal">
+        <span class="eyebrow gothic">HISTORY</span>
+        <h2 class="sec">まるぱん堂のあゆみ</h2>
+        <p class="sec-lead">三条河原町の店先から見てきた、百七十年。</p>
+      </div>
+      <ul class="chrono" id="chrono" style="padding:0"></ul>
+    </div>
+  </section>
+
+  <!-- 声 -->
+  <section id="voice" style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow gothic">VOICE</span>
+        <h2 class="sec">お客様の声</h2>
+        <p class="sec-lead">町内のお得意様から、遠方よりお越しの方まで。</p>
+      </div>
+      <div class="voices">
+        <div class="voice reveal searchable">
+          <div class="stars">★★★★★</div>
+          <p>茶席の御用で三十年お世話になっています。甘さがくどくないので、薄茶にも濃茶にも合わせられるのがありがたい。</p>
+          <div class="who gothic">中京区・茶道教授</div>
+        </div>
+        <div class="voice reveal searchable">
+          <div class="stars">★★★★★</div>
+          <p>東京への手土産に十二個入りの桐箱を頼みました。包み紙の家紋が美しく、渡した先で必ず店の名を聞かれます。</p>
+          <div class="who gothic">会社員・40代</div>
+        </div>
+        <div class="voice reveal searchable">
+          <div class="stars">★★★★☆</div>
+          <p>季節の栗あんぱんが目当てで、秋は毎週通っています。昼過ぎには売り切れるので、窯出しの時刻を見て行くのがこつ。</p>
+          <div class="who gothic">学生・20代</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap" style="max-width:820px">
+      <div class="reveal">
+        <span class="eyebrow gothic">FAQ</span>
+        <h2 class="sec">よくある質問</h2>
+        <p class="sec-lead">見出しを押すと答えが開きます。</p>
+      </div>
+      <div id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- お問い合わせ -->
+  <section id="contact" class="contact">
+    <div class="wrap" style="max-width:860px">
+      <div class="reveal">
+        <span class="eyebrow gothic">CONTACT</span>
+        <h2 class="sec">ご注文・お問い合わせ</h2>
+        <p class="sec-lead">お取り置き、まとめ買い、御進物の箱詰め、法要の御用など、お気軽にご相談ください。いただいた内容は、そのまま店の管理画面に届きます。</p>
+      </div>
+
+      <form id="contactForm" class="reveal gothic">
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-name">お名前<span class="req">必須</span></label>
+            <input id="f-name" type="text" required placeholder="河原町 花子">
+          </div>
+          <div class="field">
+            <label for="f-mail">メールアドレス<span class="req">必須</span></label>
+            <input id="f-mail" type="email" required placeholder="hanako@example.com">
+          </div>
+          <div class="field">
+            <label for="f-tel">お電話番号</label>
+            <input id="f-tel" type="tel" placeholder="075-123-4567">
+          </div>
+          <div class="field">
+            <label for="f-type">ご用件<span class="req">必須</span></label>
+            <select id="f-type" required>
+              <option value="まとめ買い・大口">まとめ買い・大口のご注文</option>
+              <option value="取り置き">お取り置きのお願い</option>
+              <option value="贈答・のし">御進物・のしのご相談</option>
+              <option value="法要・茶席">法要・茶席の御用</option>
+              <option value="イベント出店">催事・イベント出店のご依頼</option>
+              <option value="その他">その他のお問い合わせ</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-qty">ご希望個数（目安）</label>
+            <input id="f-qty" type="text" inputmode="numeric" placeholder="30">
+          </div>
+          <div class="field">
+            <label for="f-date">ご希望日</label>
+            <input id="f-date" type="text" placeholder="10月3日（金）午前">
+          </div>
+          <div class="field full">
+            <label for="f-msg">ご相談内容<span class="req">必須</span></label>
+            <textarea id="f-msg" required placeholder="10月3日の午前中に、丹波大納言20個とこしあん10個をお取り置きいただけますでしょうか。桐箱と、のし（御礼）をお願いします。"></textarea>
+          </div>
+        </div>
+        <p class="form-note">※こちらは練習用のモック（見本）です。実際のメール送信は行わず、同じブラウザの管理画面に届く仕組みになっています。</p>
+        <div class="cta-row" style="margin-top:26px">
+          <button class="btn fill" type="submit">この内容で送信する</button>
+          <a class="btn ghost" href="admin.html">届いたか管理画面で見る</a>
+        </div>
+      </form>
+
+      <div class="sent gothic" id="sentBox">
+        <h3>承りました。ありがとうございます。</h3>
+        <p id="sentDetail"></p>
+        <div class="cta-row" style="justify-content:center">
+          <a class="btn fill" href="admin.html">管理画面で受信を確認する</a>
+          <button class="btn ghost" type="button" id="againBtn">もう一度送る</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site gothic">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4>まるぱん堂</h4>
+        <div>京都市中京区 三条河原町 西入ル<br>7:00〜18:00／水曜定休<br>075-123-4567</div>
+      </div>
+      <div>
+        <h4>品書き</h4>
+        <div>丹波大納言／こしあん／白小豆<br>宇治抹茶あん／栗あん／黒胡麻</div>
+      </div>
+      <div>
+        <h4>お店の方へ</h4>
+        <div><a href="admin.html">管理画面（ご注文・お問い合わせ）</a><br><a href="architecture.html">システム全体像の図解</a></div>
+      </div>
+    </div>
+    <div>© 安政元年創業 まるぱん堂 ／ このサイトは学習用のモックです。</div>
+  </div>
+</footer>
+
+<button class="btn-icon totop" id="toTop" title="上に戻る" aria-label="上に戻る">↑</button>
+
+<script>
+(function(){
+  "use strict";
+  var K = {
+    inquiries:"marupando.v1.inquiries",
+    favorites:"marupando.v1.favorites",
+    theme:"marupando.v1.theme",
+    activity:"marupando.v1.activity",
+    seq:"marupando.v1.seq"
+  };
+  function load(key, fb){ try{ var v=localStorage.getItem(key); return v?JSON.parse(v):fb; }catch(e){ return fb; } }
+  function save(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+
+  /* ===== 配色（明るい／暗い） ===== */
+  var themeBtn=document.getElementById("themeBtn");
+  function applyTheme(t){
+    document.documentElement.setAttribute("data-theme", t);
+    themeBtn.textContent = t==="dark" ? "☀️" : "🌙";
+    themeBtn.title = t==="dark" ? "明るい配色にする" : "暗い配色にする";
+  }
+  applyTheme(load(K.theme,"light"));
+  themeBtn.addEventListener("click",function(){
+    var next = document.documentElement.getAttribute("data-theme")==="dark" ? "light":"dark";
+    save(K.theme,next); applyTheme(next);
+  });
+
+  /* ===== 品書きデータ ===== */
+  var PRODUCTS=[
+    {id:"p-dainagon",name:"丹波大納言",price:280,tags:["看板","朝七時"],desc:"皮の粒立ちを残して炊いた丹波産大納言。まずはこの一個から。一日五百個焼く看板でございます。"},
+    {id:"p-koshi",name:"こしあん",price:280,tags:["定番","なめらか"],desc:"三度こして舌ざわりだけを残しました。ご年配の方とお子さまに永く選ばれております。"},
+    {id:"p-shiroazuki",name:"白小豆あん",price:340,tags:["希少","御進物"],desc:"収穫量のわずかな備中白小豆。後味の軽い上品な甘さで、御進物にいちばん選ばれます。"},
+    {id:"p-matcha",name:"宇治抹茶あん",price:320,tags:["宇治","ほろ苦"],desc:"宇治の茶匠に挽いていただいた抹茶を白あんに合わせました。ほろ苦さが後を引きます。"},
+    {id:"p-kuri",name:"栗あんぱん",price:380,tags:["季節限定","秋"],desc:"丹波の渋皮栗を丸ごとひと粒。九月から十一月だけの限定で、毎日昼過ぎには売り切れます。"},
+    {id:"p-goma",name:"黒胡麻あん",price:320,tags:["香ばしい"],desc:"炒りたての黒胡麻を練り込んだ、香りの立つあん。珈琲にもよく合うと評判です。"}
+  ];
+  var favs = load(K.favorites, []);
+  var grid=document.getElementById("menuGrid");
+  PRODUCTS.forEach(function(p){
+    var el=document.createElement("article");
+    el.className="item reveal searchable";
+    el.innerHTML=
+      '<div class="thumb">'+
+        '<svg viewBox="0 0 200 90" width="150" aria-hidden="true">'+
+          '<path d="M20 72 Q20 20 100 20 Q180 20 180 72 Z" fill="#c99441" stroke="#a3762f" stroke-width="3"/>'+
+          '<ellipse cx="100" cy="72" rx="80" ry="9" fill="#dcae66"/>'+
+          '<circle cx="100" cy="40" r="7" fill="#7a2733"/>'+
+        '</svg>'+
+      '</div>'+
+      '<div class="body">'+
+        '<h3>'+p.name+'</h3>'+
+        '<div class="gothic">'+p.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join('')+'</div>'+
+        '<p>'+p.desc+'</p>'+
+        '<div class="foot"><span class="price">'+p.price+'円</span>'+
+        '<button class="fav gothic" type="button" data-id="'+p.id+'" aria-pressed="false">☆ お気に入り</button></div>'+
+      '</div>';
+    grid.appendChild(el);
+  });
+  function paintFav(){
+    document.querySelectorAll(".fav").forEach(function(b){
+      var on = favs.indexOf(b.dataset.id) >= 0;
+      b.setAttribute("aria-pressed", on ? "true":"false");
+      b.textContent = on ? "★ お気に入り済み" : "☆ お気に入り";
+    });
+    var note=document.getElementById("favNote");
+    if(favs.length===0){ note.textContent="まだお気に入りはございません。気になる品の★を押してみてください。"; }
+    else{
+      var names=PRODUCTS.filter(function(p){return favs.indexOf(p.id)>=0;}).map(function(p){return p.name;});
+      note.textContent="お気に入り "+favs.length+"件：" + names.join("／") + "（この端末に保存されました）";
+    }
+  }
+  grid.addEventListener("click",function(e){
+    var b=e.target.closest(".fav"); if(!b) return;
+    var id=b.dataset.id, i=favs.indexOf(id);
+    if(i>=0){ favs.splice(i,1); } else { favs.push(id); }
+    save(K.favorites,favs); paintFav();
+  });
+  paintFav();
+
+  /* ===== あゆみ ===== */
+  var HISTORY=[
+    {y:"安政元年（1854）",t:"三条河原町に創業",d:"初代・丸屋清兵衛が、饅頭屋として三条大橋の西詰に店を構える。当時は餡だけを商っていた。"},
+    {y:"明治八年（1875）",t:"あんぱんを焼きはじめる",d:"二代目が東京で酒種あんぱんに出会い、蔵の酵母で京風に焼き直す。今の生地の原型がこのとき生まれた。"},
+    {y:"昭和二十年（1945）",t:"炭と小豆で店を守る",d:"物資の乏しい時代、丹波の農家と直接手を結び、小豆だけは絶やさなかった。この縁が今も続いている。"},
+    {y:"平成十年（1998）",t:"銅型を修復して使い続ける",d:"初代からの銅型を職人に打ち直してもらい、現役に戻す。「型を替えると味が変わる」という四代目の判断だった。"},
+    {y:"令和六年（2024）",t:"創業170年・お取り置きを受付開始",d:"遠方のお客さまのため、ホームページからのお取り置き・御進物のご相談を承るようになった。"}
+  ];
+  var chrono=document.getElementById("chrono");
+  HISTORY.forEach(function(h){
+    var li=document.createElement("li");
+    li.className="ch reveal searchable";
+    li.innerHTML='<div class="yr gothic">'+h.y+'</div><h3>'+h.t+'</h3><p>'+h.d+'</p>';
+    chrono.appendChild(li);
+  });
+
+  /* ===== よくある質問 ===== */
+  var FAQ=[
+    {q:"お取り置きはできますか？",a:"承っております。お電話か、このページのご注文フォームより、ご希望日・時間帯・個数をお知らせください。当日分は前日十八時まで、十個以上のまとめ買いは三日前までにお願いしております。"},
+    {q:"日持ちはどれくらいですか？",a:"保存料を使っておりませんので、当日中にお召し上がりください。酒種の生地は翌日でも固くなりにくうございますが、その際は霧を吹いてトースターで二分ほど温め直すのがおすすめです。"},
+    {q:"御進物の箱やのしはありますか？",a:"六個入り・十二個入りの桐箱をご用意しております（箱代は六個入り四百円、十二個入り七百円）。のし紙は無料でお付けできますので、表書きとお名前をお知らせください。法要用の掛け紙も承ります。"},
+    {q:"アレルギー表示はありますか？",a:"小麦・卵・乳を使用しております。栗あんぱんのみ、くるみと同じ設備で製造しています。詳しい原材料表は店頭のお会計横に掲示しておりますので、お気軽にお申し付けください。"},
+    {q:"お支払い方法は何が使えますか？",a:"現金のほか、各種クレジットカード、交通系ICカード、QRコード決済がご利用いただけます。大口のお支払いは、店頭でのお引き渡し時に頂戴しております。"},
+    {q:"催事への出店はお願いできますか？",a:"百貨店の催事や、地域の市に月二回ほど出させていただいております。ご依頼はご注文フォームの「催事・イベント出店のご依頼」よりご相談ください。人手の都合で、一か月以上先のお話ですと調整しやすうございます。"},
+    {q:"配送はしていますか？",a:"焼きたての状態でお召し上がりいただきたく、原則として店頭でのお渡しのみとしております。ただし十二個入り以上の御進物に限り、京都市内へは当日中の自転車便でお届けできます。ご相談ください。"}
+  ];
+  var faqList=document.getElementById("faqList");
+  FAQ.forEach(function(f){
+    var d=document.createElement("div");
+    d.className="faq-item reveal searchable";
+    d.innerHTML='<button class="faq-q" type="button">'+f.q+'</button><div class="faq-a"><p>'+f.a+'</p></div>';
+    faqList.appendChild(d);
+  });
+  faqList.addEventListener("click",function(e){
+    var b=e.target.closest(".faq-q"); if(!b) return;
+    var item=b.parentElement, a=item.querySelector(".faq-a");
+    var open=item.classList.toggle("open");
+    a.style.maxHeight = open ? (a.scrollHeight+"px") : "0px";
+  });
+
+  /* ===== スクロールでふわっと ===== */
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add("shown"); io.unobserve(en.target); }
+    });
+  },{threshold:.12});
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+
+  /* ===== サイト内検索 ===== */
+  var input=document.getElementById("siteSearch");
+  var info=document.getElementById("searchInfo");
+  var TARGETS="p,h1,h2,h3,h4,li,div.who,div.yr,span.tag,button.faq-q";
+  function clearMarks(root){
+    root.querySelectorAll("mark.hit").forEach(function(m){
+      m.parentNode.replaceChild(document.createTextNode(m.textContent), m);
+    });
+    root.normalize();
+  }
+  function resetSearch(){
+    clearMarks(document.querySelector("main"));
+    document.querySelectorAll(".hidden-by-search").forEach(function(el){ el.classList.remove("hidden-by-search"); });
+    info.classList.remove("on"); info.innerHTML="";
+  }
+  function escapeReg(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
+  function highlightIn(el, q){
+    var re=new RegExp(escapeReg(q),"gi");
+    var found=false;
+    var walker=document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    var nodes=[], n;
+    while((n=walker.nextNode())){
+      if(n.nodeValue && n.nodeValue.trim()){
+        re.lastIndex=0;
+        if(re.test(n.nodeValue)) nodes.push(n);
+      }
+    }
+    nodes.forEach(function(node){
+      var frag=document.createDocumentFragment(), last=0, txt=node.nodeValue, m;
+      var r2=new RegExp(escapeReg(q),"gi");
+      while((m=r2.exec(txt))){
+        frag.appendChild(document.createTextNode(txt.slice(last,m.index)));
+        var mark=document.createElement("mark"); mark.className="hit"; mark.textContent=m[0];
+        frag.appendChild(mark); last=m.index+m[0].length; found=true;
+        if(m[0].length===0) r2.lastIndex++;
+      }
+      frag.appendChild(document.createTextNode(txt.slice(last)));
+      node.parentNode.replaceChild(frag,node);
+    });
+    return found;
+  }
+  function runSearch(q){
+    resetSearch();
+    q=q.trim();
+    if(q.length===0) return;
+    var main=document.querySelector("main");
+    var blocks=main.querySelectorAll(".searchable");
+    var hitBlocks=0;
+    blocks.forEach(function(b){
+      var re=new RegExp(escapeReg(q),"i");
+      if(re.test(b.textContent)){ hitBlocks++; }
+      else{ b.classList.add("hidden-by-search"); }
+    });
+    main.querySelectorAll(TARGETS).forEach(function(el){
+      if(el.closest(".hidden-by-search")) return;
+      if(el.querySelector(TARGETS)) return;
+      highlightIn(el,q);
+    });
+    var marks=main.querySelectorAll("mark.hit").length;
+    info.classList.add("on");
+    if(marks===0){
+      info.innerHTML='「'+q+'」は見つかりませんでした。<button type="button" id="clearS">検索を解除</button>';
+    }else{
+      info.innerHTML='「'+q+'」を '+marks+' か所で見つけました。品書き・あゆみ・よくある質問は '+hitBlocks+' 件に絞り込んでいます。'+
+        '<button type="button" id="clearS">検索を解除（Escキー）</button>';
+      var first=main.querySelector("mark.hit");
+      if(first) first.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  }
+  var timer=null;
+  input.addEventListener("input",function(){
+    clearTimeout(timer);
+    var v=input.value;
+    timer=setTimeout(function(){ runSearch(v); },220);
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"){ input.value=""; resetSearch(); }
+  });
+  info.addEventListener("click",function(e){
+    if(e.target.id==="clearS"){ input.value=""; resetSearch(); input.focus(); }
+  });
+
+  /* ===== ご注文フォーム（管理画面へ届ける） ===== */
+  function nextId(){
+    var n=Math.max(load(K.seq,1012),1012)+1; save(K.seq,n); return "INQ-"+n;
+  }
+  var form=document.getElementById("contactForm");
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    var rec={
+      id: nextId(),
+      receivedAt: new Date().toISOString(),
+      name: document.getElementById("f-name").value.trim(),
+      email: document.getElementById("f-mail").value.trim(),
+      tel: document.getElementById("f-tel").value.trim(),
+      type: document.getElementById("f-type").value,
+      qty: parseInt(document.getElementById("f-qty").value,10) || 0,
+      wishDate: document.getElementById("f-date").value.trim(),
+      message: document.getElementById("f-msg").value.trim(),
+      source: "ホームページのフォーム",
+      status: "new",
+      stage: "受付",
+      repeat: false,
+      favorites: favs.slice()
+    };
+    var list=load(K.inquiries,[]);
+    list.unshift(rec);
+    save(K.inquiries,list);
+
+    var act=load(K.activity,[]);
+    act.unshift({at:new Date().toISOString(), who:"ホームページ", what:"新しいお問い合わせ "+rec.id+"（"+rec.name+" 様）を受信"});
+    save(K.activity,act.slice(0,200));
+
+    form.style.display="none";
+    var box=document.getElementById("sentBox");
+    box.classList.add("on");
+    document.getElementById("sentDetail").textContent =
+      "受付番号 "+rec.id+" として、店の管理画面の受信箱に届きました。ご用件：" + rec.type + (rec.qty ? "／"+rec.qty+"個" : "");
+    box.scrollIntoView({behavior:"smooth",block:"center"});
+  });
+  document.getElementById("againBtn").addEventListener("click",function(){
+    document.getElementById("sentBox").classList.remove("on");
+    form.reset(); form.style.display="";
+    form.scrollIntoView({behavior:"smooth",block:"center"});
+  });
+
+  /* ===== 上に戻る ===== */
+  var toTop=document.getElementById("toTop");
+  window.addEventListener("scroll",function(){
+    toTop.classList.toggle("on", window.scrollY>600);
+  });
+  toTop.addEventListener("click",function(){ window.scrollTo({top:0,behavior:"smooth"}); });
+
+  /* ===== 本日の日付 ===== */
+  var d=new Date(), w="日月火水木金土"[d.getDay()];
+  document.getElementById("todayLabel").textContent =
+    d.getMonth()+1 + "月" + d.getDate() + "日（"+w+"）／銅型で一日四度、焼き上げております";
+})();
+</script>
+</body>
+</html>

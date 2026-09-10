@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まるぱん堂 帳場（管理画面）</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-soft:#f8f6f2;
+    --ink:#1b1917;
+    --ink-soft:#6b6459;
+    --azuki:#7a2733;
+    --kitsune:#c99441;
+    --line:#e7e1d9;
+    --card:#ffffff;
+    --ok:#1f7a4d;
+    --warn:#b5761a;
+    --ng:#a32b2b;
+    --shadow:0 4px 18px rgba(27,25,23,.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg-soft);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;
+    font-size:16px;line-height:1.8;
+  }
+  .wrap{width:min(1240px,95vw);margin-inline:auto}
+  a{color:var(--azuki)}
+  button{font-family:inherit}
+
+  /* ヘッダー */
+  header.app{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+  .top{display:flex;align-items:center;gap:16px;padding:14px 0;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit}
+  .brand .mk{width:38px;height:38px;border-radius:50%;border:2px solid var(--azuki);color:var(--azuki);display:grid;place-items:center;font-weight:700;font-size:18px}
+  .brand b{font-size:19px;letter-spacing:.06em;display:block;line-height:1.25}
+  .brand small{color:var(--ink-soft);font-size:12px;letter-spacing:.16em}
+  .top .sp{margin-left:auto}
+  .user{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--ink-soft)}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--kitsune);color:#3a2a10;display:grid;place-items:center;font-weight:700}
+  .btn-site{
+    text-decoration:none;font-size:14px;padding:9px 15px;border-radius:999px;
+    border:1.5px solid var(--azuki);color:var(--azuki);font-weight:700;white-space:nowrap;
+  }
+  .btn-site:hover{background:var(--azuki);color:#fff}
+
+  /* タブ */
+  .tabs{display:flex;gap:4px;overflow-x:auto;border-top:1px solid var(--line)}
+  .tab{
+    border:0;background:none;padding:15px 20px;font-size:15px;font-weight:700;color:var(--ink-soft);
+    cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--azuki);border-bottom-color:var(--azuki)}
+  .tab .badge{
+    display:inline-block;min-width:20px;padding:0 6px;margin-left:7px;border-radius:999px;
+    background:var(--azuki);color:#fff;font-size:12px;line-height:20px;vertical-align:2px;
+  }
+
+  /* パネル */
+  main{padding:26px 0 70px}
+  .panel{display:none}
+  .panel.active{display:block}
+  h2.p-title{font-size:26px;margin:0 0 4px;letter-spacing:.04em}
+  .p-lead{color:var(--ink-soft);margin:0 0 20px;font-size:15px}
+
+  .hint{
+    background:#fffaf0;border:1px solid #f0ddb8;border-left:5px solid var(--kitsune);
+    border-radius:10px;padding:16px 20px;margin:0 0 24px;font-size:15px;
+  }
+  .hint b{display:block;margin-bottom:6px;color:#7a5a12}
+  .hint ul{margin:0;padding-left:1.3em}
+  .hint li{margin:3px 0;color:#5f4a1c}
+  .hint code{background:#fff;border:1px solid #ecdcbb;border-radius:5px;padding:1px 7px;font-size:14px}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .kpi .lb{font-size:13px;color:var(--ink-soft);letter-spacing:.06em}
+  .kpi .vl{font-size:34px;font-weight:800;line-height:1.3;font-variant-numeric:tabular-nums}
+  .kpi .df{font-size:13px;color:var(--ink-soft)}
+  .kpi.ok .vl{color:var(--ok)} .kpi.warn .vl{color:var(--warn)} .kpi.ng .vl{color:var(--ng)}
+  .kpi.azuki .vl{color:var(--azuki)}
+
+  .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:var(--shadow);margin-bottom:22px}
+  .box h3{margin:0 0 14px;font-size:18px;letter-spacing:.04em}
+  .two{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+  @media(max-width:900px){.two{grid-template-columns:1fr}}
+
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:13px;color:var(--ink-soft);letter-spacing:.06em;font-weight:700;white-space:nowrap}
+  tbody tr:hover{background:var(--bg-soft)}
+  .tbl-scroll{overflow-x:auto}
+  .nowrap{white-space:nowrap}
+
+  .pill{display:inline-block;font-size:12.5px;font-weight:700;padding:3px 11px;border-radius:999px;white-space:nowrap}
+  .pill.auto{background:#e6f4ec;color:var(--ok);border:1px solid #bfe3ce}
+  .pill.check{background:#fdf3e0;color:var(--warn);border:1px solid #f0dcb4}
+  .pill.reject{background:#fbeaea;color:var(--ng);border:1px solid #f0c9c9}
+  .pill.done{background:#eee;color:#555;border:1px solid #ddd}
+  .pill.stage{background:#f2eef7;color:#5b3d7a;border:1px solid #ddd0ea}
+
+  .score{display:flex;align-items:center;gap:9px}
+  .score .n{font-weight:800;font-size:18px;font-variant-numeric:tabular-nums;min-width:34px}
+  .bar{width:74px;height:7px;border-radius:999px;background:#eee;overflow:hidden;flex:none}
+  .bar i{display:block;height:100%}
+  .bar i.auto{background:var(--ok)} .bar i.check{background:var(--warn)} .bar i.reject{background:var(--ng)}
+
+  .btn{
+    border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+    border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer;font-weight:700;white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--azuki);color:var(--azuki)}
+  .btn.primary{background:var(--azuki);border-color:var(--azuki);color:#fff}
+  .btn.primary:hover{opacity:.88;color:#fff}
+  .btn.danger{border-color:#e6bcbc;color:var(--ng)}
+  .btn.danger:hover{background:var(--ng);color:#fff;border-color:var(--ng)}
+  .btn.sm{padding:5px 11px;font-size:13px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .row-actions{display:flex;gap:7px;flex-wrap:wrap}
+
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .filters input[type=text],.filters select{
+    font-family:inherit;font-size:15px;padding:9px 13px;border:1.5px solid var(--line);
+    border-radius:9px;background:var(--card);color:var(--ink);
+  }
+  .filters input[type=text]{min-width:230px}
+  .chip{
+    border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 15px;
+    font-size:14px;cursor:pointer;font-weight:700;color:var(--ink-soft);
+  }
+  .chip.on{background:var(--azuki);border-color:var(--azuki);color:#fff}
+
+  /* 承認ゲート */
+  .gate{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:10px 0 0}
+  .step{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft)}
+  .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;background:var(--card)}
+  .step.done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+  .step.now .dot{border-color:var(--azuki);color:var(--azuki);font-weight:800}
+  .step.now{color:var(--azuki);font-weight:800}
+  .link{width:26px;height:2px;background:var(--line);margin:0 8px}
+  .apr{border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;background:var(--card);box-shadow:var(--shadow)}
+  .apr h4{margin:0 0 4px;font-size:18px}
+  .apr .meta{font-size:14px;color:var(--ink-soft);margin-bottom:10px}
+  .apr .why{background:var(--bg-soft);border-radius:9px;padding:12px 15px;font-size:14.5px;margin:12px 0}
+
+  /* 在庫 */
+  .stockbar{height:9px;border-radius:999px;background:#eee;overflow:hidden;width:130px}
+  .stockbar i{display:block;height:100%}
+  .qty{display:flex;align-items:center;gap:7px}
+  .qty button{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-size:16px;font-weight:700}
+  .qty span{min-width:44px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+
+  /* 分析 */
+  .chart{display:flex;align-items:flex-end;gap:12px;height:190px;padding-top:10px}
+  .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+  .col .stack{width:100%;max-width:58px;border-radius:6px 6px 0 0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+  .col .stack i{display:block}
+  .col .cl{font-size:12.5px;color:var(--ink-soft)}
+  .legend{display:flex;gap:16px;font-size:13px;color:var(--ink-soft);margin-top:12px;flex-wrap:wrap}
+  .legend span::before{content:"";display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px}
+  .lg-auto::before{background:var(--ok)} .lg-check::before{background:var(--warn)} .lg-reject::before{background:var(--ng)}
+  .setting-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .setting-row label{font-weight:700;min-width:210px}
+  .setting-row input[type=range]{flex:1;min-width:180px;accent-color:var(--azuki)}
+  .setting-row output{font-weight:800;font-variant-numeric:tabular-nums;min-width:52px;color:var(--azuki)}
+
+  .log{list-style:none;margin:0;padding:0;font-size:14.5px;max-height:340px;overflow-y:auto}
+  .log li{padding:9px 0;border-bottom:1px dashed var(--line)}
+  .log .tm{color:var(--ink-soft);font-size:13px;margin-right:9px;font-variant-numeric:tabular-nums}
+  .empty{padding:40px 10px;text-align:center;color:var(--ink-soft)}
+
+  /* モーダル */
+  .overlay{
+    position:fixed;inset:0;background:rgba(27,25,23,.55);display:none;
+    align-items:center;justify-content:center;padding:20px;z-index:100;
+  }
+  .overlay.on{display:flex}
+  .modal{
+    background:var(--card);border-radius:14px;width:min(560px,100%);max-height:88vh;overflow-y:auto;
+    box-shadow:0 24px 60px rgba(0,0,0,.3);animation:pop .22s ease;
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+  .modal .mh{padding:22px 26px 0}
+  .modal h3{margin:0 0 8px;font-size:21px;letter-spacing:.03em}
+  .modal .mb{padding:6px 26px 4px;font-size:15.5px;color:var(--ink-soft)}
+  .modal .detail{background:var(--bg-soft);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14.5px;color:var(--ink)}
+  .modal .detail div{padding:2px 0}
+  .modal textarea{
+    width:100%;min-height:84px;font-family:inherit;font-size:15px;padding:12px;
+    border:1.5px solid var(--line);border-radius:9px;resize:vertical;background:var(--card);color:var(--ink);
+  }
+  .modal .mf{display:flex;justify-content:flex-end;gap:10px;padding:16px 26px 22px;flex-wrap:wrap}
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:13px 24px;border-radius:999px;font-size:15px;
+    opacity:0;pointer-events:none;transition:.3s;z-index:120;box-shadow:0 8px 24px rgba(0,0,0,.25);
+  }
+  .toast.on{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="index.html">
+        <span class="mk">丸</span>
+        <span><b>まるぱん堂 帳場</b><small>ANNAI / ADMIN CONSOLE</small></span>
+      </a>
+      <div class="sp"></div>
+      <a class="btn-site" href="index.html">🏠 ホームページを見る</a>
+      <a class="btn-site" href="architecture.html">🗺 全体像の図解</a>
+      <div class="user"><span class="avatar">女</span>女将（承認者）</div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-p="dash">📊 ダッシュボード</button>
+      <button class="tab" data-p="inbox">📥 受信箱<span class="badge" id="bdgInbox">0</span></button>
+      <button class="tab" data-p="gate">🔏 承認ゲート<span class="badge" id="bdgGate">0</span></button>
+      <button class="tab" data-p="stock">🍞 品書き・在庫</button>
+      <button class="tab" data-p="ana">📈 分析・設定</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== ダッシュボード ===== -->
+  <section class="panel active" id="p-dash">
+    <h2 class="p-title">ダッシュボード</h2>
+    <p class="p-lead">今日の帳場のようす。ホームページから届いたご注文・お問い合わせを、点数で自動的に仕分けています。</p>
+
+    <div class="hint">
+      <b>💡 この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「今日の未処理を、急ぎ順に3件だけ挙げて、それぞれ一言で理由を付けて」</li>
+        <li>「今週の問い合わせを読んで、多かった要望を3つにまとめて」</li>
+        <li>「点数が低かった案件に共通する特徴を教えて」</li>
+      </ul>
+    </div>
+
+    <div class="cards" id="kpis"></div>
+
+    <div class="two">
+      <div class="box">
+        <h3>🔥 今すぐ手を打つべき案件</h3>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>受付番号</th><th>お客様</th><th>ご用件</th><th>点数</th><th>仕分け</th><th></th></tr></thead>
+          <tbody id="dashUrgent"></tbody>
+        </table></div>
+      </div>
+      <div class="box">
+        <h3>🕒 最近の動き</h3>
+        <ul class="log" id="dashLog"></ul>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>📦 本日の窯出し予定と残り</h3>
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>品名</th><th>本日焼く数</th><th>予約で押さえた数</th><th>店頭に出せる数</th><th>状況</th></tr></thead>
+        <tbody id="dashStock"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ===== 受信箱 ===== -->
+  <section class="panel" id="p-inbox">
+    <h2 class="p-title">受信箱（ご注文・お問い合わせ）</h2>
+    <p class="p-lead">ホームページのフォームから届いた内容を、100点満点で自動採点して3つに振り分けます。点数の内訳は「詳しく見る」で確認できます。</p>
+
+    <div class="hint">
+      <b>💡 この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「この問い合わせへの返信文を、丁寧な京言葉で3行にまとめて下書きして」</li>
+        <li>「“人が確認”に入っている案件を、判断に迷う理由ごとに分類して」</li>
+        <li>「同じお客様からの過去のご注文をまとめて、おすすめの個数を提案して」</li>
+      </ul>
+    </div>
+
+    <div class="filters">
+      <input type="text" id="q" placeholder="お名前・内容で検索">
+      <button class="chip on" data-f="all">すべて</button>
+      <button class="chip" data-f="auto" id="chipAuto">自動でOK</button>
+      <button class="chip" data-f="check" id="chipCheck">人が確認</button>
+      <button class="chip" data-f="reject" id="chipReject">却下</button>
+      <select id="sortBy">
+        <option value="score">点数の高い順</option>
+        <option value="new">新しい順</option>
+        <option value="qty">個数の多い順</option>
+      </select>
+      <span class="sp" style="margin-left:auto"></span>
+      <button class="btn" id="reseed">サンプルデータを入れ直す</button>
+    </div>
+
+    <div class="box" style="padding:6px 22px">
+      <div class="tbl-scroll"><table>
+        <thead><tr>
+          <th>受付</th><th>お客様</th><th>ご用件</th><th class="nowrap">個数／見込み</th>
+          <th>点数</th><th>仕分け</th><th>いまの段階</th><th></th>
+        </tr></thead>
+        <tbody id="inboxBody"></tbody>
+      </table></div>
+      <div class="empty" id="inboxEmpty" style="display:none">該当するお問い合わせはありません。</div>
+    </div>
+  </section>
+
+  <!-- ===== 承認ゲート ===== -->
+  <section class="panel" id="p-gate">
+    <h2 class="p-title">承認ゲート（人が承認してから次へ）</h2>
+    <p class="p-lead">お金・信用にかかわる操作は、番頭が確認し、女将が承認してはじめて実行されます。どの段階も、人が押さない限り先へ進みません。</p>
+
+    <div class="hint">
+      <b>💡 この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「この値引き申請、過去の似た案件と比べて妥当か3行で意見を書いて」</li>
+        <li>「女将に上げる前に、確認もれがないかチェックリストを作って」</li>
+        <li>「差し戻しの理由を、相手が納得しやすい書き方に直して」</li>
+      </ul>
+    </div>
+
+    <div class="filters">
+      <button class="chip on" data-g="pending">対応待ち</button>
+      <button class="chip" data-g="all">すべて</button>
+      <button class="chip" data-g="done">完了・差し戻し</button>
+    </div>
+
+    <div id="gateList"></div>
+    <div class="empty" id="gateEmpty" style="display:none">対応待ちの案件はありません。</div>
+  </section>
+
+  <!-- ===== 品書き・在庫 ===== -->
+  <section class="panel" id="p-stock">
+    <h2 class="p-title">品書き・在庫</h2>
+    <p class="p-lead">本日焼く数と、予約で押さえた数を管理します。店頭に出せる数が少なくなると、自動で「追い窯」を提案します。</p>
+
+    <div class="hint">
+      <b>💡 この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「明日の天気と曜日から、品ごとの焼く数を提案して」</li>
+        <li>「売り切れが早い品を挙げて、増やす順番を決めて」</li>
+        <li>「新しい季節のあんぱんの名前と説明文を5案出して」</li>
+      </ul>
+    </div>
+
+    <div class="box" style="padding:6px 22px">
+      <div class="tbl-scroll"><table>
+        <thead><tr><th>品名</th><th>価格</th><th>本日焼く数</th><th>予約分</th><th>店頭に出せる数</th><th>残りぐあい</th><th></th></tr></thead>
+        <tbody id="stockBody"></tbody>
+      </table></div>
+    </div>
+
+    <div class="box">
+      <h3>🔥 追い窯の提案</h3>
+      <div id="bakeSuggest"></div>
+    </div>
+  </section>
+
+  <!-- ===== 分析・設定 ===== -->
+  <section class="panel" id="p-ana">
+    <h2 class="p-title">分析・設定</h2>
+    <p class="p-lead">仕分けの結果を振り返り、点数のしきい値を調整できます。変えるとその場で受信箱の仕分けに反映されます。</p>
+
+    <div class="hint">
+      <b>💡 この画面でAIに頼むと良いこと</b>
+      <ul>
+        <li>「しきい値を5点上げたら何件が“人が確認”に移るか、影響を教えて」</li>
+        <li>「先月と今月の傾向の違いを、店主向けに3行で説明して」</li>
+        <li>「却下になった案件を読み直して、拾うべきものがないか確認して」</li>
+      </ul>
+    </div>
+
+    <div class="two">
+      <div class="box">
+        <h3>ご用件ごとの仕分け結果</h3>
+        <div class="chart" id="chart"></div>
+        <div class="legend">
+          <span class="lg-auto">自動でOK</span>
+          <span class="lg-check">人が確認</span>
+          <span class="lg-reject">却下</span>
+        </div>
+      </div>
+      <div class="box">
+        <h3>点数のしきい値</h3>
+        <div class="setting-row">
+          <label for="thAuto">自動でOKにする点数</label>
+          <input type="range" id="thAuto" min="50" max="95" step="1">
+          <output id="thAutoV"></output>
+        </div>
+        <div class="setting-row">
+          <label for="thCheck">却下にする点数（未満）</label>
+          <input type="range" id="thCheck" min="10" max="60" step="1">
+          <output id="thCheckV"></output>
+        </div>
+        <p style="font-size:14.5px;color:var(--ink-soft)">
+          いまの設定：<b id="thNow"></b><br>
+          この設定は <code>marupando.v1.settings</code> という名前で、この端末に保存されます。
+        </p>
+        <button class="btn" id="resetTh">初期値（75／45）に戻す</button>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="box">
+        <h3>点数の付け方（内訳）</h3>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>見ているところ</th><th>満点</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td>内容の具体性</td><td>30点</td><td>日付・個数・品名が書かれているか、文章が十分な長さか</td></tr>
+            <tr><td>連絡先の確からしさ</td><td>20点</td><td>メールの形が正しいか、電話番号があるか</td></tr>
+            <tr><td>ご注文の見込み額</td><td>20点</td><td>個数 × 平均単価。金額が大きいほど高得点</td></tr>
+            <tr><td>迷惑ワードの有無</td><td>15点</td><td>宣伝・営業・投資などの語があると減点</td></tr>
+            <tr><td>お得意様か</td><td>15点</td><td>過去のご注文があるか、お気に入り登録があるか</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="box">
+        <h3>保存されているデータ</h3>
+        <p style="font-size:14.5px;color:var(--ink-soft);margin-top:0">
+          すべて <code>marupando.v1.</code> で始まる名前に統一しています。
+        </p>
+        <div class="tbl-scroll"><table>
+          <thead><tr><th>キー名</th><th>中身</th><th>件数</th></tr></thead>
+          <tbody id="keysBody"></tbody>
+        </table></div>
+        <div class="row-actions" style="margin-top:16px">
+          <button class="btn" id="exportBtn">内容を書き出す（画面に表示）</button>
+          <button class="btn danger" id="wipeBtn">すべての保存データを消す</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>🕒 操作の記録</h3>
+      <ul class="log" id="fullLog"></ul>
+    </div>
+  </section>
+</main>
+
+<!-- モーダル -->
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="mh"><h3 id="mTitle"></h3></div>
+    <div class="mb" id="mBody"></div>
+    <div class="mf" id="mFoot"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================== 保存キー ================== */
+  var K={
+    inquiries:"marupando.v1.inquiries",
+    approvals:"marupando.v1.approvals",
+    products :"marupando.v1.products",
+    activity :"marupando.v1.activity",
+    settings :"marupando.v1.settings",
+    favorites:"marupando.v1.favorites",
+    seq      :"marupando.v1.seq"
+  };
+  function load(k,fb){ try{var v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;} }
+  function save(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+  /* ================== サンプルデータ ================== */
+  function iso(dayAgo,h,m){
+    var d=new Date(); d.setDate(d.getDate()-dayAgo); d.setHours(h,m||0,0,0); return d.toISOString();
+  }
+  var SAMPLE_INQ=[
+    {id:"INQ-1012",receivedAt:iso(0,9,20),name:"西陣 とみ子",email:"tomiko@example.com",tel:"075-221-0011",
+     type:"法要・茶席",qty:40,wishDate:"10月3日（金）午前10時",repeat:true,favorites:["p-koshi"],
+     message:"十月三日の法要に、こしあん30個と白小豆10個をお願いいたします。掛け紙は「志」でお願いします。前回同様、朝十時に取りに伺います。"},
+    {id:"INQ-1011",receivedAt:iso(0,8,42),name:"丸太町 ホテル紫雲",email:"buyer@shiun-hotel.example.jp",tel:"075-330-8800",
+     type:"まとめ買い・大口",qty:120,wishDate:"毎週金曜 朝7時",repeat:false,favorites:[],
+     message:"当ホテルの朝食で提供したく、毎週金曜に丹波大納言を120個、継続して納入いただけないでしょうか。単価と条件のご相談をさせてください。"},
+    {id:"INQ-1010",receivedAt:iso(0,7,58),name:"三条 川口",email:"kawaguchi@example.com",tel:"",
+     type:"取り置き",qty:6,wishDate:"本日夕方",repeat:true,favorites:["p-dainagon","p-kuri"],
+     message:"本日十七時ごろ伺います。栗あんぱんを4個と丹波大納言2個、お取り置きお願いできますか。"},
+    {id:"INQ-1009",receivedAt:iso(1,16,10),name:"投資のご案内",email:"info@no-reply-invest.example",tel:"",
+     type:"その他",qty:0,wishDate:"",repeat:false,favorites:[],
+     message:"貴社の資金繰りを劇的に改善する投資商品のご案内です。今なら無料。ぜひ一度ご連絡ください。"},
+    {id:"INQ-1008",receivedAt:iso(1,14,33),name:"祇園 岡本",email:"okamoto@example.com",tel:"090-1234-5678",
+     type:"贈答・のし",qty:12,wishDate:"10月10日",repeat:true,favorites:["p-shiroazuki"],
+     message:"東京の取引先への手土産に、桐箱十二個入りを2箱お願いします。のしは「御礼」、名入れは「岡本」でお願いいたします。"},
+    {id:"INQ-1007",receivedAt:iso(1,11,5),name:"匿名希望",email:"aaa@aaa",tel:"",
+     type:"その他",qty:0,wishDate:"",repeat:false,favorites:[],
+     message:"あんぱん"},
+    {id:"INQ-1006",receivedAt:iso(2,15,48),name:"京都駅前 百貨店 催事担当",email:"saiji@dept.example.jp",tel:"075-361-0000",
+     type:"イベント出店",qty:200,wishDate:"11月中旬 5日間",repeat:false,favorites:[],
+     message:"十一月の「京の老舗展」に出店いただけませんか。5日間、1日200個程度を想定しております。什器はこちらでご用意します。"},
+    {id:"INQ-1005",receivedAt:iso(2,10,12),name:"北山 森",email:"mori@example.com",tel:"",
+     type:"取り置き",qty:8,wishDate:"9月28日 午後",repeat:false,favorites:["p-matcha"],
+     message:"宇治抹茶あんを8個、二十八日の午後にお取り置きいただけますか。土曜なので混むと聞き、念のためお願いします。"},
+    {id:"INQ-1004",receivedAt:iso(3,13,27),name:"広告代理",email:"ad@promo-blast.example",tel:"",
+     type:"その他",qty:0,wishDate:"",repeat:false,favorites:[],
+     message:"格安でSNS運用代行いたします。フォロワー1万人保証、初月無料キャンペーン実施中です。"},
+    {id:"INQ-1003",receivedAt:iso(3,9,3),name:"左京 中村",email:"nakamura@example.com",tel:"075-751-3333",
+     type:"贈答・のし",qty:6,wishDate:"10月1日",repeat:false,favorites:[],
+     message:"内祝いに六個入りを1箱お願いします。のしの表書きは「内祝」、名前は「中村」で。受け取りは一日の午前中を希望します。"},
+    {id:"INQ-1002",receivedAt:iso(4,17,44),name:"伏見 山下",email:"yamashita@example.com",tel:"",
+     type:"その他",qty:0,wishDate:"",repeat:false,favorites:["p-goma"],
+     message:"黒胡麻あんぱんの原材料を詳しく教えていただけますか。ごまアレルギーの家族がいるため、製造ラインについても知りたいです。"},
+    {id:"INQ-1001",receivedAt:iso(5,12,0),name:"錦市場 たなか商店",email:"tanaka@nishiki.example.jp",tel:"075-221-9999",
+     type:"まとめ買い・大口",qty:60,wishDate:"毎月第一土曜",repeat:true,favorites:["p-dainagon"],
+     message:"月に一度、店頭催事で60個を仕入れさせていただいております。来月分も同条件でお願いできますでしょうか。"}
+  ];
+
+  var SAMPLE_APR=[
+    {id:"APR-501",title:"ホテル紫雲への継続納入（週120個）",kind:"大口受注",
+     amount:"月間 約134,400円",linked:"INQ-1011",stage:1,history:[],
+     why:"毎週金曜の朝7時に120個。窯の稼働と人手の見直しが要るため、女将の承認が必要です。",
+     by:"番頭",createdAt:iso(0,9,0)},
+    {id:"APR-502",title:"錦市場 たなか商店への卸単価 5%引き",kind:"値引き",
+     amount:"月間 −840円",linked:"INQ-1001",stage:2,
+     history:[{at:iso(1,10,0),who:"番頭",act:"確認済み",note:"5年続くお取引です。単価表の範囲内です。"}],
+     why:"5年来のお得意様です。年間の取引額を踏まえ、卸単価の見直しをお願いします。",
+     by:"番頭",createdAt:iso(1,9,30)},
+    {id:"APR-503",title:"百貨店催事への出店（11月・5日間）",kind:"催事出店",
+     amount:"想定売上 約380,000円",linked:"INQ-1006",stage:1,history:[],
+     why:"5日間で1000個。店の窯だけでは足りず、臨時の職人手配が前提になります。",
+     by:"番頭",createdAt:iso(2,16,0)},
+    {id:"APR-504",title:"西陣 とみ子様への返信文の送信",kind:"返信送信",
+     amount:"—",linked:"INQ-1012",stage:1,history:[],
+     why:"法要のお客様への返信です。掛け紙の表書きに誤りがないか、送信前の確認をお願いします。",
+     by:"AI下書き",createdAt:iso(0,9,30)},
+    {id:"APR-505",title:"栗あんぱんの追い窯 80個",kind:"生産変更",
+     amount:"材料費 約9,600円",linked:"",stage:3,
+     history:[
+       {at:iso(1,13,0),who:"番頭",act:"確認済み",note:"渋皮栗の在庫は足ります。"},
+       {at:iso(1,14,0),who:"女将",act:"承認",note:"やりましょう。"}
+     ],
+     why:"予約で押さえた数が本日分を超えました。夕の追い窯で80個を足したく思います。",
+     by:"在庫の自動検知",createdAt:iso(1,12,30)}
+  ];
+
+  var SAMPLE_PROD=[
+    {id:"p-dainagon",name:"丹波大納言",price:280,plan:500,reserved:186},
+    {id:"p-koshi",name:"こしあん",price:280,plan:320,reserved:104},
+    {id:"p-shiroazuki",name:"白小豆あん",price:340,plan:120,reserved:96},
+    {id:"p-matcha",name:"宇治抹茶あん",price:320,plan:150,reserved:38},
+    {id:"p-kuri",name:"栗あんぱん",price:380,plan:180,reserved:174},
+    {id:"p-goma",name:"黒胡麻あん",price:320,plan:140,reserved:22}
+  ];
+
+  var DEFAULT_SETTINGS={autoAt:75,rejectUnder:45};
+
+  function mergeSamples(key, samples){
+    var cur=load(key,null);
+    if(cur===null){ save(key, JSON.parse(JSON.stringify(samples))); return; }
+    var ids={}; cur.forEach(function(x){ ids[x.id]=1; });
+    var add=samples.filter(function(s){ return !ids[s.id]; });
+    if(add.length) save(key, cur.concat(JSON.parse(JSON.stringify(add))));
+  }
+  function seedIfEmpty(force){
+    if(force){
+      save(K.inquiries, JSON.parse(JSON.stringify(SAMPLE_INQ)));
+      save(K.approvals, JSON.parse(JSON.stringify(SAMPLE_APR)));
+      save(K.products , JSON.parse(JSON.stringify(SAMPLE_PROD)));
+      save(K.settings , Object.assign({},DEFAULT_SETTINGS));
+      save(K.seq, 1012);
+    }else{
+      /* ホームページから先に届いた分は残したまま、足りないサンプルだけ補う */
+      mergeSamples(K.inquiries, SAMPLE_INQ);
+      mergeSamples(K.approvals, SAMPLE_APR);
+      mergeSamples(K.products , SAMPLE_PROD);
+      if(localStorage.getItem(K.settings)===null) save(K.settings, Object.assign({},DEFAULT_SETTINGS));
+      if(load(K.seq,0)<1012) save(K.seq,1012);
+    }
+    if(force || localStorage.getItem(K.activity)===null) save(K.activity , [
+      {at:iso(0,9,32),who:"AI",what:"INQ-1011（ホテル紫雲）を大口と判断し、承認ゲートに上げました"},
+      {at:iso(0,9,21),who:"ホームページ",what:"新しいお問い合わせ INQ-1012（西陣 とみ子 様）を受信"},
+      {at:iso(1,14,2),who:"女将",what:"APR-505（栗あんぱんの追い窯 80個）を承認しました"},
+      {at:iso(1,13,4),who:"番頭",what:"APR-505 を確認済みにしました"},
+      {at:iso(1,11,8),who:"AI",what:"INQ-1007 を点数18点と判定し、却下に振り分けました"}
+    ]);
+  }
+  seedIfEmpty(false);
+
+  var settings = Object.assign({},DEFAULT_SETTINGS,load(K.settings,{}));
+
+  /* ================== 採点 ================== */
+  var SPAM=["投資","無料","キャンペーン","代行","保証","副業","儲か","激安","運用代行","フォロワー","SEO","広告"];
+  var AVG_PRICE=305;
+
+  function scoreOf(q){
+    var s={};
+    var msg=q.message||"";
+    /* 内容の具体性 30 */
+    var c=0;
+    if(msg.length>=30) c+=10; else if(msg.length>=12) c+=5;
+    if(msg.length>=60) c+=6;
+    if(/[0-9０-９]+\s*(個|箱|本)/.test(msg)||q.qty>0) c+=7;
+    if(/(月|日|曜|本日|明日|来週|毎週|毎月)/.test(msg)||(q.wishDate||"").length>0) c+=7;
+    s.具体性=Math.min(30,c);
+    /* 連絡先の確からしさ 20 */
+    var m=0;
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(q.email||"")) m+=13; else if((q.email||"").indexOf("@")>0) m+=4;
+    if(/[0-9]{9,}/.test((q.tel||"").replace(/[-\s]/g,""))) m+=7;
+    s.連絡先=Math.min(20,m);
+    /* ご注文の見込み額 20 */
+    var yen=(q.qty||0)*AVG_PRICE;
+    s.見込み額 = yen<=0 ? 2 : Math.min(20, Math.round(4+Math.log10(yen/300+1)*11));
+    /* 迷惑ワードの有無 15（満点から減点） */
+    var hit=0;
+    SPAM.forEach(function(w){ if(msg.indexOf(w)>=0||(q.name||"").indexOf(w)>=0) hit++; });
+    s.迷惑なし=Math.max(0,15-hit*8);
+    /* お得意様か 15 */
+    var r=0;
+    if(q.repeat) r+=10;
+    if((q.favorites||[]).length>0) r+=5;
+    s.お得意様=Math.min(15,r);
+
+    var total=0; for(var k in s) total+=s[k];
+    return {total:Math.max(0,Math.min(100,Math.round(total))), parts:s, yen:yen};
+  }
+  function tierOf(total){
+    if(total>=settings.autoAt) return "auto";
+    if(total< settings.rejectUnder) return "reject";
+    return "check";
+  }
+  var TIER_LABEL={auto:"自動でOK",check:"人が確認",reject:"却下"};
+
+  /* ================== 共通 UI ================== */
+  function toast(msg){
+    var t=document.getElementById("toast");
+    t.textContent=msg; t.classList.add("on");
+    clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove("on");},2400);
+  }
+  var overlay=document.getElementById("overlay");
+  function closeModal(){ overlay.classList.remove("on"); document.getElementById("mFoot").innerHTML=""; }
+  overlay.addEventListener("click",function(e){ if(e.target===overlay) closeModal(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeModal(); });
+
+  /* opts: {title, body(html), okText, okClass, onOk(noteText), needNote, noteLabel, cancelText, extra:[{text,cls,fn}]} */
+  function modal(o){
+    document.getElementById("mTitle").textContent=o.title;
+    var body=o.body||"";
+    if(o.needNote){
+      body+='<div style="margin-top:14px"><label style="font-size:14px;font-weight:700;display:block;margin-bottom:6px">'+
+        esc(o.noteLabel||"ひとこと（記録に残ります）")+'</label><textarea id="mNote" placeholder="'+
+        esc(o.notePlaceholder||"例：内容を確認しました。")+'"></textarea></div>';
+    }
+    document.getElementById("mBody").innerHTML=body;
+    var foot=document.getElementById("mFoot");
+    foot.innerHTML="";
+    (o.extra||[]).forEach(function(x){
+      var b=document.createElement("button"); b.className="btn "+(x.cls||""); b.textContent=x.text;
+      b.onclick=function(){ var n=document.getElementById("mNote"); closeModal(); x.fn(n?n.value.trim():""); };
+      foot.appendChild(b);
+    });
+    var cancel=document.createElement("button");
+    cancel.className="btn"; cancel.textContent=o.cancelText||"やめる";
+    cancel.onclick=closeModal; foot.appendChild(cancel);
+    if(o.okText){
+      var ok=document.createElement("button");
+      ok.className="btn "+(o.okClass||"primary"); ok.textContent=o.okText;
+      ok.onclick=function(){ var n=document.getElementById("mNote"); var val=n?n.value.trim():""; closeModal(); o.onOk&&o.onOk(val); };
+      foot.appendChild(ok);
+    }
+    overlay.classList.add("on");
+  }
+
+  function log(who,what){
+    var a=load(K.activity,[]);
+    a.unshift({at:new Date().toISOString(),who:who,what:what});
+    save(K.activity,a.slice(0,300));
+  }
+  function fmt(isoStr){
+    var d=new Date(isoStr);
+    if(isNaN(d)) return "—";
+    var p=function(n){return n<10?"0"+n:""+n;};
+    return (d.getMonth()+1)+"/"+d.getDate()+" "+p(d.getHours())+":"+p(d.getMinutes());
+  }
+  function yen(n){ return "¥"+Number(n||0).toLocaleString("ja-JP"); }
+
+  /* ================== タブ ================== */
+  document.getElementById("tabs").addEventListener("click",function(e){
+    var t=e.target.closest(".tab"); if(!t) return;
+    document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("active",x===t);});
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.toggle("active",p.id==="p-"+t.dataset.p);});
+    window.scrollTo({top:0,behavior:"smooth"});
+    renderAll();
+  });
+
+  /* ================== 受信箱 ================== */
+  var filter="all", keyword="", sortBy="score";
+  document.querySelectorAll("#p-inbox .chip").forEach(function(c){
+    c.addEventListener("click",function(){
+      document.querySelectorAll("#p-inbox .chip").forEach(function(x){x.classList.toggle("on",x===c);});
+      filter=c.dataset.f; renderInbox();
+    });
+  });
+  document.getElementById("q").addEventListener("input",function(e){ keyword=e.target.value.trim(); renderInbox(); });
+  document.getElementById("sortBy").addEventListener("change",function(e){ sortBy=e.target.value; renderInbox(); });
+
+  function inquiriesScored(){
+    return load(K.inquiries,[]).map(function(q){
+      var sc=scoreOf(q);
+      return Object.assign({},q,{_score:sc.total,_parts:sc.parts,_yen:sc.yen,_tier:tierOf(sc.total)});
+    });
+  }
+  function scoreCell(n,tier){
+    return '<div class="score"><span class="n">'+n+'</span>'+
+      '<span class="bar"><i class="'+tier+'" style="width:'+n+'%"></i></span></div>';
+  }
+  function renderInbox(){
+    document.getElementById("chipAuto").textContent   = "自動でOK（"+settings.autoAt+"点以上）";
+    document.getElementById("chipCheck").textContent  = "人が確認（"+settings.rejectUnder+"〜"+(settings.autoAt-1)+"点）";
+    document.getElementById("chipReject").textContent = "却下（"+(settings.rejectUnder-1)+"点以下）";
+    var list=inquiriesScored();
+    if(filter!=="all") list=list.filter(function(q){return q._tier===filter;});
+    if(keyword){
+      var kw=keyword.toLowerCase();
+      list=list.filter(function(q){
+        return (q.name+q.message+q.type+q.id+(q.email||"")).toLowerCase().indexOf(kw)>=0;
+      });
+    }
+    list.sort(function(a,b){
+      if(sortBy==="new") return new Date(b.receivedAt)-new Date(a.receivedAt);
+      if(sortBy==="qty") return (b.qty||0)-(a.qty||0);
+      return b._score-a._score;
+    });
+    var tb=document.getElementById("inboxBody");
+    tb.innerHTML=list.map(function(q){
+      return '<tr>'+
+        '<td class="nowrap"><b>'+esc(q.id)+'</b><br><small style="color:var(--ink-soft)">'+fmt(q.receivedAt)+'</small></td>'+
+        '<td>'+esc(q.name)+(q.repeat?' <span class="pill done">お得意様</span>':'')+
+          '<br><small style="color:var(--ink-soft)">'+esc(q.email||"—")+'</small></td>'+
+        '<td>'+esc(q.type)+'<br><small style="color:var(--ink-soft)">'+esc((q.message||"").slice(0,34))+'…</small></td>'+
+        '<td class="nowrap">'+(q.qty?q.qty+"個":"—")+'<br><small style="color:var(--ink-soft)">'+(q._yen?yen(q._yen):"—")+'</small></td>'+
+        '<td>'+scoreCell(q._score,q._tier)+'</td>'+
+        '<td><span class="pill '+q._tier+'">'+TIER_LABEL[q._tier]+'</span></td>'+
+        '<td><span class="pill stage">'+esc(q.stage||"受付")+'</span></td>'+
+        '<td><div class="row-actions">'+
+          '<button class="btn sm" data-act="detail" data-id="'+esc(q.id)+'">詳しく見る</button>'+
+          (q._tier==="reject"
+            ? '<button class="btn sm danger" data-act="drop" data-id="'+esc(q.id)+'">削除</button>'
+            : '<button class="btn sm primary" data-act="gate" data-id="'+esc(q.id)+'">承認に回す</button>')+
+        '</div></td>'+
+      '</tr>';
+    }).join("");
+    document.getElementById("inboxEmpty").style.display = list.length? "none":"block";
+    document.getElementById("bdgInbox").textContent = inquiriesScored().filter(function(q){return q.stage!=="完了";}).length;
+  }
+
+  document.getElementById("inboxBody").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-act]"); if(!b) return;
+    var id=b.dataset.id;
+    var q=inquiriesScored().filter(function(x){return x.id===id;})[0];
+    if(!q) return;
+
+    if(b.dataset.act==="detail"){
+      var rows="";
+      for(var k in q._parts){
+        var maxv={具体性:30,連絡先:20,見込み額:20,迷惑なし:15,お得意様:15}[k];
+        rows+='<div>'+k+'：<b>'+q._parts[k]+'</b> / '+maxv+'点</div>';
+      }
+      modal({
+        title:q.id+"　"+q.name+" 様",
+        body:'<div class="detail">'+
+             '<div>ご用件：<b>'+esc(q.type)+'</b></div>'+
+             '<div>ご希望日：'+esc(q.wishDate||"—")+'／個数：'+(q.qty||"—")+'</div>'+
+             '<div>連絡先：'+esc(q.email||"—")+'　'+esc(q.tel||"")+'</div>'+
+             '<div style="margin-top:8px">ご相談内容：<br>'+esc(q.message)+'</div>'+
+             '</div>'+
+             '<div class="detail"><b>点数 '+q._score+' 点（'+TIER_LABEL[q._tier]+'）の内訳</b>'+rows+
+             '<div style="margin-top:6px">見込み額：'+yen(q._yen)+'</div></div>',
+        okText:"閉じる", okClass:"primary", onOk:function(){}
+      });
+    }
+
+    if(b.dataset.act==="gate"){
+      modal({
+        title:"承認ゲートに回しますか？",
+        body:'<div class="detail"><div><b>'+esc(q.id)+'　'+esc(q.name)+' 様</b></div>'+
+             '<div>'+esc(q.type)+'／'+(q.qty||0)+'個／見込み '+yen(q._yen)+'</div>'+
+             '<div>点数 '+q._score+' 点（'+TIER_LABEL[q._tier]+'）</div></div>'+
+             '<p>回すと「番頭の確認 → 女将の承認」の順に進みます。承認されるまで、実際の返信や受注は行われません。</p>',
+        needNote:true, noteLabel:"番頭へのひとこと（記録に残ります）",
+        notePlaceholder:"例：常連さんです。単価は据え置きでよいかと。",
+        okText:"承認ゲートに回す",
+        onOk:function(note){
+          var aprs=load(K.approvals,[]);
+          var newId="APR-"+(500+aprs.length+1);
+          aprs.unshift({
+            id:newId, title:q.name+" 様の"+q.type+"（"+(q.qty||0)+"個）", kind:q.type,
+            amount:q._yen?yen(q._yen):"—", linked:q.id, stage:1, history:[],
+            why: note || q.message.slice(0,60), by:"受信箱から", createdAt:new Date().toISOString()
+          });
+          save(K.approvals,aprs);
+          var list=load(K.inquiries,[]);
+          list.forEach(function(x){ if(x.id===q.id){ x.stage="承認待ち"; } });
+          save(K.inquiries,list);
+          log("女将",q.id+" を承認ゲート（"+newId+"）に回しました");
+          toast(q.id+" を承認ゲートに回しました");
+          renderAll();
+        }
+      });
+    }
+
+    if(b.dataset.act==="drop"){
+      modal({
+        title:"この問い合わせを削除しますか？",
+        body:'<div class="detail"><div><b>'+esc(q.id)+'　'+esc(q.name)+'</b></div>'+
+             '<div>点数 '+q._score+' 点（却下）</div>'+
+             '<div style="margin-top:6px">'+esc(q.message.slice(0,80))+'</div></div>'+
+             '<p>削除すると元に戻せません。判断に迷うときは「詳しく見る」で内容を確認してください。</p>',
+        okText:"削除する", okClass:"danger",
+        onOk:function(){
+          var list=load(K.inquiries,[]).filter(function(x){return x.id!==q.id;});
+          save(K.inquiries,list);
+          log("女将",q.id+"（却下判定）を削除しました");
+          toast(q.id+" を削除しました"); renderAll();
+        }
+      });
+    }
+  });
+
+  /* ================== 承認ゲート ================== */
+  var STEPS=["起票","番頭の確認","女将の承認","実行"];
+  var gateFilter="pending";
+  document.querySelectorAll("#p-gate .chip").forEach(function(c){
+    c.addEventListener("click",function(){
+      document.querySelectorAll("#p-gate .chip").forEach(function(x){x.classList.toggle("on",x===c);});
+      gateFilter=c.dataset.g; renderGate();
+    });
+  });
+
+  function gateHtml(a){
+    var steps=STEPS.map(function(s,i){
+      var cls = (i < a.stage) ? "done" : (i === a.stage ? "now" : "");
+      return '<div class="step '+cls+'"><span class="dot">'+(cls==="done"?"✓":(i+1))+'</span>'+s+'</div>'+
+             (i<STEPS.length-1?'<span class="link"></span>':'');
+    }).join("");
+
+    var hist = (a.history||[]).map(function(h){
+      return '<div>・'+fmt(h.at)+'　'+esc(h.who)+' が「'+esc(h.act)+'」'+(h.note?'：'+esc(h.note):'')+'</div>';
+    }).join("");
+
+    var actions="";
+    if(a.stage===1) actions='<button class="btn primary" data-a="advance" data-id="'+a.id+'">番頭が確認した</button>'+
+                            '<button class="btn danger" data-a="reject" data-id="'+a.id+'">差し戻す</button>';
+    else if(a.stage===2) actions='<button class="btn primary" data-a="advance" data-id="'+a.id+'">女将が承認する</button>'+
+                            '<button class="btn danger" data-a="reject" data-id="'+a.id+'">差し戻す</button>';
+    else if(a.stage===3) actions='<button class="btn primary" data-a="advance" data-id="'+a.id+'">実行する（返信・受注確定）</button>';
+    else if(a.stage===4) actions='<span class="pill auto">実行済み</span>';
+    else actions='<span class="pill reject">差し戻し</span>'+
+                 '<button class="btn sm" data-a="revive" data-id="'+a.id+'">起票に戻す</button>';
+
+    return '<div class="apr">'+
+      '<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">'+
+        '<div style="flex:1;min-width:240px">'+
+          '<h4>'+esc(a.title)+'</h4>'+
+          '<div class="meta">'+esc(a.id)+'　種別：'+esc(a.kind)+'　金額：'+esc(a.amount)+
+            (a.linked?'　もと：'+esc(a.linked):'')+'　起票：'+esc(a.by)+'（'+fmt(a.createdAt)+'）</div>'+
+        '</div>'+
+        '<div class="row-actions">'+actions+'</div>'+
+      '</div>'+
+      '<div class="gate">'+steps+'</div>'+
+      '<div class="why"><b>理由：</b>'+esc(a.why)+'</div>'+
+      (hist?'<div style="font-size:14px;color:var(--ink-soft)"><b>これまでの記録</b>'+hist+'</div>':'')+
+    '</div>';
+  }
+
+  function renderGate(){
+    var all=load(K.approvals,[]);
+    var list=all.filter(function(a){
+      if(gateFilter==="pending") return a.stage>=1 && a.stage<=3;
+      if(gateFilter==="done") return a.stage===4 || a.stage===0;
+      return true;
+    });
+    document.getElementById("gateList").innerHTML=list.map(gateHtml).join("");
+    document.getElementById("gateEmpty").style.display=list.length?"none":"block";
+    document.getElementById("bdgGate").textContent=all.filter(function(a){return a.stage>=1&&a.stage<=3;}).length;
+  }
+
+  document.getElementById("gateList").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-a]"); if(!b) return;
+    var id=b.dataset.id, act=b.dataset.a;
+    var all=load(K.approvals,[]);
+    var a=all.filter(function(x){return x.id===id;})[0]; if(!a) return;
+
+    if(act==="advance"){
+      var who = a.stage===1?"番頭" : (a.stage===2?"女将":"帳場");
+      var actName = a.stage===1?"確認済み" : (a.stage===2?"承認":"実行");
+      var next = STEPS[a.stage] || "実行";
+      modal({
+        title: a.stage===3 ? "実行してよろしいですか？" : (who+"として、次の段階に進めますか？"),
+        body:'<div class="detail"><div><b>'+esc(a.title)+'</b></div>'+
+             '<div>'+esc(a.id)+'／'+esc(a.kind)+'／'+esc(a.amount)+'</div>'+
+             '<div style="margin-top:6px">いまの段階：'+STEPS[a.stage-1]+' → 次：'+next+'</div></div>'+
+             (a.stage===3?'<p>実行すると、お客様への返信送信・受注の確定として記録されます（このモックでは実際の送信は行いません）。</p>'
+                         :'<p>次の段階に進めても、まだ実行はされません。最後に人が「実行する」を押すまで止まります。</p>'),
+        needNote:true, noteLabel:"ひとこと（記録に残ります）",
+        notePlaceholder: a.stage===1?"例：内容と在庫を確認しました。":"例：この条件で進めてください。",
+        okText: a.stage===3?"実行する":(who+"として進める"),
+        onOk:function(note){
+          a.history=a.history||[];
+          a.history.push({at:new Date().toISOString(),who:who,act:actName,note:note});
+          a.stage=a.stage+1;
+          save(K.approvals,all);
+          if(a.stage===4 && a.linked){
+            var inq=load(K.inquiries,[]);
+            inq.forEach(function(x){ if(x.id===a.linked){ x.stage="完了"; } });
+            save(K.inquiries,inq);
+          }
+          log(who,a.id+"（"+a.title+"）を「"+actName+"」にしました");
+          toast(a.stage===4?"実行しました":"次の段階に進めました");
+          renderAll();
+        }
+      });
+    }
+
+    if(act==="reject"){
+      modal({
+        title:"差し戻しますか？",
+        body:'<div class="detail"><div><b>'+esc(a.title)+'</b></div><div>'+esc(a.id)+'</div></div>'+
+             '<p>差し戻すと起票者に戻ります。理由を書いておくと、やり直しが早くなります。</p>',
+        needNote:true, noteLabel:"差し戻しの理由（必ず書いてください）",
+        notePlaceholder:"例：単価の根拠が不足しています。過去の取引額を添えてください。",
+        okText:"差し戻す", okClass:"danger",
+        onOk:function(note){
+          a.history=a.history||[];
+          a.history.push({at:new Date().toISOString(),who:a.stage===1?"番頭":"女将",act:"差し戻し",note:note||"（理由なし）"});
+          a.stage=0;
+          save(K.approvals,all);
+          log("女将",a.id+" を差し戻しました："+(note||"理由なし"));
+          toast("差し戻しました"); renderAll();
+        }
+      });
+    }
+
+    if(act==="revive"){
+      modal({
+        title:"起票の段階に戻しますか？",
+        body:'<div class="detail"><b>'+esc(a.title)+'</b></div><p>もう一度、番頭の確認からやり直します。</p>',
+        okText:"起票に戻す",
+        onOk:function(){
+          a.stage=1; save(K.approvals,all);
+          log("女将",a.id+" を起票に戻しました");
+          toast("起票に戻しました"); renderAll();
+        }
+      });
+    }
+  });
+
+  /* ================== 品書き・在庫 ================== */
+  function renderStock(){
+    var ps=load(K.products,[]);
+    document.getElementById("stockBody").innerHTML=ps.map(function(p){
+      var left=p.plan-p.reserved;
+      var ratio=p.plan?Math.max(0,Math.round(left/p.plan*100)):0;
+      var col = ratio<10?"var(--ng)":(ratio<30?"var(--warn)":"var(--ok)");
+      return '<tr>'+
+        '<td><b>'+esc(p.name)+'</b></td>'+
+        '<td class="nowrap">'+p.price+'円</td>'+
+        '<td><div class="qty">'+
+          '<button data-s="-" data-id="'+p.id+'">−</button><span>'+p.plan+'</span>'+
+          '<button data-s="+" data-id="'+p.id+'">＋</button></div></td>'+
+        '<td class="nowrap">'+p.reserved+'個</td>'+
+        '<td class="nowrap"><b style="color:'+col+'">'+left+'個</b></td>'+
+        '<td><div class="stockbar"><i style="width:'+ratio+'%;background:'+col+'"></i></div>'+
+          '<small style="color:var(--ink-soft)">残り '+ratio+'%</small></td>'+
+        '<td>'+(left<20?'<button class="btn sm primary" data-s="bake" data-id="'+p.id+'">追い窯を申請</button>':'<span style="color:var(--ink-soft);font-size:13px">十分あります</span>')+'</td>'+
+      '</tr>';
+    }).join("");
+
+    var low=ps.filter(function(p){return (p.plan-p.reserved)<20;});
+    document.getElementById("bakeSuggest").innerHTML = low.length
+      ? low.map(function(p){
+          var need=Math.max(40,Math.ceil((60-(p.plan-p.reserved))/20)*20);
+          return '<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap">'+
+            '<div><b>'+esc(p.name)+'</b>：店頭に出せる数が <b style="color:var(--ng)">'+(p.plan-p.reserved)+'個</b> です。'+
+            '夕の追い窯で <b>'+need+'個</b> 足すことをおすすめします（材料費 約'+yen(need*120)+'）。</div>'+
+            '<button class="btn primary" data-s="bake" data-id="'+p.id+'" data-n="'+need+'">承認ゲートに申請</button></div>';
+        }).join("")
+      : '<p style="color:var(--ink-soft);margin:0">いまのところ、追い窯が必要な品はありません。</p>';
+  }
+
+  function stockClick(e){
+    var b=e.target.closest("button[data-s]"); if(!b) return;
+    var ps=load(K.products,[]);
+    var p=ps.filter(function(x){return x.id===b.dataset.id;})[0]; if(!p) return;
+
+    if(b.dataset.s==="+"||b.dataset.s==="-"){
+      p.plan=Math.max(0,p.plan+(b.dataset.s==="+"?20:-20));
+      save(K.products,ps);
+      log("番頭",p.name+"の本日焼く数を "+p.plan+"個 に変更しました");
+      renderStock(); renderDash();
+      return;
+    }
+    if(b.dataset.s==="bake"){
+      var need=parseInt(b.dataset.n,10)||Math.max(40,60-(p.plan-p.reserved));
+      modal({
+        title:"追い窯を承認ゲートに申請しますか？",
+        body:'<div class="detail"><div><b>'+esc(p.name)+'</b></div>'+
+             '<div>本日焼く数：'+p.plan+'個／予約分：'+p.reserved+'個／店頭に出せる数：'+(p.plan-p.reserved)+'個</div>'+
+             '<div>追加で焼く数：<b>'+need+'個</b>（材料費 約'+yen(need*120)+'）</div></div>'+
+             '<p>申請すると、番頭の確認 → 女将の承認 を経てから実行されます。</p>',
+        needNote:true, noteLabel:"申請の理由",
+        notePlaceholder:"例：予約が本日分を超えました。",
+        okText:"申請する",
+        onOk:function(note){
+          var aprs=load(K.approvals,[]);
+          var newId="APR-"+(500+aprs.length+1);
+          aprs.unshift({
+            id:newId,title:p.name+"の追い窯 "+need+"個",kind:"生産変更",
+            amount:"材料費 約"+yen(need*120),linked:"",stage:1,history:[],
+            why:note||"店頭に出せる数が少なくなりました。",by:"品書き・在庫画面",createdAt:new Date().toISOString()
+          });
+          save(K.approvals,aprs);
+          log("番頭",p.name+"の追い窯 "+need+"個 を申請しました（"+newId+"）");
+          toast("承認ゲートに申請しました"); renderAll();
+        }
+      });
+    }
+  }
+  document.getElementById("stockBody").addEventListener("click",stockClick);
+  document.getElementById("bakeSuggest").addEventListener("click",stockClick);
+
+  /* ================== ダッシュボード ================== */
+  function renderDash(){
+    var list=inquiriesScored();
+    var auto=list.filter(function(q){return q._tier==="auto";}).length;
+    var chk =list.filter(function(q){return q._tier==="check";}).length;
+    var rej =list.filter(function(q){return q._tier==="reject";}).length;
+    var gate=load(K.approvals,[]).filter(function(a){return a.stage>=1&&a.stage<=3;}).length;
+    var sales=list.filter(function(q){return q._tier!=="reject";}).reduce(function(s,q){return s+q._yen;},0);
+    var saved=Math.round((auto*6+rej*4)); /* 1件あたりの手間を分で換算 */
+
+    document.getElementById("kpis").innerHTML=
+      kpi("届いているご相談",list.length+"件","うち未完了 "+list.filter(function(q){return q.stage!=="完了";}).length+"件","azuki")+
+      kpi("自動でOK",auto+"件",settings.autoAt+"点以上","ok")+
+      kpi("人が確認",chk+"件",settings.rejectUnder+"〜"+(settings.autoAt-1)+"点","warn")+
+      kpi("却下",rej+"件",settings.rejectUnder+"点未満","ng")+
+      kpi("承認待ち",gate+"件","女将・番頭の手が要ります","")+
+      kpi("見込み売上",yen(sales),"却下を除いた合計","")+
+      kpi("省けた手間",saved+"分","仕分けの自動化ぶん","");
+
+    var urgent=list.filter(function(q){return q._tier!=="reject"&&q.stage!=="完了";})
+                   .sort(function(a,b){return b._score-a._score;}).slice(0,6);
+    document.getElementById("dashUrgent").innerHTML=urgent.map(function(q){
+      return '<tr><td class="nowrap"><b>'+esc(q.id)+'</b></td><td>'+esc(q.name)+'</td>'+
+        '<td>'+esc(q.type)+'</td><td>'+scoreCell(q._score,q._tier)+'</td>'+
+        '<td><span class="pill '+q._tier+'">'+TIER_LABEL[q._tier]+'</span></td>'+
+        '<td><button class="btn sm" data-go="inbox">受信箱で見る</button></td></tr>';
+    }).join("") || '<tr><td colspan="6" class="empty">手を打つべき案件はありません。</td></tr>';
+
+    var acts=load(K.activity,[]).slice(0,10);
+    document.getElementById("dashLog").innerHTML=acts.map(function(a){
+      return '<li><span class="tm">'+fmt(a.at)+'</span>'+esc(a.who)+'：'+esc(a.what)+'</li>';
+    }).join("") || '<li class="empty">記録はまだありません。</li>';
+
+    var ps=load(K.products,[]);
+    document.getElementById("dashStock").innerHTML=ps.map(function(p){
+      var left=p.plan-p.reserved;
+      var st = left<20?'<span class="pill reject">追い窯が要ります</span>'
+             : left<60?'<span class="pill check">残りわずか</span>'
+             :'<span class="pill auto">十分あります</span>';
+      return '<tr><td><b>'+esc(p.name)+'</b></td><td>'+p.plan+'個</td><td>'+p.reserved+'個</td><td><b>'+left+'個</b></td><td>'+st+'</td></tr>';
+    }).join("");
+  }
+  function kpi(lb,vl,df,cls){
+    return '<div class="kpi '+(cls||"")+'"><div class="lb">'+lb+'</div><div class="vl">'+vl+'</div><div class="df">'+df+'</div></div>';
+  }
+  document.getElementById("dashUrgent").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-go]"); if(!b) return;
+    document.querySelector('.tab[data-p="inbox"]').click();
+  });
+
+  /* ================== 分析・設定 ================== */
+  var thA=document.getElementById("thAuto"), thC=document.getElementById("thCheck");
+  function syncTh(){
+    thA.value=settings.autoAt; thC.value=settings.rejectUnder;
+    document.getElementById("thAutoV").textContent=settings.autoAt+"点";
+    document.getElementById("thCheckV").textContent=settings.rejectUnder+"点";
+    document.getElementById("thNow").textContent=
+      settings.autoAt+"点以上は自動でOK ／ "+settings.rejectUnder+"〜"+(settings.autoAt-1)+"点は人が確認 ／ "+settings.rejectUnder+"点未満は却下";
+  }
+  function onTh(){
+    var a=parseInt(thA.value,10), c=parseInt(thC.value,10);
+    if(c>=a) c=a-5;
+    settings.autoAt=a; settings.rejectUnder=Math.max(5,c);
+    save(K.settings,settings); syncTh(); renderAll();
+  }
+  thA.addEventListener("input",onTh); thC.addEventListener("input",onTh);
+  document.getElementById("resetTh").addEventListener("click",function(){
+    modal({title:"しきい値を初期値に戻しますか？",
+      body:'<p>自動でOK＝75点以上、却下＝45点未満 に戻します。</p>',
+      okText:"戻す",onOk:function(){
+        settings=Object.assign({},DEFAULT_SETTINGS); save(K.settings,settings);
+        log("女将","しきい値を初期値に戻しました"); toast("初期値に戻しました"); syncTh(); renderAll();
+      }});
+  });
+
+  function renderAna(){
+    var list=inquiriesScored();
+    var types={};
+    list.forEach(function(q){
+      types[q.type]=types[q.type]||{auto:0,check:0,reject:0};
+      types[q.type][q._tier]++;
+    });
+    var names=Object.keys(types);
+    var max=1;
+    names.forEach(function(n){ var t=types[n]; max=Math.max(max,t.auto+t.check+t.reject); });
+    document.getElementById("chart").innerHTML=names.map(function(n){
+      var t=types[n], sum=t.auto+t.check+t.reject;
+      var h=Math.round(sum/max*150);
+      var seg=function(v,cls){ return v? '<i class="'+cls+'" style="height:'+(v/sum*h)+'px;background:'+
+        (cls==="auto"?"var(--ok)":cls==="check"?"var(--warn)":"var(--ng)")+'"></i>':''; };
+      return '<div class="col"><small style="font-weight:700">'+sum+'</small>'+
+        '<div class="stack" style="height:'+h+'px">'+seg(t.reject,"reject")+seg(t.check,"check")+seg(t.auto,"auto")+'</div>'+
+        '<div class="cl">'+esc(n).replace("・","<br>")+'</div></div>';
+    }).join("");
+
+    var counts=[
+      [K.inquiries,"お問い合わせ"],[K.approvals,"承認案件"],[K.products,"品書き"],
+      [K.activity,"操作の記録"],[K.settings,"しきい値の設定"],[K.favorites,"お客様のお気に入り"],[K.seq,"受付番号の連番"]
+    ];
+    document.getElementById("keysBody").innerHTML=counts.map(function(c){
+      var v=load(c[0],null);
+      var n = v===null?"（未作成）" : (Array.isArray(v)? v.length+"件" : "1件");
+      return '<tr><td><code>'+c[0]+'</code></td><td>'+c[1]+'</td><td class="nowrap">'+n+'</td></tr>';
+    }).join("");
+
+    document.getElementById("fullLog").innerHTML=load(K.activity,[]).slice(0,60).map(function(a){
+      return '<li><span class="tm">'+fmt(a.at)+'</span>'+esc(a.who)+'：'+esc(a.what)+'</li>';
+    }).join("") || '<li class="empty">記録はまだありません。</li>';
+  }
+
+  document.getElementById("exportBtn").addEventListener("click",function(){
+    var dump={};
+    for(var k in K){ dump[K[k]]=load(K[k],null); }
+    modal({title:"保存データの中身",
+      body:'<div class="detail" style="max-height:44vh;overflow:auto"><pre style="white-space:pre-wrap;font-size:12.5px;margin:0">'+
+           esc(JSON.stringify(dump,null,2).slice(0,6000))+'</pre></div>'+
+           '<p style="font-size:14px">※先頭6000文字だけ表示しています。</p>',
+      okText:"閉じる",onOk:function(){}});
+  });
+  document.getElementById("wipeBtn").addEventListener("click",function(){
+    modal({title:"すべての保存データを消しますか？",
+      body:'<p>お問い合わせ・承認案件・品書き・記録が、この端末からすべて消えます。元に戻せません。</p>'+
+           '<p>消したあとは、サンプルデータが入り直します。</p>',
+      needNote:true,noteLabel:"確認のため「消す」と入力してください",notePlaceholder:"消す",
+      okText:"すべて消す",okClass:"danger",
+      onOk:function(note){
+        if(note!=="消す"){ toast("「消す」と入力されなかったので中止しました"); return; }
+        for(var k in K){ try{localStorage.removeItem(K[k]);}catch(e){} }
+        seedIfEmpty(true);
+        settings=Object.assign({},DEFAULT_SETTINGS);
+        toast("すべて消して、サンプルデータを入れ直しました");
+        syncTh(); renderAll();
+      }});
+  });
+  document.getElementById("reseed").addEventListener("click",function(){
+    modal({title:"サンプルデータを入れ直しますか？",
+      body:'<p>いまの受信箱・承認案件・品書きを、最初のサンプル12件・5件・6件に戻します。ホームページから送った内容も消えます。</p>',
+      okText:"入れ直す",okClass:"danger",
+      onOk:function(){
+        seedIfEmpty(true);
+        log("女将","サンプルデータを入れ直しました");
+        toast("サンプルデータを入れ直しました"); renderAll();
+      }});
+  });
+
+  /* ================== まとめて描画 ================== */
+  function renderAll(){ renderDash(); renderInbox(); renderGate(); renderStock(); renderAna(); }
+  syncTh();
+  renderAll();
+})();
+</script>
+</body>
+</html>

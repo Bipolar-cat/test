@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>まるぱん堂 システム全体像</title>
+<style>
+  body{
+    margin:0;background:#f8f6f2;color:#1b1917;
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;
+    font-size:16px;line-height:1.85;
+  }
+  .wrap{width:min(1180px,94vw);margin:0 auto;padding:34px 0 70px}
+  h1{font-size:29px;margin:0 0 6px;letter-spacing:.05em}
+  .lead{color:#6b6459;margin:0 0 22px}
+  .nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  .nav a{
+    text-decoration:none;font-size:14px;font-weight:700;padding:9px 16px;border-radius:999px;
+    border:1.5px solid #7a2733;color:#7a2733;
+  }
+  .nav a:hover{background:#7a2733;color:#fff}
+  .card{background:#fff;border:1px solid #e7e1d9;border-radius:14px;padding:24px;margin-bottom:24px;box-shadow:0 4px 18px rgba(27,25,23,.06)}
+  .card h2{margin:0 0 14px;font-size:20px;letter-spacing:.04em}
+  svg{width:100%;height:auto;display:block}
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #e7e1d9;vertical-align:top}
+  th{font-size:13px;color:#6b6459;letter-spacing:.06em;white-space:nowrap}
+  code{background:#f8f6f2;border:1px solid #e7e1d9;border-radius:5px;padding:1px 7px;font-size:14px}
+  .scroll{overflow-x:auto}
+  .note{font-size:14.5px;color:#6b6459}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>まるぱん堂 システム全体像</h1>
+  <p class="lead">表のホームページと、裏の帳場（管理画面）が、どうつながっているかの図です。</p>
+  <div class="nav">
+    <a href="index.html">🏠 ホームページへ</a>
+    <a href="admin.html">🛠 管理画面へ</a>
+  </div>
+
+  <div class="card">
+    <h2>① 全体の流れ</h2>
+    <div class="scroll">
+    <svg viewBox="0 0 1120 560" role="img" aria-label="全体構成図">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="#7a2733"/>
+        </marker>
+        <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="#c99441"/>
+        </marker>
+      </defs>
+
+      <!-- 表 -->
+      <rect x="24" y="24" width="300" height="512" rx="16" fill="#fff" stroke="#e7e1d9" stroke-width="2"/>
+      <rect x="24" y="24" width="300" height="46" rx="16" fill="#7a2733"/>
+      <rect x="24" y="54" width="300" height="16" fill="#7a2733"/>
+      <text x="174" y="53" text-anchor="middle" fill="#fff" font-size="17" font-weight="bold">表の顔：ホームページ</text>
+      <text x="174" y="92" text-anchor="middle" fill="#6b6459" font-size="13">index.html</text>
+
+      <g font-size="14" fill="#1b1917">
+        <rect x="48" y="108" width="252" height="52" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="64" y="130">🔍 サイト内検索</text>
+        <text x="64" y="149" font-size="12" fill="#6b6459">打った言葉を光らせて絞り込む</text>
+
+        <rect x="48" y="170" width="252" height="52" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="64" y="192">🌙 明るい／暗い配色の切替</text>
+        <text x="64" y="211" font-size="12" fill="#6b6459">選んだ配色は端末に残る</text>
+
+        <rect x="48" y="232" width="252" height="52" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="64" y="254">✨ スクロールでふわっと表示</text>
+        <text x="64" y="273" font-size="12" fill="#6b6459">＋ よくある質問の開閉</text>
+
+        <rect x="48" y="294" width="252" height="52" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="64" y="316">★ お気に入り保存</text>
+        <text x="64" y="335" font-size="12" fill="#6b6459">次に来ても覚えている</text>
+
+        <rect x="48" y="356" width="252" height="64" rx="10" fill="#fdf3e0" stroke="#e6c98d" stroke-width="2"/>
+        <text x="64" y="380" font-weight="bold">✉️ ご注文フォーム</text>
+        <text x="64" y="400" font-size="12" fill="#6b6459">お名前・ご用件・個数・</text>
+        <text x="64" y="416" font-size="12" fill="#6b6459">ご希望日・ご相談内容</text>
+
+        <rect x="48" y="432" width="252" height="42" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="64" y="459">🛠 管理画面へのリンク</text>
+      </g>
+
+      <!-- 保管庫 -->
+      <rect x="384" y="150" width="212" height="260" rx="16" fill="#fff" stroke="#c99441" stroke-width="2.5"/>
+      <rect x="384" y="150" width="212" height="46" rx="16" fill="#c99441"/>
+      <rect x="384" y="180" width="212" height="16" fill="#c99441"/>
+      <text x="490" y="179" text-anchor="middle" fill="#3a2a10" font-size="16" font-weight="bold">ブラウザの保管庫</text>
+      <text x="490" y="216" text-anchor="middle" fill="#6b6459" font-size="12">localStorage（この端末の中だけ）</text>
+      <g font-size="12.5" fill="#1b1917">
+        <text x="402" y="244">marupando.v1.inquiries</text>
+        <text x="402" y="266">marupando.v1.approvals</text>
+        <text x="402" y="288">marupando.v1.products</text>
+        <text x="402" y="310">marupando.v1.activity</text>
+        <text x="402" y="332">marupando.v1.settings</text>
+        <text x="402" y="354">marupando.v1.favorites</text>
+        <text x="402" y="376">marupando.v1.theme / seq</text>
+      </g>
+      <text x="490" y="398" text-anchor="middle" font-size="11.5" fill="#6b6459">名前をそろえて整理</text>
+
+      <!-- 裏 -->
+      <rect x="656" y="24" width="440" height="512" rx="16" fill="#fff" stroke="#e7e1d9" stroke-width="2"/>
+      <rect x="656" y="24" width="440" height="46" rx="16" fill="#1b1917"/>
+      <rect x="656" y="54" width="440" height="16" fill="#1b1917"/>
+      <text x="876" y="53" text-anchor="middle" fill="#fff" font-size="17" font-weight="bold">裏の顔：帳場（管理画面）</text>
+      <text x="876" y="92" text-anchor="middle" fill="#6b6459" font-size="13">admin.html ／ タブ5つ</text>
+
+      <g font-size="13.5">
+        <rect x="676" y="108" width="196" height="48" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="692" y="130" font-weight="bold">📊 ダッシュボード</text>
+        <text x="692" y="147" font-size="11.5" fill="#6b6459">今日の数字と急ぎの案件</text>
+
+        <rect x="880" y="108" width="196" height="48" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="896" y="130" font-weight="bold">📥 受信箱</text>
+        <text x="896" y="147" font-size="11.5" fill="#6b6459">100点満点で自動仕分け</text>
+
+        <rect x="676" y="166" width="196" height="48" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="692" y="188" font-weight="bold">🔏 承認ゲート</text>
+        <text x="692" y="205" font-size="11.5" fill="#6b6459">人が押すまで進まない</text>
+
+        <rect x="880" y="166" width="196" height="48" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="896" y="188" font-weight="bold">🍞 品書き・在庫</text>
+        <text x="896" y="205" font-size="11.5" fill="#6b6459">追い窯を自動で提案</text>
+
+        <rect x="676" y="224" width="196" height="48" rx="10" fill="#faf7f2" stroke="#e7e1d9"/>
+        <text x="692" y="246" font-weight="bold">📈 分析・設定</text>
+        <text x="692" y="263" font-size="11.5" fill="#6b6459">しきい値を動かせる</text>
+
+        <rect x="880" y="224" width="196" height="48" rx="10" fill="#fdf3e0" stroke="#e6c98d"/>
+        <text x="896" y="246" font-weight="bold">💡 AIヒント</text>
+        <text x="896" y="263" font-size="11.5" fill="#6b6459">各画面に頼み方の例</text>
+      </g>
+
+      <!-- 採点 -->
+      <rect x="676" y="292" width="400" height="126" rx="12" fill="#faf7f2" stroke="#e7e1d9"/>
+      <text x="692" y="316" font-size="14" font-weight="bold">自動採点（100点満点）</text>
+      <g font-size="11.5" fill="#6b6459">
+        <text x="692" y="337">具体性30 ＋ 連絡先20 ＋ 見込み額20 ＋ 迷惑ワード15 ＋ お得意様15</text>
+      </g>
+      <rect x="692" y="348" width="118" height="30" rx="8" fill="#e6f4ec" stroke="#bfe3ce"/>
+      <text x="751" y="368" text-anchor="middle" font-size="12.5" fill="#1f7a4d" font-weight="bold">75点以上 自動でOK</text>
+      <rect x="820" y="348" width="112" height="30" rx="8" fill="#fdf3e0" stroke="#f0dcb4"/>
+      <text x="876" y="368" text-anchor="middle" font-size="12.5" fill="#b5761a" font-weight="bold">45〜74 人が確認</text>
+      <rect x="942" y="348" width="118" height="30" rx="8" fill="#fbeaea" stroke="#f0c9c9"/>
+      <text x="1001" y="368" text-anchor="middle" font-size="12.5" fill="#a32b2b" font-weight="bold">44点以下 却下</text>
+      <text x="692" y="400" font-size="11.5" fill="#6b6459">しきい値は「分析・設定」でいつでも動かせます</text>
+
+      <!-- 承認の流れ -->
+      <rect x="676" y="432" width="400" height="80" rx="12" fill="#f2eef7" stroke="#ddd0ea"/>
+      <text x="692" y="456" font-size="14" font-weight="bold">承認ゲート（引き継ぎ型）</text>
+      <g font-size="12">
+        <circle cx="712" cy="484" r="13" fill="#fff" stroke="#7a2733" stroke-width="2"/>
+        <text x="712" y="489" text-anchor="middle" font-size="11">1</text>
+        <text x="732" y="489">起票</text>
+        <line x1="768" y1="484" x2="792" y2="484" stroke="#bbb" stroke-width="2"/>
+        <circle cx="808" cy="484" r="13" fill="#fff" stroke="#7a2733" stroke-width="2"/>
+        <text x="808" y="489" text-anchor="middle" font-size="11">2</text>
+        <text x="828" y="489">番頭の確認</text>
+        <line x1="898" y1="484" x2="920" y2="484" stroke="#bbb" stroke-width="2"/>
+        <circle cx="936" cy="484" r="13" fill="#fff" stroke="#7a2733" stroke-width="2"/>
+        <text x="936" y="489" text-anchor="middle" font-size="11">3</text>
+        <text x="956" y="489">女将の承認</text>
+        <line x1="1026" y1="484" x2="1042" y2="484" stroke="#bbb" stroke-width="2"/>
+        <circle cx="1058" cy="484" r="13" fill="#1f7a4d" stroke="#1f7a4d" stroke-width="2"/>
+        <text x="1058" y="489" text-anchor="middle" font-size="11" fill="#fff">4</text>
+      </g>
+
+      <!-- 矢印 -->
+      <path d="M304 388 C 344 388, 350 300, 380 288" fill="none" stroke="#7a2733" stroke-width="2.5" marker-end="url(#ar)"/>
+      <text x="336" y="436" font-size="12" fill="#7a2733" font-weight="bold">送信すると書き込む</text>
+      <path d="M600 250 C 630 250, 640 150, 670 138" fill="none" stroke="#c99441" stroke-width="2.5" marker-end="url(#ar2)"/>
+      <text x="648" y="172" text-anchor="end" font-size="12" fill="#a3762f" font-weight="bold">開くと読み込む</text>
+      <path d="M670 470 C 630 470, 610 420, 598 396" fill="none" stroke="#c99441" stroke-width="2.5" marker-end="url(#ar2)"/>
+      <text x="648" y="452" text-anchor="end" font-size="12" fill="#a3762f" font-weight="bold">承認の結果を書き戻す</text>
+      <path d="M330 480 C 420 500, 560 508, 654 470" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ar)"/>
+      <text x="440" y="524" font-size="12" fill="#6b6459">画面のリンクで行き来できる</text>
+    </svg>
+    </div>
+    <p class="note">※サービス連携はしていません。表と裏は、同じブラウザの保管庫（localStorage）だけでつながっています。</p>
+  </div>
+
+  <div class="card">
+    <h2>② お問い合わせが流れていく順番</h2>
+    <div class="scroll">
+    <svg viewBox="0 0 1120 210" role="img" aria-label="処理の流れ図">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="#7a2733"/>
+        </marker>
+      </defs>
+      <g font-size="13.5">
+        <rect x="14" y="66" width="152" height="76" rx="12" fill="#fff" stroke="#7a2733" stroke-width="2"/>
+        <text x="90" y="96" text-anchor="middle" font-weight="bold">お客様が送信</text>
+        <text x="90" y="118" text-anchor="middle" font-size="11.5" fill="#6b6459">ホームページの</text>
+        <text x="90" y="133" text-anchor="middle" font-size="11.5" fill="#6b6459">フォーム</text>
+
+        <rect x="200" y="66" width="152" height="76" rx="12" fill="#fff" stroke="#e7e1d9" stroke-width="2"/>
+        <text x="276" y="96" text-anchor="middle" font-weight="bold">保管庫に記録</text>
+        <text x="276" y="118" text-anchor="middle" font-size="11.5" fill="#6b6459">受付番号 INQ-○○○</text>
+        <text x="276" y="133" text-anchor="middle" font-size="11.5" fill="#6b6459">を自動で付ける</text>
+
+        <rect x="386" y="66" width="152" height="76" rx="12" fill="#fff" stroke="#e7e1d9" stroke-width="2"/>
+        <text x="462" y="96" text-anchor="middle" font-weight="bold">100点満点で採点</text>
+        <text x="462" y="118" text-anchor="middle" font-size="11.5" fill="#6b6459">5つの観点を合計</text>
+
+        <rect x="572" y="14" width="152" height="52" rx="12" fill="#e6f4ec" stroke="#bfe3ce" stroke-width="2"/>
+        <text x="648" y="38" text-anchor="middle" font-weight="bold" fill="#1f7a4d">自動でOK</text>
+        <text x="648" y="55" text-anchor="middle" font-size="11.5" fill="#1f7a4d">返信の下書きまで用意</text>
+
+        <rect x="572" y="78" width="152" height="52" rx="12" fill="#fdf3e0" stroke="#f0dcb4" stroke-width="2"/>
+        <text x="648" y="102" text-anchor="middle" font-weight="bold" fill="#b5761a">人が確認</text>
+        <text x="648" y="119" text-anchor="middle" font-size="11.5" fill="#b5761a">受信箱で中身を読む</text>
+
+        <rect x="572" y="142" width="152" height="52" rx="12" fill="#fbeaea" stroke="#f0c9c9" stroke-width="2"/>
+        <text x="648" y="166" text-anchor="middle" font-weight="bold" fill="#a32b2b">却下</text>
+        <text x="648" y="183" text-anchor="middle" font-size="11.5" fill="#a32b2b">営業・いたずらを外す</text>
+
+        <rect x="758" y="46" width="164" height="96" rx="12" fill="#f2eef7" stroke="#ddd0ea" stroke-width="2"/>
+        <text x="840" y="76" text-anchor="middle" font-weight="bold">承認ゲート</text>
+        <text x="840" y="98" text-anchor="middle" font-size="11.5" fill="#5b3d7a">番頭が確認 →</text>
+        <text x="840" y="114" text-anchor="middle" font-size="11.5" fill="#5b3d7a">女将が承認 →</text>
+        <text x="840" y="130" text-anchor="middle" font-size="11.5" fill="#5b3d7a">はじめて実行</text>
+
+        <rect x="956" y="66" width="150" height="76" rx="12" fill="#fff" stroke="#1f7a4d" stroke-width="2"/>
+        <text x="1031" y="96" text-anchor="middle" font-weight="bold" fill="#1f7a4d">実行・完了</text>
+        <text x="1031" y="118" text-anchor="middle" font-size="11.5" fill="#6b6459">返信送信／受注確定</text>
+        <text x="1031" y="133" text-anchor="middle" font-size="11.5" fill="#6b6459">記録が残る</text>
+      </g>
+      <g stroke="#7a2733" stroke-width="2" fill="none" marker-end="url(#a3)">
+        <line x1="168" y1="104" x2="196" y2="104"/>
+        <line x1="354" y1="104" x2="382" y2="104"/>
+        <path d="M540 104 C 556 104, 556 40, 568 40"/>
+        <line x1="540" y1="104" x2="568" y2="104"/>
+        <path d="M540 104 C 556 104, 556 168, 568 168"/>
+        <path d="M726 40 C 742 40, 742 82, 754 82"/>
+        <path d="M726 104 C 742 104, 742 100, 754 100"/>
+        <line x1="924" y1="104" x2="952" y2="104"/>
+      </g>
+    </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>③ 保存しているデータの一覧</h2>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>キー名（保存の名札）</th><th>中身</th><th>書く人</th><th>読む人</th></tr></thead>
+      <tbody>
+        <tr><td><code>marupando.v1.inquiries</code></td><td>ご注文・お問い合わせ</td><td>ホームページ／管理画面</td><td>管理画面</td></tr>
+        <tr><td><code>marupando.v1.approvals</code></td><td>承認ゲートの案件</td><td>管理画面</td><td>管理画面</td></tr>
+        <tr><td><code>marupando.v1.products</code></td><td>品書きと在庫</td><td>管理画面</td><td>管理画面</td></tr>
+        <tr><td><code>marupando.v1.activity</code></td><td>だれが何をしたかの記録</td><td>両方</td><td>管理画面</td></tr>
+        <tr><td><code>marupando.v1.settings</code></td><td>点数のしきい値</td><td>管理画面</td><td>管理画面</td></tr>
+        <tr><td><code>marupando.v1.favorites</code></td><td>お客様のお気に入り</td><td>ホームページ</td><td>両方</td></tr>
+        <tr><td><code>marupando.v1.theme</code></td><td>明るい／暗いの選択</td><td>ホームページ</td><td>ホームページ</td></tr>
+        <tr><td><code>marupando.v1.seq</code></td><td>受付番号の連番</td><td>両方</td><td>両方</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">キー名を <code>marupando.v1.</code> でそろえているので、あとから中身を探しやすく、消すときもまとめて扱えます。</p>
+  </div>
+
+  <div class="nav">
+    <a href="index.html">🏠 ホームページへ</a>
+    <a href="admin.html">🛠 管理画面へ</a>
+  </div>
+</div>
+</body>
+</html>
