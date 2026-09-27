@@ -218,11 +218,11 @@
     <h1>物語のある一枚<span class="latin">Stories in Frames</span></h1>
   </div>
   <div>
-    <p class="lead">画像生成AIで制作した<strong>広告ビジュアル・店舗イメージ・キャラクター作品</strong>をまとめました。どの作品も、一枚の中に「その前後の時間」が感じられるよう、場所・小物・表情まで設計しています。</p>
+    <p class="lead">画像生成AIで制作した<strong>広告ビジュアル・店舗イメージ・キャラクター作品・図解エッセイ</strong>をまとめました。どの作品も、一枚の中に「その前後の時間」が感じられるよう、場所・小物・表情まで設計しています。</p>
     <div class="tally" aria-label="収録数">
-      <span><b id="t-works">13</b>作品</span>
-      <span><b id="t-images">16</b>カット</span>
-      <span><b id="t-series">3</b>シリーズ</span>
+      <span><b id="t-works">22</b>作品</span>
+      <span><b id="t-images">27</b>カット</span>
+      <span><b id="t-series">5</b>シリーズ</span>
     </div>
   </div>
 </header>
@@ -264,7 +264,8 @@
     ad:    "広告・プロモーション",
     space: "空間・ライフスタイル",
     story: "キャラクター・物語",
-    book:  "絵本・イラスト"
+    book:  "絵本・イラスト",
+    essay: "エッセイ・図解"
   };
 
   var WORKS = [
@@ -309,7 +310,36 @@
     { no: "13", cat: "story", title: "ローソンへ行くパンダ",
       desc: "真夏の日差しの中、日傘をさしてローソンへ向かい、メルカリの荷物を発送するパンダ。横長の左右2分割と縦長の上下2段、2つのレイアウトで制作しました。",
       cuts: [{ src: "works/13-lawson-panda-b.webp", w: 1024, h: 1536, cap: "縦・上下2段" },
-             { src: "works/13-lawson-panda-a.webp", w: 1402, h: 1122, cap: "横・左右2分割" }] }
+             { src: "works/13-lawson-panda-a.webp", w: 1402, h: 1122, cap: "横・左右2分割" }] },
+    { no: "14", cat: "story", title: "畳でひと休み",
+      desc: "畳の上で枕に頭をのせ、仰向けでスマホを眺めるパンダ。障子の部屋と、すだれの窓辺の2カットで、同じポーズのまま背景と光の違いを比べています。",
+      cuts: [{ src: "works/14-tatami-panda-a.webp", w: 512, h: 279, cap: "障子の部屋" },
+             { src: "works/14-tatami-panda-b.webp", w: 512, h: 279, cap: "すだれの窓辺" }] },
+    { no: "15", cat: "ad", title: "秋の大人スイーツ",
+      desc: "栗のパフェ、かぼちゃのタルト、ブリュレを並べた秋の限定スイーツの告知。ランタンと落ち葉を添え、落ち着いた大人向けの雰囲気にまとめました。",
+      cuts: [{ src: "works/15-autumn-sweets.webp", w: 426, h: 441 }] },
+    { no: "16", cat: "ad", title: "この秋おすすめのお芋スイーツ",
+      desc: "蜜芋モンブラン、お芋の贅沢パフェ、焼き芋ブリュレの3品を紹介する秋のPOP。手書き風の吹き出しと紫・黄色の配色で、にぎやかに目を引く構成です。",
+      cuts: [{ src: "works/16-imo-sweets.webp", w: 1254, h: 1254 }] },
+    { no: "17", cat: "space", title: "夕焼けの丘で",
+      desc: "街と川を見下ろす丘で、猫と並んで夕日を眺める後ろ姿。ノートPCとマグカップ、積んだ本を添えて、作業の合間のひと息を描きました。",
+      cuts: [{ src: "works/17-sunset-hill.webp", w: 1672, h: 941 }] },
+    { no: "18", cat: "story", title: "ITパスポートへの道",
+      desc: "ITパスポート試験の勉強に取り組むパンダ。用語のチェックリストを広げた朝のベッドと、AIに質問しながらノートをまとめる夜の机、2つの時間帯で描いたシリーズです。",
+      cuts: [{ src: "works/18-it-passport-a.webp", w: 1672, h: 941, cap: "朝のベッドで" },
+             { src: "works/18-it-passport-b.webp", w: 1408, h: 768, cap: "夜の机で" }] },
+    { no: "19", cat: "story", title: "Good Work Good Tomorrow",
+      desc: "オフィスで頭を抱えるパンダと、書類を手にあわてるネズミ、それを見守るシカ。職場のささいなドタバタを表情で見せる一枚です。",
+      cuts: [{ src: "works/19-good-work-office.webp", w: 1536, h: 1024 }] },
+    { no: "20", cat: "story", title: "警察署で住所変更",
+      desc: "日傘と麦わら帽子のパンダが、運転免許証の住所変更のために警察署を訪れる場面。案内板の矢印や奥の窓口まで描き込み、手続きの日の一コマにしました。",
+      cuts: [{ src: "works/20-police-station.webp", w: 1448, h: 1086 }] },
+    { no: "21", cat: "essay", title: "できることを少しずつ",
+      desc: "双極症とともに過ごす日々を、パンダと猫のキャラクターで描いた図解エッセイ。つらい時期から、家事や学び、季節に合わせた小さな「できること」を見つけていく流れを9つのコマで綴っています。",
+      cuts: [{ src: "works/21-one-step-at-a-time.webp", w: 1254, h: 1254 }] },
+    { no: "22", cat: "essay", title: "編み物に凝っていた15年前のパンダ",
+      desc: "15年前に夢中になった編み物の思い出を、パンダと当時の作品で振り返る一枚。Opal毛糸の靴下、がま口、編み込み帽子に手書きのメモを添えました。",
+      cuts: [{ src: "works/22-knitting-panda.webp", w: 1734, h: 907 }] }
   ];
 
   function ratio(w, h) {
