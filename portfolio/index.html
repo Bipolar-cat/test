@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--artifact-start-->
+<title>物語のある一枚</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #edefea;
+    --surface: #f8f9f6;
+    --ink: #1b211e;
+    --muted: #5b655f;
+    --line: #d0d6ce;
+    --accent: #2e5e4e;
+    --accent-ink: #f4f7f3;
+    --shade: rgba(20, 28, 24, .10);
+    --scrim: rgba(12, 16, 14, .92);
+    --display: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #131715;
+      --surface: #1b201d;
+      --ink: #e7ebe6;
+      --muted: #9aa49d;
+      --line: #2d3430;
+      --accent: #8fc5b0;
+      --accent-ink: #10231c;
+      --shade: rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #131715;
+    --surface: #1b201d;
+    --ink: #e7ebe6;
+    --muted: #9aa49d;
+    --line: #2d3430;
+    --accent: #8fc5b0;
+    --accent-ink: #10231c;
+    --shade: rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 15px/1.8 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 48px); }
+
+  /* ---------- header ---------- */
+  header.intro {
+    padding-block: clamp(40px, 8vw, 96px) clamp(28px, 5vw, 56px);
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: clamp(24px, 5vw, 72px);
+    align-items: end;
+  }
+  .eyebrow {
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 20px;
+  }
+  h1 {
+    font: 900 clamp(44px, 8.4vw, 104px)/1.08 var(--display);
+    letter-spacing: .02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 .latin {
+    display: block;
+    margin-top: 14px;
+    font: 500 clamp(14px, 1.6vw, 18px)/1.4 var(--mono);
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .lead { margin: 0; max-width: 34em; color: var(--muted); }
+  .lead strong { color: var(--ink); font-weight: 500; }
+  .tally {
+    display: flex; gap: 28px; margin-top: 24px;
+    font: 400 12px/1.3 var(--mono); color: var(--muted);
+    letter-spacing: .06em;
+  }
+  .tally b {
+    display: block; font: 700 30px/1 var(--display);
+    color: var(--ink); letter-spacing: 0; margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- filter ---------- */
+  .filters {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--bg);
+    border-block: 1px solid var(--line);
+    padding-block: 12px;
+  }
+  .filters .wrap { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip {
+    appearance: none; cursor: pointer;
+    font: 500 13px/1 var(--body);
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 9px 14px;
+    display: inline-flex; gap: 8px; align-items: center;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .chip:hover { border-color: var(--muted); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip .n { font: 400 11px/1 var(--mono); opacity: .7; }
+  .chip:focus-visible, .work button:focus-visible, .lb button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px;
+  }
+
+  /* ---------- gallery ---------- */
+  main { padding-block: clamp(28px, 4vw, 48px) 96px; }
+  .grid { columns: 3 300px; column-gap: clamp(18px, 2.4vw, 32px); }
+  .work {
+    break-inside: avoid;
+    margin: 0 0 clamp(28px, 3.6vw, 48px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .work .frame {
+    appearance: none; border: 0; padding: 0; margin: 0; cursor: zoom-in;
+    background: var(--surface);
+    display: block; width: 100%;
+    box-shadow: 0 1px 2px var(--shade), 0 10px 28px -12px var(--shade);
+    overflow: hidden;
+  }
+  .work .frame img {
+    width: 100%; height: auto;
+    transition: transform .5s cubic-bezier(.2, .7, .2, 1);
+  }
+  .work .frame:hover img { transform: scale(1.025); }
+  .work .cuts { display: flex; gap: 8px; }
+  .work .cuts button {
+    appearance: none; border: 1px solid var(--line); padding: 0; margin: 0; cursor: zoom-in;
+    background: var(--surface); width: 64px; height: 44px; overflow: hidden; flex: none;
+  }
+  .work .cuts button img { width: 100%; height: 100%; object-fit: cover; }
+  .work .cuts button[aria-current="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .work .cuts .label {
+    align-self: center; font: 400 11px/1.4 var(--mono); color: var(--muted); letter-spacing: .06em;
+  }
+  .meta { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 6px; }
+  .meta .no {
+    grid-row: span 2;
+    font: 500 12px/1 var(--mono); color: var(--accent);
+    padding-top: 7px; letter-spacing: .04em;
+  }
+  .meta h2 { font: 700 20px/1.45 var(--display); margin: 0; text-wrap: balance; }
+  .meta .tags {
+    font: 400 11px/1.5 var(--mono); color: var(--muted); letter-spacing: .04em;
+    display: flex; flex-wrap: wrap; gap: 4px 12px;
+  }
+  .meta p { grid-column: 2; margin: 4px 0 0; font-size: 14px; line-height: 1.85; color: var(--muted); }
+  .work[hidden] { display: none !important; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-block: 28px 48px;
+    font: 400 12px/1.7 var(--mono); color: var(--muted); letter-spacing: .03em;
+  }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+  /* ---------- lightbox ---------- */
+  .lb {
+    position: fixed; inset: 0; z-index: 50;
+    background: var(--scrim);
+    display: grid; grid-template-rows: auto 1fr auto;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px);
+    color: #eef1ed;
+  }
+  .lb[hidden] { display: none !important; }
+  .lb .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 400 12px/1 var(--mono); letter-spacing: .08em; color: #b8c1bb; }
+  .lb .stage { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; min-height: 0; padding-block: 12px; }
+  .lb .stage img { max-height: calc(100vh - 190px); max-height: calc(100dvh - 190px); width: auto; margin: 0 auto; object-fit: contain; }
+  .lb button {
+    appearance: none; background: transparent; color: inherit; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
+    font: 500 13px/1 var(--mono); padding: 10px 14px;
+  }
+  .lb button:hover { border-color: rgba(255,255,255,.6); }
+  .lb .cap { text-align: center; max-width: 60ch; margin: 0 auto; }
+  .lb .cap h3 { font: 700 18px/1.4 var(--display); margin: 0 0 4px; }
+  .lb .cap span { font: 400 11px/1.4 var(--mono); color: #b8c1bb; letter-spacing: .05em; }
+
+  @media (max-width: 760px) {
+    header.intro { grid-template-columns: 1fr; align-items: start; }
+    .lb .stage { grid-template-columns: 1fr; }
+    .lb .stage .nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap intro">
+  <div>
+    <p class="eyebrow">Portfolio · Generative Image Works · 2026</p>
+    <h1>物語のある一枚<span class="latin">Stories in Frames</span></h1>
+  </div>
+  <div>
+    <p class="lead">画像生成AIで制作した<strong>広告ビジュアル・店舗イメージ・キャラクター作品・図解エッセイ</strong>をまとめました。どの作品も、一枚の中に「その前後の時間」が感じられるよう、場所・小物・表情まで設計しています。</p>
+    <div class="tally" aria-label="収録数">
+      <span><b id="t-works">22</b>作品</span>
+      <span><b id="t-images">27</b>カット</span>
+      <span><b id="t-series">5</b>シリーズ</span>
+    </div>
+  </div>
+</header>
+
+<nav class="filters" aria-label="カテゴリで絞り込む">
+  <div class="wrap" id="filters"></div>
+</nav>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>掲載作品はすべて画像生成AIを用いて制作しています。</span>
+    <span>© 2026 Stories in Frames</span>
+  </div>
+</footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="作品を拡大表示">
+  <div class="bar">
+    <span id="lb-count"></span>
+    <button type="button" id="lb-close">閉じる ✕</button>
+  </div>
+  <div class="stage">
+    <button type="button" class="nav" id="lb-prev" aria-label="前の画像">←</button>
+    <img id="lb-img" alt="">
+    <button type="button" class="nav" id="lb-next" aria-label="次の画像">→</button>
+  </div>
+  <div class="cap">
+    <h3 id="lb-title"></h3>
+    <span id="lb-meta"></span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var CATS = {
+    ad:    "広告・プロモーション",
+    space: "空間・ライフスタイル",
+    story: "キャラクター・物語",
+    book:  "絵本・イラスト",
+    essay: "エッセイ・図解"
+  };
+
+  var WORKS = [
+    { no: "01", cat: "story", title: "三者合意",
+      desc: "大阪城を望む夕暮れの応接室。キツネ・クマ・アナグマが、肉球の印を押した合意書を前に握手を交わす場面です。スーツの生地や机上の小物、窓の外の街並みまで描き込みました。",
+      cuts: [{ src: "works/01-contract.webp", w: 1408, h: 768 }] },
+    { no: "02", cat: "ad", title: "ごほうびの午後",
+      desc: "ペット用おやつ「PREMIUM PUP」の広告を想定したライフスタイルビジュアル。自然光の入るリビングに、くつろぐ飼い主と眠るゴールデンレトリバーを同じ画面に収めています。",
+      cuts: [{ src: "works/02-premium-pup.webp", w: 1024, h: 1024 }] },
+    { no: "03", cat: "space", title: "Station Lane Cafe",
+      desc: "駅に面したクレープカフェの店舗イメージ。黒板メニュー、植物の壁、窓の向こうを走る列車で、立地と店の雰囲気が一目で伝わる構成にしました。",
+      cuts: [{ src: "works/03-station-lane-cafe.webp", w: 896, h: 1199 }] },
+    { no: "04", cat: "ad", title: "癒しの緑",
+      desc: "ワークスペース型カフェの告知ビジュアル。Wi-Fi・電源・個室などの設備をアイコンで並べ、植物に囲まれた半個室の写真とコピーで落ち着いた空間を伝えます。",
+      cuts: [{ src: "works/04-iyashi-no-midori.webp", w: 1080, h: 1350 }] },
+    { no: "05", cat: "space", title: "ハイランドの小径",
+      desc: "夕焼けの湖と山並みを見下ろす石畳の道。人物を後ろ姿で置き、見る人が旅の視点に入り込めるようにした風景作品です。",
+      cuts: [{ src: "works/05-highland-path.webp", w: 1080, h: 555 }] },
+    { no: "06", cat: "space", title: "木の書斎",
+      desc: "note の記事ヘッダーを想定したワークスペース写真。無垢材のデスクと窓の外の緑で、書く時間の静けさを表現しました。",
+      cuts: [{ src: "works/06-note-desk.webp", w: 1080, h: 541 }] },
+    { no: "07", cat: "ad", title: "ONE BOWL",
+      desc: "冷凍オーガニックスープの商品広告バナー。キャッチコピー、商品の特長、価格、調理の3ステップ、ECサイトへの導線を一枚にまとめたレイアウトです。",
+      cuts: [{ src: "works/07-one-bowl.webp", w: 1080, h: 1028 }] },
+    { no: "08", cat: "book", title: "森の青い鳥",
+      desc: "パステル調の絵本イラスト。寄り添う二羽と、一羽が飛び立つ場面の2カットです。背景を共通にして、ページをめくるような時間の流れをつくりました。",
+      cuts: [{ src: "works/08-bluebirds-a.webp", w: 1424, h: 736, cap: "寄り添う" },
+             { src: "works/08-bluebirds-b.webp", w: 1424, h: 736, cap: "飛び立つ" }] },
+    { no: "09", cat: "story", title: "パンダの在宅ワーク",
+      desc: "柄物のブランケットにくるまり、床に寝そべってノートPCに向かうパンダ。クッションや本、マグカップで、のんびりした在宅の一日を描いています。",
+      cuts: [{ src: "works/09-panda-remote-work.webp", w: 512, h: 279 }] },
+    { no: "10", cat: "story", title: "白うさぎと毒の小瓶",
+      desc: "古い書斎で「POISON」の札がついた小瓶を抱える白うさぎ。童話のような不穏さを、暗い色調と窓からの光で表現しました。",
+      cuts: [{ src: "works/10-poison-rabbit.webp", w: 1376, h: 768 }] },
+    { no: "11", cat: "story", title: "路線バスのパンダ",
+      desc: "中央病院前を走るバスで、帽子と眼鏡のパンダが傘を手に座っています。優先席の表示や降車ボタンまで、日本の路線バスの車内を再現した日常の一コマです。",
+      cuts: [{ src: "works/11-panda-bus.webp", w: 1408, h: 768 }] },
+    { no: "12", cat: "story", title: "入院生活",
+      desc: "車椅子のシカと、見舞いに来たパンダとシマリス。病室と、街を見渡すラウンジの2場面で、入院中の日々を描いたシリーズです。",
+      cuts: [{ src: "works/12-hospital-lounge.webp", w: 1408, h: 768, cap: "ラウンジ" },
+             { src: "works/12-hospital-room.webp", w: 512, h: 279, cap: "病室" }] },
+    { no: "13", cat: "story", title: "ローソンへ行くパンダ",
+      desc: "真夏の日差しの中、日傘をさしてローソンへ向かい、メルカリの荷物を発送するパンダ。横長の左右2分割と縦長の上下2段、2つのレイアウトで制作しました。",
+      cuts: [{ src: "works/13-lawson-panda-b.webp", w: 1024, h: 1536, cap: "縦・上下2段" },
+             { src: "works/13-lawson-panda-a.webp", w: 1402, h: 1122, cap: "横・左右2分割" }] },
+    { no: "14", cat: "story", title: "畳でひと休み",
+      desc: "畳の上で枕に頭をのせ、仰向けでスマホを眺めるパンダ。障子の部屋と、すだれの窓辺の2カットで、同じポーズのまま背景と光の違いを比べています。",
+      cuts: [{ src: "works/14-tatami-panda-a.webp", w: 512, h: 279, cap: "障子の部屋" },
+             { src: "works/14-tatami-panda-b.webp", w: 512, h: 279, cap: "すだれの窓辺" }] },
+    { no: "15", cat: "ad", title: "秋の大人スイーツ",
+      desc: "栗のパフェ、かぼちゃのタルト、ブリュレを並べた秋の限定スイーツの告知。ランタンと落ち葉を添え、落ち着いた大人向けの雰囲気にまとめました。",
+      cuts: [{ src: "works/15-autumn-sweets.webp", w: 426, h: 441 }] },
+    { no: "16", cat: "ad", title: "この秋おすすめのお芋スイーツ",
+      desc: "蜜芋モンブラン、お芋の贅沢パフェ、焼き芋ブリュレの3品を紹介する秋のPOP。手書き風の吹き出しと紫・黄色の配色で、にぎやかに目を引く構成です。",
+      cuts: [{ src: "works/16-imo-sweets.webp", w: 1254, h: 1254 }] },
+    { no: "17", cat: "space", title: "夕焼けの丘で",
+      desc: "街と川を見下ろす丘で、猫と並んで夕日を眺める後ろ姿。ノートPCとマグカップ、積んだ本を添えて、作業の合間のひと息を描きました。",
+      cuts: [{ src: "works/17-sunset-hill.webp", w: 1672, h: 941 }] },
+    { no: "18", cat: "story", title: "ITパスポートへの道",
+      desc: "ITパスポート試験の勉強に取り組むパンダ。用語のチェックリストを広げた朝のベッドと、AIに質問しながらノートをまとめる夜の机、2つの時間帯で描いたシリーズです。",
+      cuts: [{ src: "works/18-it-passport-a.webp", w: 1672, h: 941, cap: "朝のベッドで" },
+             { src: "works/18-it-passport-b.webp", w: 1408, h: 768, cap: "夜の机で" }] },
+    { no: "19", cat: "story", title: "Good Work Good Tomorrow",
+      desc: "オフィスで頭を抱えるパンダと、書類を手にあわてるネズミ、それを見守るシカ。職場のささいなドタバタを表情で見せる一枚です。",
+      cuts: [{ src: "works/19-good-work-office.webp", w: 1536, h: 1024 }] },
+    { no: "20", cat: "story", title: "警察署で住所変更",
+      desc: "日傘と麦わら帽子のパンダが、運転免許証の住所変更のために警察署を訪れる場面。案内板の矢印や奥の窓口まで描き込み、手続きの日の一コマにしました。",
+      cuts: [{ src: "works/20-police-station.webp", w: 1448, h: 1086 }] },
+    { no: "21", cat: "essay", title: "できることを少しずつ",
+      desc: "双極症とともに過ごす日々を、パンダと猫のキャラクターで描いた図解エッセイ。つらい時期から、家事や学び、季節に合わせた小さな「できること」を見つけていく流れを9つのコマで綴っています。",
+      cuts: [{ src: "works/21-one-step-at-a-time.webp", w: 1254, h: 1254 }] },
+    { no: "22", cat: "essay", title: "編み物に凝っていた15年前のパンダ",
+      desc: "15年前に夢中になった編み物の思い出を、パンダと当時の作品で振り返る一枚。Opal毛糸の靴下、がま口、編み込み帽子に手書きのメモを添えました。",
+      cuts: [{ src: "works/22-knitting-panda.webp", w: 1734, h: 907 }] }
+  ];
+
+  function ratio(w, h) {
+    var r = w / h;
+    if (Math.abs(r - 1) < .03) return "1:1";
+    if (Math.abs(r - 16 / 9) < .03) return "16:9";
+    if (Math.abs(r - 4 / 5) < .03) return "4:5";
+    if (Math.abs(r - 2 / 3) < .03) return "2:3";
+    if (Math.abs(r - 3 / 4) < .03) return "3:4";
+    if (Math.abs(r - 5 / 4) < .03) return "5:4";
+    return r.toFixed(2) + ":1";
+  }
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    for (var k in attrs || {}) {
+      if (k === "text") n.textContent = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) n.appendChild(c); });
+    return n;
+  }
+
+  // flat list of every cut, for lightbox navigation
+  var FLAT = [];
+  WORKS.forEach(function (w, wi) {
+    w.cuts.forEach(function (c, ci) { FLAT.push({ wi: wi, ci: ci }); });
+  });
+
+  var grid = document.getElementById("grid");
+  var cards = [];
+
+  WORKS.forEach(function (w, wi) {
+    var first = w.cuts[0];
+    var mainImg = el("img", {
+      src: first.src, width: first.w, height: first.h, loading: wi < 4 ? "eager" : "lazy",
+      alt: w.title + (first.cap ? "（" + first.cap + "）" : "")
+    });
+    var frame = el("button", { type: "button", class: "frame", "aria-label": w.title + " を拡大" }, [mainImg]);
+    frame.addEventListener("click", function () { open(wi, card._cut || 0); });
+
+    var cuts = null;
+    if (w.cuts.length > 1) {
+      cuts = el("div", { class: "cuts" });
+      w.cuts.forEach(function (c, ci) {
+        var b = el("button", {
+          type: "button", "aria-label": w.title + "：" + c.cap,
+          "aria-current": ci === 0 ? "true" : "false"
+        }, [el("img", { src: c.src, alt: "", loading: "lazy" })]);
+        b.addEventListener("click", function () {
+          card._cut = ci;
+          mainImg.src = c.src; mainImg.width = c.w; mainImg.height = c.h;
+          mainImg.alt = w.title + "（" + c.cap + "）";
+          cuts.querySelectorAll("button").forEach(function (x, xi) {
+            x.setAttribute("aria-current", xi === ci ? "true" : "false");
+          });
+        });
+        cuts.appendChild(b);
+      });
+      cuts.appendChild(el("span", { class: "label", text: w.cuts.length + " カット · " + w.cuts.map(function (c) { return c.cap; }).join(" / ") }));
+    }
+
+    var dims = w.cuts.map(function (c) { return c.w + "×" + c.h; }).join(" / ");
+    var tags = el("div", { class: "tags" }, [
+      el("span", { text: CATS[w.cat] }),
+      el("span", { text: dims + " px" }),
+      el("span", { text: ratio(first.w, first.h) })
+    ]);
+    var meta = el("div", { class: "meta" }, [
+      el("span", { class: "no", text: "N° " + w.no }),
+      el("h2", { text: w.title }),
+      tags,
+      el("p", { text: w.desc })
+    ]);
+    var card = el("article", { class: "work", "data-cat": w.cat }, [frame, cuts, meta]);
+    cards.push(card);
+    grid.appendChild(card);
+  });
+
+  // tally
+  document.getElementById("t-works").textContent = WORKS.length;
+  document.getElementById("t-images").textContent = FLAT.length;
+  document.getElementById("t-series").textContent = WORKS.filter(function (w) { return w.cuts.length > 1; }).length;
+
+  // filters
+  var filters = document.getElementById("filters");
+  var current = "all";
+  function count(cat) {
+    return cat === "all" ? WORKS.length : WORKS.filter(function (w) { return w.cat === cat; }).length;
+  }
+  function setFilter(cat) {
+    current = cat;
+    filters.querySelectorAll(".chip").forEach(function (c) {
+      c.setAttribute("aria-pressed", c.dataset.cat === cat ? "true" : "false");
+    });
+    cards.forEach(function (card) { card.hidden = !(cat === "all" || card.dataset.cat === cat); });
+    try { localStorage.setItem("sif-filter", cat); } catch (e) {}
+  }
+  [["all", "すべて"]].concat(Object.keys(CATS).map(function (k) { return [k, CATS[k]]; })).forEach(function (pair) {
+    var b = el("button", { type: "button", class: "chip", "data-cat": pair[0], "aria-pressed": "false" }, [
+      el("span", { text: pair[1] }), el("span", { class: "n", text: String(count(pair[0])) })
+    ]);
+    b.addEventListener("click", function () { setFilter(pair[0]); });
+    filters.appendChild(b);
+  });
+  var saved = "all";
+  try { saved = localStorage.getItem("sif-filter") || "all"; } catch (e) {}
+  setFilter(CATS[saved] ? saved : "all");
+
+  // lightbox
+  var lb = document.getElementById("lb");
+  var lbImg = document.getElementById("lb-img");
+  var pos = 0, lastFocus = null;
+  function visibleFlat() {
+    return FLAT.filter(function (f) { return current === "all" || WORKS[f.wi].cat === current; });
+  }
+  function show() {
+    var list = visibleFlat();
+    var f = list[pos], w = WORKS[f.wi], c = w.cuts[f.ci];
+    lbImg.src = c.src;
+    lbImg.alt = w.title + (c.cap ? "（" + c.cap + "）" : "");
+    document.getElementById("lb-title").textContent = w.title + (c.cap ? " — " + c.cap : "");
+    document.getElementById("lb-meta").textContent = "N° " + w.no + " · " + CATS[w.cat] + " · " + c.w + "×" + c.h + " px";
+    document.getElementById("lb-count").textContent = String(pos + 1).padStart(2, "0") + " / " + String(list.length).padStart(2, "0");
+  }
+  function open(wi, ci) {
+    var list = visibleFlat();
+    pos = Math.max(0, list.findIndex(function (f) { return f.wi === wi && f.ci === ci; }));
+    lastFocus = document.activeElement;
+    lb.hidden = false;
+    document.body.style.overflow = "hidden";
+    show();
+    document.getElementById("lb-close").focus();
+  }
+  function close() {
+    lb.hidden = true;
+    document.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  }
+  function step(d) {
+    var n = visibleFlat().length;
+    pos = (pos + d + n) % n;
+    show();
+  }
+  document.getElementById("lb-close").addEventListener("click", close);
+  document.getElementById("lb-prev").addEventListener("click", function () { step(-1); });
+  document.getElementById("lb-next").addEventListener("click", function () { step(1); });
+  lb.addEventListener("click", function (e) { if (e.target === lb || e.target.classList.contains("stage")) close(); });
+  document.addEventListener("keydown", function (e) {
+    if (lb.hidden) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft") step(-1);
+    else if (e.key === "ArrowRight") step(1);
+  });
+  // swipe on touch screens
+  var sx = null;
+  lb.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener("touchend", function (e) {
+    if (sx === null) return;
+    var dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1);
+    sx = null;
+  });
+})();
+</script>
+<!--artifact-end-->
+</body>
+</html>
